@@ -1,11 +1,11 @@
 # Hawthorn Superheroes: Quick View Guide
 
-If you just want to see the superhero cards with their badges, you can open `index.html` directly or run a tiny local server. Pick whichever feels easiest.
+If you just want to see the superhero cards and open their dossiers, you can open `index.html` directly or run a tiny local server. Pick whichever feels easiest.
 
 ## Option 1: Open the file directly (fastest)
 1. Download or clone this folder.
 2. Double-click `index.html` to open it in your browser (Chrome, Edge, Firefox, Safari all work).
-3. You should see each hero card with colorful badges showing their signature moves.
+3. You should see each hero card—click any card to open its dossier and signature moves.
 
 ## Option 2: Run a local web server (helpful if images don’t load)
 This keeps paths tidy and works on any platform.
@@ -25,8 +25,8 @@ serve . -l 8000
 Then visit <http://localhost:8000> in your browser.
 
 ## What to look for
-- Each hero card displays small badges listing their **signature moves**.
-- Badge colors match the hero’s power type (electric, ice, impact, etc.).
+- Click a hero card to open the dossier modal with their **signature moves** and power ratings.
+- A trio of illustrated move icons sits under the description—press one to jump to that move in the list below.
 
 ## Troubleshooting
 - If images don’t appear when double-clicking `index.html`, use the local server option above.
