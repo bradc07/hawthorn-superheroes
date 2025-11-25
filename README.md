@@ -35,6 +35,11 @@ Then visit <http://localhost:8000> in your browser.
 ## Need the whole `index.html` file?
 - The complete file already lives in this folder as `index.html`—no patches needed.
 - To grab a copy without any extra tools, just download or copy that file from the folder you received.
+- If you want to download only `index.html` from a browser (for example from GitHub):
+  1. Open the repository page.
+  2. Click `index.html` in the file list.
+  3. Press the **Raw** button so the full file opens in your browser.
+  4. Use **File → Save Page As...** (or right-click → **Save As...**) to save it locally as `index.html`.
 - If you have Git available, you can export everything (including `index.html`) into a zip by running:
   ```bash
   git archive --format=zip -o hawthorn-superheroes.zip HEAD
