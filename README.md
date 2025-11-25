@@ -25,8 +25,8 @@ serve . -l 8000
 Then visit <http://localhost:8000> in your browser.
 
 ## What to look for
+- Each hero card shows three illustrated badges along the bottom of the portrait—each badge is an icon for one of their signature moves.
 - Click a hero card to open the dossier modal with their **signature moves** and power ratings.
-- A trio of illustrated move icons sits under the description—press one to jump to that move in the list below.
 
 ## Troubleshooting
 - If images don’t appear when double-clicking `index.html`, use the local server option above.

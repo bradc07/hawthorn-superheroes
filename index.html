@@ -385,6 +385,40 @@
             display: inline-block;
         }
 
+        .move-badge-row {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.8rem;
+            padding: 0.5rem 0.7rem;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            width: fit-content;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .move-badge {
+            width: 46px;
+            height: 46px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s;
+        }
+
+        .move-badge:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), inset 0 0 16px rgba(255, 255, 255, 0.08);
+        }
+
+        .move-badge[data-type="electric"] { color: var(--col-electric); }
+        .move-badge[data-type="ice"] { color: var(--col-ice); }
+        .move-badge[data-type="impact"] { color: var(--col-impact); }
+
         /* Class Badge */
         .class-badge {
             position: absolute;
@@ -584,73 +618,6 @@
             box-shadow: 0 0 15px #ef4444;
         }
 
-        .move-icon-row {
-            display: flex;
-            gap: 0.6rem;
-            flex-wrap: wrap;
-            margin: 1.2rem 0 0.5rem 0;
-        }
-
-        .move-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.65rem 0.9rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(255, 255, 255, 0.04);
-            color: #e2e8f0;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: transform 0.2s var(--ease-smooth), border-color 0.2s, box-shadow 0.2s;
-            backdrop-filter: blur(6px);
-        }
-
-        .move-chip:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
-        }
-
-        .chip-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: grid;
-            place-items: center;
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.06);
-        }
-
-        .chip-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-
-        .move-row.pulse {
-            animation: pulseRow 0.6s ease;
-        }
-
-        @keyframes pulseRow {
-            0% {
-                transform: scale(1);
-                background: rgba(255, 255, 255, 0.02);
-            }
-
-            50% {
-                transform: scale(1.02);
-                background: rgba(255, 255, 255, 0.06);
-            }
-
-            100% {
-                transform: scale(1);
-                background: transparent;
-            }
-        }
-
         .close-btn {
             position: absolute;
             top: 20px;
@@ -812,7 +779,6 @@
                     <div id="modalRole" class="modal-role-display"></div>
                 </div>
                 <p id="modalDescription" class="modal-desc"></p>
-                <div id="modalMoveIcons" class="move-icon-row" aria-label="Signature move quick links"></div>
                 <div class="dashboard-grid">
                     <div class="dash-panel">
                         <div class="panel-label"
@@ -927,6 +893,17 @@
         ];
         heroes.sort((a, b) => a.name.localeCompare(b.name));
 
+        function pickMoveIcon(moveName, type) {
+            const name = moveName.toLowerCase();
+            if (name.includes('freeze') || name.includes('frost') || name.includes('ice')) return '❄️✨';
+            if (name.includes('wall') || name.includes('shield')) return '🧊🛡️';
+            if (name.includes('slide') || name.includes('glide')) return '🛝';
+            if (name.includes('bolt') || name.includes('shock') || name.includes('spark')) return '⚡';
+            if (name.includes('charge') || name.includes('slam') || name.includes('bash')) return '💥';
+            if (name.includes('wave') || name.includes('surf') || name.includes('tide')) return '🌊';
+            return type === 'electric' ? '⚡' : type === 'ice' ? '❄️' : '💥';
+        }
+
         /* --- CINEMATIC AUDIO ENGINE --- */
         const AudioEngine = {
             ctx: null,
@@ -998,10 +975,12 @@
                 const isHidden = filterType !== 'all' && hero.type !== filterType;
                 if (isHidden) return '';
 
+                const badges = hero.moves.map(m => `<span class="move-badge" data-type="${hero.type}" title="${m.name}">${pickMoveIcon(m.name, hero.type)}</span>`).join('');
+
                 return `
       <div class="hero-card-container">
-        <div class="hero-card" id="card-${hero.id}" data-type="${hero.type}" 
-             onclick="triggerMegaReveal('${hero.id}')" 
+        <div class="hero-card" id="card-${hero.id}" data-type="${hero.type}"
+             onclick="triggerMegaReveal('${hero.id}')"
              onmouseenter="AudioEngine.hover()"
              onmousemove="tiltCard(event, this)" 
              onmouseleave="resetTilt(this)">
@@ -1014,6 +993,7 @@
           <div class="card-content">
             <div class="hero-name">${hero.name}</div>
             <div class="hero-alias">${hero.alias}</div>
+            <div class="move-badge-row" aria-label="Signature move icons">${badges}</div>
           </div>
         </div>
       </div>
@@ -1067,7 +1047,6 @@
         const nameEl = document.getElementById("modalName");
         const roleEl = document.getElementById("modalRole");
         const descEl = document.getElementById("modalDescription");
-        const moveIconsEl = document.getElementById("modalMoveIcons");
         const movesEl = document.getElementById("modalMoves");
         const statsEl = document.getElementById("modalStats");
 
@@ -1081,8 +1060,7 @@
             typeBadge.style.borderColor = themeColor; typeBadge.style.color = themeColor; typeBadge.innerHTML = hero.icon; typeBadge.style.boxShadow = `0 0 30px ${themeColor}`;
             nameEl.textContent = hero.name; roleEl.innerHTML = `${hero.alias} • ${hero.role}`; descEl.textContent = hero.description;
 
-            movesEl.innerHTML = hero.moves.map(m => `<div class="move-row" data-move="${m.name}"><span class="move-name">${m.name}</span><span class="move-val">${m.pwr}</span></div>`).join("");
-            renderMoveIcons(hero);
+            movesEl.innerHTML = hero.moves.map(m => `<div class="move-row"><span class="move-name">${m.name}</span><span class="move-val">${m.pwr}</span></div>`).join("");
             statsEl.innerHTML = `
     ${createStatRow('Bravery', hero.stats.bravery, statClass)}
     ${createStatRow('Speed', hero.stats.speed, statClass)}
@@ -1093,35 +1071,6 @@
             overlay.classList.add("active");
             setTimeout(() => { document.querySelectorAll('.stat-fill').forEach((bar, i) => setTimeout(() => bar.style.width = bar.getAttribute('data-pct'), i * 100)); }, 300);
         }
-
-        function renderMoveIcons(hero) {
-            moveIconsEl.innerHTML = hero.moves.map(m => {
-                const icon = pickMoveIcon(m.name, hero.type);
-                const safeName = m.name.replace(/'/g, "\\'");
-                return `<button class="move-chip" type="button" onclick="focusMove('${safeName}')"><span class="chip-icon">${icon}</span><span class="chip-label">${m.name}</span></button>`;
-            }).join("");
-        }
-
-        function pickMoveIcon(moveName, type) {
-            const name = moveName.toLowerCase();
-            if (name.includes('freeze') || name.includes('frost') || name.includes('ice')) return '❄️✨';
-            if (name.includes('wall') || name.includes('shield')) return '🧊🛡️';
-            if (name.includes('slide') || name.includes('glide')) return '🛝';
-            if (name.includes('bolt') || name.includes('shock') || name.includes('spark')) return '⚡';
-            if (name.includes('charge') || name.includes('slam') || name.includes('bash')) return '💥';
-            if (name.includes('wave') || name.includes('surf') || name.includes('tide')) return '🌊';
-            return type === 'electric' ? '⚡' : type === 'ice' ? '❄️' : '💥';
-        }
-
-        function focusMove(moveName) {
-            const rows = Array.from(movesEl.querySelectorAll('.move-row'));
-            const target = rows.find(r => r.getAttribute('data-move') === moveName);
-            if (!target) return;
-            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            target.classList.add('pulse');
-            setTimeout(() => target.classList.remove('pulse'), 600);
-        }
-
         function createStatRow(label, val, colorClass) {
             const pct = (val / 5) * 100 + '%';
             return `<div class="stat-row"><div class="stat-label">${label}</div><div class="stat-track"><div class="stat-fill ${colorClass}" data-pct="${pct}"></div></div></div>`;
