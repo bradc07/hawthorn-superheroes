@@ -31,3 +31,12 @@ Then visit <http://localhost:8000> in your browser.
 ## Troubleshooting
 - If images don’t appear when double-clicking `index.html`, use the local server option above.
 - Refresh the page (Ctrl/Cmd + R) after starting a server to ensure everything loads.
+
+## Need the whole `index.html` file?
+- The complete file already lives in this folder as `index.html`—no patches needed.
+- To grab a copy without any extra tools, just download or copy that file from the folder you received.
+- If you have Git available, you can export everything (including `index.html`) into a zip by running:
+  ```bash
+  git archive --format=zip -o hawthorn-superheroes.zip HEAD
+  ```
+  The zip will contain the full `index.html` for you to open.
