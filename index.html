@@ -373,13 +373,36 @@
         .battle-overlay.active { opacity: 1; pointer-events: all; }
         
         .battle-stage {
-            width: 100%; max-width: 1000px; height: 80vh; background: radial-gradient(circle at center, #1e1b4b 0%, #000 70%);
-            border: 2px solid #a855f7; border-radius: 20px; box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
-            display: flex; flex-direction: column; padding: 2rem; position: relative; overflow: hidden;
-            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1); /* For Slow Mo Zoom */
+            width: 100%; max-width: 1000px; height: 80vh; background: radial-gradient(circle at center, #0b1233 0%, #020617 55%, #000 100%);
+            border: 2px solid #a855f7; border-radius: 24px; box-shadow: 0 0 60px rgba(168, 85, 247, 0.4);
+            display: flex; flex-direction: column; padding: 2.5rem; position: relative; overflow: hidden;
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease, border-color 0.6s ease;
         }
         /* Zoom effect class */
         .battle-stage.slow-mo { transform: scale(1.1); filter: contrast(1.2); }
+
+        .battle-stage::after,
+        .battle-stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.15), transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(34, 211, 238, 0.12), transparent 45%);
+            z-index: 0;
+            mix-blend-mode: screen;
+            filter: blur(10px);
+        }
+        .battle-stage::before {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05), transparent 60%);
+            animation: pulseArena 6s ease-in-out infinite;
+        }
+
+        @keyframes pulseArena { 0% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } 100% { opacity: 0.5; transform: scale(1); } }
+
+        /* Element tinting */
+        .battle-stage[data-element="electric"] { border-color: #fbbf24; box-shadow: 0 0 70px rgba(251, 191, 36, 0.4); }
+        .battle-stage[data-element="ice"] { border-color: #22d3ee; box-shadow: 0 0 70px rgba(34, 211, 238, 0.35); }
+        .battle-stage[data-element="impact"] { border-color: #ef4444; box-shadow: 0 0 70px rgba(239, 68, 68, 0.35); }
 
         .battle-stage::before {
              content: ""; position: absolute; inset:0; 
@@ -390,12 +413,20 @@
         .battle-header { text-align: center; margin-bottom: 2rem; z-index: 2; }
         .battle-title { font-family: 'Bangers'; font-size: 3rem; color: #a855f7; text-shadow: 0 0 20px #a855f7; }
 
-        .battle-area { display: flex; justify-content: space-between; align-items: center; flex-grow: 1; z-index: 2; }
-        .side { width: 300px; text-align: center; position: relative; }
-        .side-img {
-            width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
-            transition: transform 0.2s; border-radius: 12px;
+        .battle-area { display: flex; justify-content: space-between; align-items: center; flex-grow: 1; z-index: 2; position: relative; }
+        .side { width: 320px; text-align: center; position: relative; padding: 1rem; }
+        .side::before {
+            content: ""; position: absolute; inset: 5%; border-radius: 16px; background: radial-gradient(circle at center, rgba(255,255,255,0.04), transparent 70%);
+            opacity: 0.7; filter: blur(1px); z-index: 0;
         }
+        .side-img {
+            width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 25px rgba(255,255,255,0.25));
+            transition: transform 0.35s var(--ease-smooth); border-radius: 12px;
+            animation: hoverFloat 3s ease-in-out infinite;
+        }
+        .side-img.hero { box-shadow: 0 0 30px rgba(34, 197, 94, 0.25); }
+        .side-img.villain { box-shadow: 0 0 30px rgba(168, 85, 247, 0.25); }
+        @keyframes hoverFloat { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
         
         /* Shake Animation */
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
@@ -437,10 +468,70 @@
         .hp-heroes { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
 
         .battle-log {
-            margin-top: 2rem; height: 100px; background: rgba(0,0,0,0.6); border: 1px solid #a855f7; border-radius: 8px;
-            padding: 1rem; font-family: 'Rajdhani'; font-size: 1.2rem; color: #fff; display: flex; align-items: center;
-            justify-content: center; text-align: center; z-index: 2;
+            margin-top: 2rem; height: 120px; background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(26, 35, 126, 0.6)); border: 1px solid #a855f7; border-radius: 12px;
+            padding: 1.5rem; font-family: 'Rajdhani'; font-size: 1.25rem; color: #fff; display: flex; align-items: center;
+            justify-content: center; text-align: center; z-index: 2; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
         }
+
+        /* HYPER BATTLE HUD */
+        .move-banner {
+            position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); padding: 0.75rem 1.5rem; border-radius: 999px;
+            display: flex; align-items: center; gap: 1rem; backdrop-filter: blur(8px); box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+            opacity: 0; transform-origin: center; scale: 0.95; transition: 0.4s var(--ease-smooth);
+            z-index: 3;
+        }
+        .move-banner.show { opacity: 1; scale: 1; }
+        .move-label { font-weight: 800; letter-spacing: 2px; color: #cbd5e1; text-transform: uppercase; }
+        .move-name-display { font-family: 'Bangers'; font-size: 1.5rem; letter-spacing: 1px; }
+        .move-chip {
+            font-size: 0.8rem; padding: 0.35rem 0.8rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.08); color: #e5e7eb; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+        }
+        .move-banner[data-element="electric"] { border-color: #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.3); }
+        .move-banner[data-element="electric"] .move-name-display { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.5); }
+        .move-banner[data-element="ice"] { border-color: #22d3ee; box-shadow: 0 0 20px rgba(34,211,238,0.3); }
+        .move-banner[data-element="ice"] .move-name-display { color: #22d3ee; text-shadow: 0 0 10px rgba(34,211,238,0.5); }
+        .move-banner[data-element="impact"] { border-color: #ef4444; box-shadow: 0 0 20px rgba(239,68,68,0.3); }
+        .move-banner[data-element="impact"] .move-name-display { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.5); }
+
+        /* FX LAYERS */
+        .battle-fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 2; overflow: hidden; }
+        .attack-beam {
+            position: absolute; height: 8px; width: 180%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.4));
+            transform: rotate(-5deg) translateX(-20%);
+            animation: beamToVillain 0.8s ease-out forwards;
+            border-radius: 8px;
+        }
+        .attack-beam.from-heroes { top: 45%; left: 30%; }
+        .attack-beam.from-villain { top: 55%; left: -40%; animation: beamToHeroes 0.8s ease-out forwards; transform: rotate(5deg);
+            background: linear-gradient(90deg, transparent, rgba(168,85,247,0.9), rgba(168,85,247,0.4)); }
+        .attack-beam.electric { background: linear-gradient(90deg, transparent, #fbbf24, #fde68a); box-shadow: 0 0 25px rgba(251,191,36,0.5); }
+        .attack-beam.ice { background: linear-gradient(90deg, transparent, #67e8f9, #22d3ee); box-shadow: 0 0 25px rgba(34,211,238,0.45); }
+        .attack-beam.impact { background: linear-gradient(90deg, transparent, #ef4444, #fca5a5); box-shadow: 0 0 25px rgba(239,68,68,0.45); }
+        @keyframes beamToVillain { from { opacity: 0; transform: translateX(30%) scaleX(0.8); } to { opacity: 1; transform: translateX(-20%) scaleX(1); } }
+        @keyframes beamToHeroes { from { opacity: 0; transform: translateX(-10%) scaleX(0.8); } to { opacity: 1; transform: translateX(40%) scaleX(1); } }
+
+        .ice-shard {
+            position: absolute; width: 14px; height: 40px; background: linear-gradient(180deg, #e0f2fe 0%, #22d3ee 100%);
+            clip-path: polygon(50% 0, 80% 30%, 100% 100%, 0% 100%, 20% 30%);
+            top: -60px; filter: drop-shadow(0 0 10px rgba(34,211,238,0.6));
+            animation: shardFall 0.8s ease-out forwards;
+        }
+        .ice-shard.to-villain { left: 15% }
+        .ice-shard.to-heroes { right: 10%; }
+        @keyframes shardFall { from { transform: translateY(-20px) rotate(-8deg); opacity: 0; } to { transform: translateY(380px) rotate(4deg); opacity: 1; } }
+
+        .impact-ripple {
+            position: absolute; width: 120px; height: 120px; border: 2px solid rgba(239,68,68,0.5); border-radius: 50%;
+            animation: ripple 0.9s ease-out forwards; filter: drop-shadow(0 0 10px rgba(239,68,68,0.5)); left: 50%; top: 55%;
+            transform: translate(-50%, -50%);
+        }
+        @keyframes ripple { from { transform: translate(-50%, -50%) scale(0.4); opacity: 0.6; } to { transform: translate(-50%, -50%) scale(1.6); opacity: 0; } }
+
+        .hit-glow { box-shadow: 0 0 30px rgba(255,255,255,0.6) !important; }
 
         /* INITIATE BUTTON (Outside) */
         .battle-btn-initiate {
@@ -570,19 +661,25 @@
     <div id="battleOverlay" class="battle-overlay">
          <div class="battle-stage" id="battleStage">
               <div class="close-btn" onclick="closeBattle()">×</div>
-              
+              <div class="move-banner" id="moveBanner" data-element="electric">
+                    <div class="move-label" id="moveLabel">Battle Ready</div>
+                    <div class="move-name-display" id="moveName">Awaiting Move</div>
+                    <div class="move-chip" id="moveChip">Electric</div>
+              </div>
+
               <div id="combatStartOverlay" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:100; background:rgba(0,0,0,0.4); backdrop-filter:blur(2px);">
                   <button class="battle-btn-commence" onclick="beginCombatSequence()">START COMBAT</button>
               </div>
 
+              <div class="battle-fx-layer" id="battleFxLayer"></div>
               <div class="battle-header">
                    <div class="battle-title" id="battleTitle">BOSS BATTLE</div>
               </div>
-              
+
               <div class="battle-area">
                    <div class="side" id="villainSide">
                         <h2 style="color:#a855f7; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;" id="villainName">Baddie</h2>
-                        <img id="villainImg" class="side-img" src="">
+                        <img id="villainImg" class="side-img villain" src="">
                         <div class="hp-bar-container">
                              <div id="villainHP" class="hp-fill hp-villain"></div>
                         </div>
@@ -593,8 +690,8 @@
                    <div class="side" id="heroesSide">
                         <h2 style="color:#22c55e; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;">The Heroes</h2>
                         <div style="display:flex; justify-content:center; gap:10px;">
-                             <img id="hero1Img" class="side-img" style="width:100px; height:100px;" src="">
-                             <img id="hero2Img" class="side-img" style="width:100px; height:100px;" src="">
+                             <img id="hero1Img" class="side-img hero" style="width:100px; height:100px;" src="">
+                             <img id="hero2Img" class="side-img hero" style="width:100px; height:100px;" src="">
                         </div>
                         <div class="hp-bar-container">
                              <div id="heroesHP" class="hp-fill hp-heroes"></div>
@@ -798,7 +895,9 @@
              
              document.getElementById('hero1Img').src = hero1.image;
              document.getElementById('hero2Img').src = hero2.image;
-             
+             setBattleElement(hero1.type);
+             showMoveBanner('Muddlewick', 'Pick your move!', 'electric');
+
              // RESET HEALTH
              currentHeroHP = 100;
              currentVillainHP = 100;
@@ -848,11 +947,72 @@
         function hitEffect(element) {
             element.classList.add('shake');
             element.classList.add('damage-flash');
+            element.classList.add('hit-glow');
             AudioEngine.hitSound();
             setTimeout(() => {
                 element.classList.remove('shake');
                 element.classList.remove('damage-flash');
+                element.classList.remove('hit-glow');
             }, 500);
+        }
+
+        /* --- BATTLE PRESENTATION HELPERS --- */
+        const moveBanner = document.getElementById('moveBanner');
+        const moveLabel = document.getElementById('moveLabel');
+        const moveName = document.getElementById('moveName');
+        const moveChip = document.getElementById('moveChip');
+
+        function setBattleElement(type) {
+            const stage = document.getElementById('battleStage');
+            stage.dataset.element = type || 'electric';
+        }
+
+        function elementLabel(type) {
+            if(type === 'electric') return 'Electric';
+            if(type === 'ice') return 'Ice';
+            if(type === 'impact') return 'Impact';
+            return 'Special';
+        }
+
+        function showMoveBanner(attacker, move, type) {
+            moveLabel.innerText = attacker;
+            moveName.innerText = move;
+            moveChip.innerText = elementLabel(type);
+            moveBanner.dataset.element = type || 'electric';
+            moveBanner.classList.remove('show');
+            void moveBanner.offsetWidth;
+            moveBanner.classList.add('show');
+        }
+
+        function spawnImpactRipple() {
+            const fxLayer = document.getElementById('battleFxLayer');
+            const ripple = document.createElement('div');
+            ripple.className = 'impact-ripple';
+            fxLayer.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 900);
+        }
+
+        function launchElementalFX(type, origin) {
+            const fxLayer = document.getElementById('battleFxLayer');
+            const beam = document.createElement('div');
+            beam.className = `attack-beam ${type} ${origin === 'villain' ? 'from-villain' : 'from-heroes'}`;
+            fxLayer.appendChild(beam);
+            setTimeout(() => beam.remove(), 900);
+
+            if(type === 'ice') {
+                for(let i = 0; i < 8; i++) {
+                    const shard = document.createElement('div');
+                    shard.className = `ice-shard ${origin === 'villain' ? 'to-heroes' : 'to-villain'}`;
+                    shard.style.left = origin === 'villain' ? `${50 + Math.random()*30}%` : `${10 + Math.random()*25}%`;
+                    shard.style.animationDelay = `${Math.random() * 0.2}s`;
+                    fxLayer.appendChild(shard);
+                    setTimeout(() => shard.remove(), 900);
+                }
+            }
+
+            if(type === 'impact') {
+                spawnImpactRipple();
+            }
         }
 
         /* --- ELEMENTAL FINALE LOGIC --- */
@@ -911,14 +1071,17 @@
                     // HERO ATTACKS
                     const attacker = Math.random() > 0.5 ? h1 : h2;
                     const move = getStandardMove(attacker);
-                    
+
                     log.innerText = `${attacker.name} uses ${move.name}!`;
+                    setBattleElement(attacker.type);
+                    showMoveBanner(attacker.name, move.name, attacker.type);
                     AudioEngine.playTone(600 + (Math.random()*200), 'sine', 0.2);
                     await delay(800);
+                    launchElementalFX(attacker.type, 'heroes');
                     hitEffect(vImg);
-                    
+
                     const damage = 15 + Math.random() * 10;
-                    currentVillainHP = Math.max(10, currentVillainHP - damage); 
+                    currentVillainHP = Math.max(10, currentVillainHP - damage);
                     updateHealthUI('villain', currentVillainHP);
                     log.innerText = "A solid hit!";
 
@@ -926,10 +1089,13 @@
                     // VILLAIN ATTACKS
                     log.innerText = `${currentVillain.name} strikes with ${currentVillain.move}!`;
                     await delay(800);
+                    setBattleElement('impact');
+                    showMoveBanner(currentVillain.name, currentVillain.move, 'impact');
+                    launchElementalFX('impact', 'villain');
                     hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                    
+
                     const damage = 15 + Math.random() * 10;
-                    currentHeroHP = Math.max(10, currentHeroHP - damage); 
+                    currentHeroHP = Math.max(10, currentHeroHP - damage);
                     updateHealthUI('heroes', currentHeroHP);
                     log.innerText = "The heroes take damage!";
                 }
@@ -952,10 +1118,13 @@
                 // Slow Mo Tension
                 AudioEngine.stopMusic();
                 stage.classList.add('slow-mo');
-                
+
                 const finisher = Math.random() > 0.5 ? h1 : h2;
                 const ult = getUltimateMove(finisher);
                 log.innerText = `But ${finisher.name} prepares ${ult.name}...`;
+                setBattleElement(finisher.type);
+                showMoveBanner(finisher.name, ult.name, finisher.type);
+                launchElementalFX(finisher.type, 'heroes');
                 await delay(2500); if(!isBattleActive) return;
 
                 // ELEMENTAL EXPLOSION
