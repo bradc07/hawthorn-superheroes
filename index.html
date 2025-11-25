@@ -373,13 +373,17 @@
         .battle-overlay.active { opacity: 1; pointer-events: all; }
         
         .battle-stage {
+            --stage-scale: 1;
+            --shake-x: 0px;
+            --shake-y: 0px;
             width: 100%; max-width: 1000px; height: 80vh; background: radial-gradient(circle at center, #1e1b4b 0%, #000 70%);
             border: 2px solid #a855f7; border-radius: 20px; box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
             display: flex; flex-direction: column; padding: 2rem; position: relative; overflow: hidden;
             transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1); /* For Slow Mo Zoom */
+            transform: translate(var(--shake-x), var(--shake-y)) scale(var(--stage-scale));
         }
         /* Zoom effect class */
-        .battle-stage.slow-mo { transform: scale(1.1); filter: contrast(1.2); }
+        .battle-stage.slow-mo { --stage-scale: 1.1; filter: contrast(1.2); }
 
         .battle-stage::before {
              content: ""; position: absolute; inset:0; 
@@ -396,10 +400,40 @@
             width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
             transition: transform 0.2s; border-radius: 12px;
         }
+
+        /* FX OVERLAYS */
+        .battle-bg-pulse { position: absolute; inset: -30%; background: radial-gradient(circle at 50% 50%, rgba(168,85,247,0.35) 0%, transparent 70%); opacity: 0; filter: blur(40px); transition: opacity 0.4s ease; z-index: 0; }
+        .battle-fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+        .move-splash { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Bangers'; font-size: 3rem; text-transform: uppercase; letter-spacing: 4px; color: #fff; text-shadow: 0 0 30px currentColor; opacity: 0; transform: scale(0.85); transition: 0.2s ease; z-index: 6; pointer-events: none; }
+        .move-splash.active { opacity: 1; transform: scale(1); }
+        .move-splash[data-type="electric"] { color: #fbbf24; }
+        .move-splash[data-type="ice"] { color: #22d3ee; }
+        .move-splash[data-type="impact"] { color: #ef4444; }
+        .move-splash[data-ultimate="true"] { font-size: 4rem; animation: pulseBtn 1s infinite alternate; }
+        .turn-indicator { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2); padding: 10px 16px; border-radius: 30px; font-weight: 800; letter-spacing: 2px; color: #fff; opacity: 0; transition: 0.2s ease; z-index: 7; }
+        .turn-indicator.active { opacity: 1; }
+        .turn-indicator[data-side="villain"] { border-color: #ef4444; color: #fecdd3; box-shadow: 0 0 20px rgba(239,68,68,0.5); }
+        .turn-indicator[data-side="heroes"] { border-color: #4ade80; color: #dcfce7; box-shadow: 0 0 20px rgba(74,222,128,0.5); }
+        .combo-badge { position: absolute; top: 10px; right: 10px; background: rgba(234,179,8,0.15); border: 1px solid #facc15; color: #facc15; padding: 8px 12px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; opacity: 0; transform: translateY(-10px); transition: 0.2s ease; z-index: 7; }
+        .combo-badge.active { opacity: 1; transform: translateY(0); }
+        .projectile { position: absolute; width: 14px; height: 14px; border-radius: 50%; filter: blur(0.3px); box-shadow: 0 0 20px currentColor, 0 0 40px currentColor; }
+        .projectile[data-type="electric"] { background: radial-gradient(circle, #fbbf24, transparent); color: #fbbf24; }
+        .projectile[data-type="ice"] { background: radial-gradient(circle, #22d3ee, transparent); color: #22d3ee; }
+        .projectile[data-type="impact"] { background: radial-gradient(circle, #ef4444, transparent); color: #ef4444; }
+        .fx-particle { position: absolute; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
+        .damage-number { position: absolute; font-family: 'Bangers'; font-size: 2rem; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .damage-number.crit { color: #fbbf24; text-shadow: 0 0 20px #fbbf24, 0 0 40px #fbbf24; font-size: 2.6rem; }
+        .impact-wave { position: absolute; border-radius: 9999px; border: 3px solid #fff; width: 140px; height: 140px; transform: translate(-50%, -50%) scale(0); opacity: 0.8; animation: ripple 0.5s ease-out forwards; }
+        .impact-wave[data-type="electric"] { border-color: #fbbf24; }
+        .impact-wave[data-type="ice"] { border-color: #22d3ee; }
+        .impact-wave[data-type="impact"] { border-color: #ef4444; }
+        .side.charging-electric .side-img { box-shadow: 0 0 30px rgba(251,191,36,0.8); filter: drop-shadow(0 0 25px rgba(251,191,36,0.5)); }
+        .side.charging-ice .side-img { box-shadow: 0 0 30px rgba(34,211,238,0.8); filter: drop-shadow(0 0 25px rgba(34,211,238,0.5)); }
+        .side.charging-impact .side-img { box-shadow: 0 0 30px rgba(239,68,68,0.8); filter: drop-shadow(0 0 25px rgba(239,68,68,0.5)); }
         
         /* Shake Animation */
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 
+        @keyframes shake {
             0% { transform: translate(0, 0); }
             10% { transform: translate(-10px, -10px); }
             20% { transform: translate(10px, 10px); }
@@ -409,6 +443,8 @@
             60% { transform: translate(10px, 0); }
             100% { transform: translate(0, 0); }
         }
+
+        @keyframes ripple { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; } }
 
         /* Violent Finale Shake */
         .shake-hard { animation: shakeHard 0.6s cubic-bezier(.36,.07,.19,.97) both; }
@@ -570,7 +606,13 @@
     <div id="battleOverlay" class="battle-overlay">
          <div class="battle-stage" id="battleStage">
               <div class="close-btn" onclick="closeBattle()">×</div>
-              
+
+              <div id="bgPulse" class="battle-bg-pulse"></div>
+              <div id="fxLayer" class="battle-fx-layer"></div>
+              <div id="turnIndicator" class="turn-indicator"></div>
+              <div id="comboBadge" class="combo-badge"></div>
+              <div id="moveSplash" class="move-splash"></div>
+
               <div id="combatStartOverlay" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:100; background:rgba(0,0,0,0.4); backdrop-filter:blur(2px);">
                   <button class="battle-btn-commence" onclick="beginCombatSequence()">START COMBAT</button>
               </div>
@@ -840,10 +882,210 @@
              isBattleActive = false;
              AudioEngine.stopMusic();
              document.getElementById('battleOverlay').classList.remove('active');
-             toggleBattleMode(); 
+             toggleBattleMode();
         }
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        /* --- BATTLE FX HELPERS --- */
+        let screenShake = 0;
+        let comboCount = 0;
+        let projectiles = [];
+        let particles = [];
+        let damageNumbers = [];
+        let impactWave = null;
+
+        const stageEl = document.getElementById('battleStage');
+        const fxLayer = document.getElementById('fxLayer');
+        const moveSplashEl = document.getElementById('moveSplash');
+        const turnIndicatorEl = document.getElementById('turnIndicator');
+        const comboBadgeEl = document.getElementById('comboBadge');
+        const bgPulseEl = document.getElementById('bgPulse');
+        const flashOverlay = document.getElementById('flashOverlay');
+
+        function flash(color) {
+            flashOverlay.style.backgroundColor = color;
+            flashOverlay.classList.add('active');
+            setTimeout(() => flashOverlay.classList.remove('active'), 120);
+        }
+
+        function shake(intensity) {
+            screenShake = Math.max(screenShake, intensity);
+        }
+
+        function setMoveSplash(name, type, ultimate = false) {
+            if (!name) {
+                moveSplashEl.classList.remove('active');
+                return;
+            }
+            moveSplashEl.textContent = name;
+            moveSplashEl.dataset.type = type;
+            moveSplashEl.dataset.ultimate = ultimate ? 'true' : 'false';
+            moveSplashEl.classList.add('active');
+        }
+
+        function setTurnIndicator(side) {
+            if (!side) {
+                turnIndicatorEl.classList.remove('active');
+                return;
+            }
+            turnIndicatorEl.dataset.side = side;
+            turnIndicatorEl.textContent = side === 'villain' ? "Villain's Move" : 'Heroes Attack!';
+            turnIndicatorEl.classList.add('active');
+        }
+
+        function updateComboDisplay(count) {
+            comboCount = count;
+            if (comboCount > 1) {
+                comboBadgeEl.textContent = `${comboCount}x Combo`;
+                comboBadgeEl.classList.add('active');
+            } else {
+                comboBadgeEl.classList.remove('active');
+            }
+        }
+
+        function setBgPulse(type, intensity) {
+            const colors = {
+                electric: 'rgba(251, 191, 36, 0.35)',
+                ice: 'rgba(34, 211, 238, 0.35)',
+                impact: 'rgba(239, 68, 68, 0.35)'
+            };
+            bgPulseEl.style.background = `radial-gradient(circle at 50% 50%, ${colors[type] || 'rgba(168,85,247,0.35)'} 0%, transparent 70%)`;
+            bgPulseEl.style.opacity = Math.min(1, intensity);
+        }
+
+        function spawnProjectile(fromX, fromY, toX, toY, type) {
+            projectiles.push({ fromX, fromY, toX, toY, type, created: performance.now() });
+        }
+
+        function spawnParticles(x, y, type, count = 18) {
+            const colors = {
+                electric: ['#fbbf24', '#fef3c7', '#f59e0b'],
+                ice: ['#22d3ee', '#cffafe', '#06b6d4'],
+                impact: ['#ef4444', '#fecaca', '#dc2626'],
+                hit: ['#fff', '#fbbf24', '#ef4444']
+            };
+            for (let i = 0; i < count; i++) {
+                const hue = colors[type] || colors.hit;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 20 + Math.random() * 35;
+                particles.push({
+                    x,
+                    y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    color: hue[Math.floor(Math.random() * hue.length)],
+                    size: 4 + Math.random() * 6,
+                    created: performance.now()
+                });
+            }
+        }
+
+        function showDamage(x, y, amount, crit = false) {
+            damageNumbers.push({ x, y, amount: Math.round(amount), crit, created: performance.now() });
+        }
+
+        function showImpactWave(x, y, type) {
+            impactWave = { x, y, type, created: performance.now() };
+        }
+
+        function applyCharge(side, type) {
+            const target = side === 'villain' ? document.getElementById('villainSide') : document.getElementById('heroesSide');
+            target.classList.add(`charging-${type}`);
+            setTimeout(() => target.classList.remove(`charging-${type}`), 900);
+        }
+
+        function resetFxState() {
+            screenShake = 0;
+            comboCount = 0;
+            projectiles = [];
+            particles = [];
+            damageNumbers = [];
+            impactWave = null;
+            moveSplashEl.classList.remove('active');
+            turnIndicatorEl.classList.remove('active');
+            comboBadgeEl.classList.remove('active');
+            setBgPulse('electric', 0);
+        }
+
+        function renderFx() {
+            const now = performance.now();
+
+            // Shake decay
+            if (screenShake > 0) {
+                const dx = (Math.random() - 0.5) * screenShake;
+                const dy = (Math.random() - 0.5) * screenShake;
+                stageEl.style.setProperty('--shake-x', `${dx}px`);
+                stageEl.style.setProperty('--shake-y', `${dy}px`);
+                screenShake = Math.max(0, screenShake - 0.5);
+            } else {
+                stageEl.style.setProperty('--shake-x', '0px');
+                stageEl.style.setProperty('--shake-y', '0px');
+            }
+
+            fxLayer.innerHTML = '';
+
+            // Projectiles
+            const projectileLifetime = 700;
+            projectiles = projectiles.filter(p => now - p.created < projectileLifetime);
+            projectiles.forEach(p => {
+                const progress = Math.min(1, (now - p.created) / projectileLifetime);
+                const x = p.fromX + (p.toX - p.fromX) * progress;
+                const y = p.fromY + (p.toY - p.fromY) * progress;
+                const el = document.createElement('div');
+                el.className = 'projectile';
+                el.dataset.type = p.type;
+                el.style.left = `${x}%`;
+                el.style.top = `${y}%`;
+                el.style.transform = 'translate(-50%, -50%)';
+                fxLayer.appendChild(el);
+            });
+
+            // Particles
+            const particleLifetime = 1100;
+            particles = particles.filter(p => now - p.created < particleLifetime);
+            particles.forEach(p => {
+                const age = (now - p.created) / 1000;
+                const el = document.createElement('div');
+                el.className = 'fx-particle';
+                el.style.left = `${p.x + p.vx * age}%`;
+                el.style.top = `${p.y + (p.vy * age) + age * age * 30}%`;
+                el.style.width = `${p.size}px`;
+                el.style.height = `${p.size}px`;
+                el.style.backgroundColor = p.color;
+                el.style.opacity = `${1 - age}`;
+                fxLayer.appendChild(el);
+            });
+
+            // Impact wave
+            if (impactWave && now - impactWave.created < 600) {
+                const wave = document.createElement('div');
+                wave.className = 'impact-wave';
+                wave.dataset.type = impactWave.type;
+                wave.style.left = `${impactWave.x}%`;
+                wave.style.top = `${impactWave.y}%`;
+                fxLayer.appendChild(wave);
+            } else {
+                impactWave = null;
+            }
+
+            // Damage numbers
+            const dmgLifetime = 1400;
+            damageNumbers = damageNumbers.filter(d => now - d.created < dmgLifetime);
+            damageNumbers.forEach(d => {
+                const age = (now - d.created) / 1000;
+                const el = document.createElement('div');
+                el.className = `damage-number ${d.crit ? 'crit' : ''}`;
+                el.style.left = `${d.x}%`;
+                el.style.top = `${d.y - age * 8}%`;
+                el.style.opacity = `${1 - age / 1.4}`;
+                el.textContent = `${d.crit ? '💥' : ''}${d.amount}`;
+                fxLayer.appendChild(el);
+            });
+
+            requestAnimationFrame(renderFx);
+        }
+        requestAnimationFrame(renderFx);
 
         function hitEffect(element) {
             element.classList.add('shake');
@@ -890,50 +1132,84 @@
             const stage = document.getElementById('battleStage');
 
             // 1. Determine Winner (70% Heroes Win)
-            const heroesWin = Math.random() < 0.7; 
-            
+            const heroesWin = Math.random() < 0.7;
+
             // 2. Setup Moves Helpers
             const getStandardMove = (h) => h.moves[0] || h.moves[1];
             const getUltimateMove = (h) => h.moves.reduce((prev, current) => (prev.pwr > current.pwr) ? prev : current);
+
+            resetFxState();
+            updateComboDisplay(0);
 
             log.innerText = `Muddlewick summons a ${currentVillain.name}!`;
             await delay(2000); if(!isBattleActive) return;
 
             // 3. GENERATE BATTLE SEQUENCE (6-8 Turns)
-            const totalTurns = Math.floor(Math.random() * 3) + 6; 
-            
+            const totalTurns = Math.floor(Math.random() * 3) + 6;
+
             for(let i = 0; i < totalTurns; i++) {
                 if(!isBattleActive) return;
-                
+
                 const isHeroTurn = (i % 2 === 0) ? Math.random() > 0.4 : Math.random() > 0.6;
-                
+
                 if(isHeroTurn) {
                     // HERO ATTACKS
                     const attacker = Math.random() > 0.5 ? h1 : h2;
                     const move = getStandardMove(attacker);
-                    
-                    log.innerText = `${attacker.name} uses ${move.name}!`;
-                    AudioEngine.playTone(600 + (Math.random()*200), 'sine', 0.2);
-                    await delay(800);
-                    hitEffect(vImg);
-                    
-                    const damage = 15 + Math.random() * 10;
-                    currentVillainHP = Math.max(10, currentVillainHP - damage); 
-                    updateHealthUI('villain', currentVillainHP);
-                    log.innerText = "A solid hit!";
 
+                    setTurnIndicator('heroes');
+                    applyCharge('heroes', attacker.type);
+                    setMoveSplash(move.name, attacker.type);
+                    log.innerText = `${attacker.name} charges ${move.name}!`;
+                    AudioEngine.playTone(600 + (Math.random()*200), 'sine', 0.2);
+                    await delay(500);
+                    spawnProjectile(25, 55, 75, 55, attacker.type);
+                    await delay(300);
+
+                    const damage = 12 + Math.random() * 12;
+                    const crit = Math.random() > 0.7;
+                    const finalDmg = crit ? damage * 1.5 : damage;
+
+                    flash(attacker.type === 'electric' ? '#fbbf24' : attacker.type === 'ice' ? '#22d3ee' : '#ef4444');
+                    shake(crit ? 14 : 8);
+                    spawnParticles(75, 55, attacker.type, crit ? 30 : 18);
+                    showImpactWave(75, 55, attacker.type);
+                    showDamage(75, 45, finalDmg, crit);
+
+                    currentVillainHP = Math.max(10, currentVillainHP - finalDmg);
+                    updateHealthUI('villain', currentVillainHP);
+                    log.innerText = crit ? `CRITICAL! ${attacker.name} deals ${Math.round(finalDmg)}!` : `${attacker.name} strikes true!`;
+
+                    updateComboDisplay(comboCount + 1);
+                    setBgPulse(attacker.type, Math.min(1, comboCount * 0.2));
+                    setMoveSplash('', attacker.type);
                 } else {
                     // VILLAIN ATTACKS
-                    log.innerText = `${currentVillain.name} strikes with ${currentVillain.move}!`;
-                    await delay(800);
-                    hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                    
-                    const damage = 15 + Math.random() * 10;
-                    currentHeroHP = Math.max(10, currentHeroHP - damage); 
+                    setTurnIndicator('villain');
+                    applyCharge('villain', 'impact');
+                    setMoveSplash(currentVillain.move, 'impact');
+                    log.innerText = `${currentVillain.name} winds up ${currentVillain.move}!`;
+                    await delay(500);
+                    spawnProjectile(75, 55, 25, 55, 'impact');
+                    await delay(300);
+
+                    const damage = 14 + Math.random() * 12;
+                    flash('#ef4444');
+                    shake(10);
+                    spawnParticles(25, 55, 'impact', 22);
+                    showImpactWave(25, 55, 'impact');
+                    showDamage(25, 45, damage);
+
+                    hImgs.forEach(img => hitEffect(img));
+                    currentHeroHP = Math.max(10, currentHeroHP - damage);
                     updateHealthUI('heroes', currentHeroHP);
-                    log.innerText = "The heroes take damage!";
+                    log.innerText = `${currentVillain.name} lands ${Math.round(damage)} damage!`;
+                    updateComboDisplay(0);
+                    setBgPulse('impact', 0.2);
+                    setMoveSplash('', 'impact');
                 }
 
+                setTurnIndicator(null);
                 await delay(2000);
             }
 
@@ -944,28 +1220,39 @@
                 // HEROES WIN SCENARIO
                 log.innerText = `${currentVillain.name} roars and attacks furiously!`;
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                currentHeroHP = 10; 
+                currentHeroHP = 10;
                 updateHealthUI('heroes', currentHeroHP);
                 log.innerText = "The heroes are down to their last spark!";
-                await delay(2500); if(!isBattleActive) return;
+                await delay(1200); if(!isBattleActive) return;
 
                 // Slow Mo Tension
                 AudioEngine.stopMusic();
                 stage.classList.add('slow-mo');
-                
+
                 const finisher = Math.random() > 0.5 ? h1 : h2;
                 const ult = getUltimateMove(finisher);
+                setMoveSplash(ult.name, finisher.type, true);
                 log.innerText = `But ${finisher.name} prepares ${ult.name}...`;
-                await delay(2500); if(!isBattleActive) return;
+                applyCharge('heroes', finisher.type);
+                await delay(1800); if(!isBattleActive) return;
 
                 // ELEMENTAL EXPLOSION
                 stage.classList.remove('slow-mo');
                 triggerElementalFinale(finisher.type);
-                hitEffect(vImg);
+                for (let i = 0; i < 5; i++) {
+                    spawnProjectile(25, 55, 75, 50 + i * 3, finisher.type);
+                }
+                await delay(400);
+                flash('#fff');
+                shake(24);
+                spawnParticles(75, 55, finisher.type, 45);
+                showImpactWave(75, 55, finisher.type);
+                showDamage(75, 40, currentVillainHP, true);
                 updateHealthUI('villain', 0);
                 log.innerText = "K.O.!!!";
-                await delay(2000); if(!isBattleActive) return;
-                
+                setMoveSplash('', finisher.type);
+                await delay(1600); if(!isBattleActive) return;
+
                 log.innerText = `The ${currentVillain.name} is defeated! The Heroes Win!`;
                 playVictoryTunes();
 
@@ -973,22 +1260,24 @@
                 // HEROES LOSE SCENARIO (30% Chance)
                 const trier = h1;
                 log.innerText = `${trier.name} tries to end it, but misses!`;
-                await delay(2000); if(!isBattleActive) return;
+                await delay(1400); if(!isBattleActive) return;
 
                 log.innerText = `${currentVillain.name} unleashes TOTAL CHAOS!`;
                 stage.classList.add('shake-hard'); // Shake for bad guy too
                 AudioEngine.playTone(100, 'sawtooth', 0.5);
-                await delay(1000); stage.classList.remove('shake-hard');
-                
+                flash('#ef4444');
+                spawnParticles(25, 55, 'impact', 30);
+                await delay(900); stage.classList.remove('shake-hard');
+
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
                 updateHealthUI('heroes', 0);
-                
+
                 log.innerText = "The heroes are overwhelmed!";
-                await delay(2000); if(!isBattleActive) return;
+                await delay(1800); if(!isBattleActive) return;
 
                 AudioEngine.stopMusic();
                 log.innerText = "Muddlewick laughs... The Heroes must retreat!";
-                AudioEngine.playTone(150, 'sine', 1.0); 
+                AudioEngine.playTone(150, 'sine', 1.0);
             }
         }
         
