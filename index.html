@@ -19,13 +19,10 @@
 
             /* ELEMENTAL COLORS */
             --col-electric: #fbbf24;
-            --col-electric-glow: #f59e0b;
             --col-ice: #22d3ee;
-            --col-ice-glow: #0ea5e9;
             --col-impact: #ef4444;
-            --col-impact-glow: #dc2626;
 
-            /* AMBIENCE (Dynamic) */
+            /* AMBIENCE */
             --nebula-1: rgba(76, 29, 149, 0.2);
             --nebula-2: rgba(56, 189, 248, 0.1);
 
@@ -78,13 +75,8 @@
         }
 
         @keyframes starMove {
-            from {
-                transform: translateY(0);
-            }
-
-            to {
-                transform: translateY(-2000px);
-            }
+            from { transform: translateY(0); }
+            to { transform: translateY(-2000px); }
         }
 
         .nebula-layer {
@@ -97,15 +89,8 @@
         }
 
         @keyframes nebulaPulse {
-            0% {
-                opacity: 0.5;
-                transform: scale(1);
-            }
-
-            100% {
-                opacity: 0.8;
-                transform: scale(1.1);
-            }
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.1); }
         }
 
         .grid-overlay {
@@ -133,7 +118,6 @@
             text-align: center;
             margin: 3rem 0 3rem 0;
             animation: fadeSlideDown 1s var(--ease-smooth) forwards;
-            position: relative;
         }
 
         header h1 {
@@ -168,6 +152,7 @@
         .controls-bar {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 2rem;
             margin-bottom: 3rem;
             animation: fadeSlideDown 1.2s var(--ease-smooth) forwards;
@@ -180,6 +165,8 @@
             padding: 0.5rem;
             border-radius: 40px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .filter-btn {
@@ -208,6 +195,18 @@
             color: #000;
             text-shadow: none;
             box-shadow: 0 0 20px var(--active-color);
+        }
+
+        /* Battle Button Style */
+        .battle-btn {
+            background: rgba(76, 29, 149, 0.3);
+            border: 1px solid #a855f7;
+            color: #e9d5ff;
+        }
+        .battle-btn:hover, .battle-btn.active {
+             background: #a855f7;
+             color: #fff;
+             box-shadow: 0 0 25px #a855f7;
         }
 
         /* --- GRID --- */
@@ -240,7 +239,7 @@
             opacity: 0;
             transform: translateY(100px) rotateX(10deg);
             box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.05);
         }
 
         .hero-card.reveal {
@@ -254,446 +253,248 @@
             box-shadow: 0 50px 80px -20px rgba(0, 0, 0, 0.9);
         }
 
+        .hero-card.selected {
+            border-color: #4ade80;
+            box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
+            transform: scale(1.05) !important;
+        }
+        
+        .hero-card.dimmed {
+            opacity: 0.4;
+            filter: grayscale(0.8);
+        }
+
         /* Glows */
         .hero-card[data-type="electric"]:hover {
             box-shadow: 0 0 50px rgba(251, 191, 36, 0.3);
             border-color: var(--col-electric);
         }
-
         .hero-card[data-type="ice"]:hover {
             box-shadow: 0 0 50px rgba(34, 211, 238, 0.3);
             border-color: var(--col-ice);
         }
-
         .hero-card[data-type="impact"]:hover {
             box-shadow: 0 0 50px rgba(239, 68, 68, 0.3);
             border-color: var(--col-impact);
         }
 
-        /* Holographic Scanline */
         .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 30;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30;
             background: linear-gradient(to bottom, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
-            background-size: 100% 200%;
-            opacity: 0;
-            transition: opacity 0.3s;
+            background-size: 100% 200%; opacity: 0; transition: opacity 0.3s;
         }
+        .hero-card:hover .scan-line { opacity: 1; animation: scanDown 2s infinite linear; }
+        @keyframes scanDown { 0% { background-position: 0% 0%; } 100% { background-position: 0% 200%; } }
 
-        .hero-card:hover .scan-line {
-            opacity: 1;
-            animation: scanDown 2s infinite linear;
-        }
-
-        @keyframes scanDown {
-            0% {
-                background-position: 0% 0%;
-            }
-
-            100% {
-                background-position: 0% 200%;
-            }
-        }
-
-        /* Foil */
         .card-foil {
-            position: absolute;
-            inset: 0;
-            z-index: 20;
-            opacity: 0;
-            transition: opacity 0.4s;
-            pointer-events: none;
+            position: absolute; inset: 0; z-index: 20; opacity: 0; transition: opacity 0.4s; pointer-events: none;
             background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.4) 30%, rgba(255, 0, 255, 0.3) 40%, rgba(0, 255, 255, 0.3) 50%, rgba(255, 255, 0, 0.3) 60%, transparent 80%);
-            mix-blend-mode: overlay;
-            transform: translateZ(1px);
-            background-size: 200% 200%;
+            mix-blend-mode: overlay; transform: translateZ(1px); background-size: 200% 200%;
         }
+        .hero-card:hover .card-foil { opacity: 1; }
 
-        .hero-card:hover .card-foil {
-            opacity: 1;
-        }
-
-        /* Image */
-        .card-image-wrapper {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
+        .card-image-wrapper { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         .hero-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s;
-            filter: grayscale(0.2) contrast(1.1);
+            width: 100%; height: 100%; object-fit: cover; object-position: center top;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s; filter: grayscale(0.2) contrast(1.1);
         }
+        .hero-card:hover img { transform: scale(1.1); filter: grayscale(0) contrast(1.2); }
 
-        .hero-card:hover img {
-            transform: scale(1.1);
-            filter: grayscale(0) contrast(1.2);
-        }
-
-        /* Content */
         .card-content {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            padding: 1.5rem;
+            position: absolute; bottom: 0; width: 100%; padding: 1.5rem;
             background: linear-gradient(to top, rgba(2, 6, 23, 0.95) 20%, rgba(2, 6, 23, 0.6) 80%, transparent 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            transform: translateZ(20px);
-            height: 50%;
+            display: flex; flex-direction: column; justify-content: flex-end; transform: translateZ(20px); height: 50%;
         }
-
         .hero-name {
-            font-family: "Bangers", cursive;
-            font-size: 3rem;
-            letter-spacing: 2px;
-            color: #fff;
-            line-height: 0.9;
-            margin-bottom: 0.25rem;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-            transition: 0.3s;
-            transform-origin: left;
+            font-family: "Bangers", cursive; font-size: 3rem; letter-spacing: 2px; color: #fff; line-height: 0.9;
+            margin-bottom: 0.25rem; text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8); transition: 0.3s; transform-origin: left;
         }
-
-        .hero-card:hover .hero-name {
-            transform: scale(1.05);
-        }
-
+        .hero-card:hover .hero-name { transform: scale(1.05); }
         .hero-alias {
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.7);
-            background: rgba(0, 0, 0, 0.5);
-            padding: 4px 10px;
-            border-radius: 4px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: inline-block;
+            font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.5); padding: 4px 10px; border-radius: 4px; backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1); display: inline-block;
         }
-
-        /* Class Badge */
         .class-badge {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            font-family: "Rajdhani";
-            font-weight: 700;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            z-index: 25;
-            backdrop-filter: blur(4px);
-            transform: translateZ(30px);
+            position: absolute; top: 20px; right: 20px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff; font-family: "Rajdhani"; font-weight: 700; font-size: 0.8rem; padding: 4px 8px; border-radius: 4px;
+            text-transform: uppercase; letter-spacing: 1px; z-index: 25; backdrop-filter: blur(4px); transform: translateZ(30px);
         }
 
-        /* --- MODAL --- */
+        /* --- MODAL (BIO) --- */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 1600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(2, 6, 23, 0.6);
-            backdrop-filter: blur(0px);
-            transition: 0.4s;
-            pointer-events: none;
-            opacity: 0;
+            position: fixed; inset: 0; z-index: 1600; display: flex; align-items: center; justify-content: center;
+            background: rgba(2, 6, 23, 0.6); backdrop-filter: blur(0px); transition: 0.4s; pointer-events: none; opacity: 0;
         }
-
-        .modal-overlay.active {
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(15px);
-            pointer-events: all;
-            opacity: 1;
-        }
+        .modal-overlay.active { background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(15px); pointer-events: all; opacity: 1; }
 
         .modal-card {
-            width: min(1100px, 95%);
-            height: min(700px, 90vh);
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 16px;
+            width: min(1100px, 95%); height: min(700px, 90vh); background: rgba(15, 23, 42, 0.9); border-radius: 16px;
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 50px 100px -20px rgba(0, 0, 0, 0.8);
-            transform: scale(0.95) translateY(20px);
-            transition: 0.5s var(--ease-smooth);
-            display: grid;
-            grid-template-columns: 45% 55%;
-            overflow: hidden;
-            position: relative;
+            transform: scale(0.95) translateY(20px); transition: 0.5s var(--ease-smooth); display: grid;
+            grid-template-columns: 45% 55%; overflow: hidden; position: relative;
         }
+        .modal-overlay.active .modal-card { transform: scale(1) translateY(0); background: rgba(15, 23, 42, 0.95); }
 
-        .modal-overlay.active .modal-card {
-            transform: scale(1) translateY(0);
-            background: rgba(15, 23, 42, 0.95);
-        }
-
-        .modal-col-img {
-            position: relative;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .modal-image-full {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center top;
-            mask-image: linear-gradient(to right, black 80%, transparent 100%);
-        }
-
-        .modal-col-data {
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 70%);
-            overflow-y: auto;
-            position: relative;
-        }
-
+        .modal-col-img { position: relative; height: 100%; overflow: hidden; }
+        .modal-image-full { width: 100%; height: 100%; object-fit: cover; object-position: center top; mask-image: linear-gradient(to right, black 80%, transparent 100%); }
+        .modal-col-data { padding: 3rem; display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 70%); overflow-y: auto; position: relative; }
         .modal-name-display {
-            font-family: "Bangers";
-            font-size: 5rem;
-            line-height: 0.9;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: linear-gradient(180deg, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-family: "Bangers"; font-size: 5rem; line-height: 0.9; margin-bottom: 0.5rem; text-transform: uppercase;
+            letter-spacing: 2px; background: linear-gradient(180deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
+        .modal-role-display { font-size: 1rem; text-transform: uppercase; letter-spacing: 4px; font-weight: 700; color: var(--theme-color); display: flex; align-items: center; gap: 1rem; }
+        .modal-desc { font-size: 1.1rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 2.5rem; font-weight: 300; border-left: 2px solid rgba(255, 255, 255, 0.1); padding-left: 1.5rem; }
 
-        .modal-role-display {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            font-weight: 700;
-            color: var(--theme-color);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .modal-desc {
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: #cbd5e1;
-            margin-bottom: 2.5rem;
-            font-weight: 300;
-            border-left: 2px solid rgba(255, 255, 255, 0.1);
-            padding-left: 1.5rem;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .dash-panel {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            position: relative;
-        }
-
-        .move-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .move-name {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #e2e8f0;
-        }
-
-        .move-val {
-            font-family: "Bangers";
-            font-size: 1.4rem;
-            color: var(--theme-color);
-            text-shadow: 0 0 10px currentColor;
-        }
-
-        .stat-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            width: 90px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-track {
-            flex-grow: 1;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 2px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .stat-fill {
-            height: 100%;
-            width: 0%;
-            position: relative;
-            z-index: 1;
-            transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .fill-electric {
-            background: #fbbf24;
-            box-shadow: 0 0 15px #fbbf24;
-        }
-
-        .fill-ice {
-            background: #22d3ee;
-            box-shadow: 0 0 15px #22d3ee;
-        }
-
-        .fill-impact {
-            background: #ef4444;
-            box-shadow: 0 0 15px #ef4444;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .dash-panel { background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.05); position: relative; }
+        .move-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .move-name { font-weight: 600; font-size: 0.95rem; color: #e2e8f0; }
+        .move-val { font-family: "Bangers"; font-size: 1.4rem; color: var(--theme-color); text-shadow: 0 0 10px currentColor; }
+        .stat-row { display: flex; align-items: center; margin-bottom: 10px; }
+        .stat-label { width: 90px; font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-track { flex-grow: 1; height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 2px; overflow: hidden; position: relative; }
+        .stat-fill { height: 100%; width: 0%; position: relative; z-index: 1; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .fill-electric { background: #fbbf24; box-shadow: 0 0 15px #fbbf24; }
+        .fill-ice { background: #22d3ee; box-shadow: 0 0 15px #22d3ee; }
+        .fill-impact { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
 
         .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            z-index: 20;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
+            position: absolute; top: 20px; right: 20px; font-size: 2rem; color: rgba(255, 255, 255, 0.5); cursor: pointer;
+            z-index: 20; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+        }
+        .close-btn:hover { color: #fff; transform: rotate(90deg); }
+
+        /* --- BATTLE ARENA MODAL --- */
+        .battle-overlay {
+            position: fixed; inset: 0; z-index: 1800; background: #000; display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s;
+        }
+        .battle-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .battle-stage {
+            width: 100%; max-width: 1000px; height: 80vh; background: radial-gradient(circle at center, #1e1b4b 0%, #000 70%);
+            border: 2px solid #a855f7; border-radius: 20px; box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
+            display: flex; flex-direction: column; padding: 2rem; position: relative; overflow: hidden;
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1); /* For Slow Mo Zoom */
+        }
+        /* Zoom effect class */
+        .battle-stage.slow-mo { transform: scale(1.1); filter: contrast(1.2); }
+
+        .battle-stage::before {
+             content: ""; position: absolute; inset:0; 
+             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a855f7' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+             opacity: 0.5;
+        }
+        
+        .battle-header { text-align: center; margin-bottom: 2rem; z-index: 2; }
+        .battle-title { font-family: 'Bangers'; font-size: 3rem; color: #a855f7; text-shadow: 0 0 20px #a855f7; }
+
+        .battle-area { display: flex; justify-content: space-between; align-items: center; flex-grow: 1; z-index: 2; }
+        .side { width: 300px; text-align: center; position: relative; }
+        .side-img {
+            width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+            transition: transform 0.2s; border-radius: 12px;
+        }
+        
+        /* Shake Animation */
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-10px, -10px); }
+            20% { transform: translate(10px, 10px); }
+            30% { transform: translate(-10px, 10px); }
+            40% { transform: translate(10px, -10px); }
+            50% { transform: translate(-10px, 0); }
+            60% { transform: translate(10px, 0); }
+            100% { transform: translate(0, 0); }
         }
 
-        .close-btn:hover {
-            color: #fff;
-            transform: rotate(90deg);
+        /* Violent Finale Shake */
+        .shake-hard { animation: shakeHard 0.6s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shakeHard {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            20% { transform: translate(-20px, -20px) rotate(-5deg); }
+            40% { transform: translate(20px, 20px) rotate(5deg); }
+            60% { transform: translate(-20px, 20px) rotate(-5deg); }
+            80% { transform: translate(20px, -20px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
         }
+
+        /* Damage Flash */
+        .damage-flash { animation: flashRed 0.3s ease-out; }
+        @keyframes flashRed {
+            0% { filter: sepia(1) saturate(5) hue-rotate(-50deg) brightness(2); }
+            100% { filter: none; }
+        }
+
+        .hp-bar-container {
+            width: 100%; height: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.2); overflow: hidden;
+        }
+        .hp-fill { height: 100%; width: 100%; transition: width 0.5s ease-out, background 0.5s ease-out; }
+        .hp-villain { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .hp-heroes { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+
+        .battle-log {
+            margin-top: 2rem; height: 100px; background: rgba(0,0,0,0.6); border: 1px solid #a855f7; border-radius: 8px;
+            padding: 1rem; font-family: 'Rajdhani'; font-size: 1.2rem; color: #fff; display: flex; align-items: center;
+            justify-content: center; text-align: center; z-index: 2;
+        }
+
+        /* INITIATE BUTTON (Outside) */
+        .battle-btn-initiate {
+             font-family: 'Bangers'; font-size: 2.5rem; padding: 20px 60px; 
+             background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: 2px solid #d8b4fe; border-radius: 12px;
+             margin-top: 20px; cursor: pointer; box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+             display: none; /* hidden until 2 selected */
+             transition: 0.3s; animation: pulseBtn 1s infinite alternate;
+        }
+        .battle-btn-initiate:hover { transform: scale(1.05); background: #a855f7; }
+
+        /* START COMBAT BUTTON (Inside Modal) */
+        .battle-btn-commence {
+             font-family: 'Bangers'; font-size: 3rem; padding: 30px 80px; 
+             background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: 2px solid #86efac; border-radius: 16px;
+             cursor: pointer; box-shadow: 0 0 60px rgba(34, 197, 94, 0.8);
+             transition: 0.3s; z-index: 20; animation: pulseGreen 1s infinite alternate;
+        }
+        .battle-btn-commence:hover { transform: scale(1.05); background: #4ade80; }
+
+        @keyframes pulseBtn { from { box-shadow: 0 0 20px #9333ea; } to { box-shadow: 0 0 50px #d8b4fe; } }
+        @keyframes pulseGreen { from { box-shadow: 0 0 20px #22c55e; } to { box-shadow: 0 0 60px #86efac; } }
 
         /* FX */
         #flashOverlay {
-            position: fixed;
-            inset: 0;
-            background: #fff;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.1s;
-            mix-blend-mode: overlay;
+            position: fixed; inset: 0; background: #fff; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.1s; mix-blend-mode: overlay;
         }
-
-        #flashOverlay.active {
-            opacity: 0.8;
+        #flashOverlay.active { opacity: 0.8; }
+        
+        /* Elemental Overlays for Finale */
+        #elementalOverlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1900; opacity: 0; transition: opacity 0.5s;
         }
+        .overlay-ice { background: radial-gradient(circle, rgba(34, 211, 238, 0.3) 0%, transparent 80%); }
+        .overlay-electric { background: radial-gradient(circle, rgba(251, 191, 36, 0.3) 0%, transparent 80%); }
+        .overlay-impact { background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 80%); }
 
-        #particleContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1500;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: burstOut 0.8s ease-out forwards;
-        }
-
+        #particleContainer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; overflow: hidden; }
+        .particle { position: absolute; border-radius: 50%; animation: burstOut 0.8s ease-out forwards; }
         @keyframes burstOut {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translate(var(--tx), var(--ty)) scale(0);
-            }
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
 
         /* RESPONSIVE */
         @media (max-width: 900px) {
-            .modal-card {
-                grid-template-columns: 1fr;
-                height: auto;
-                max-height: 90vh;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .modal-col-img {
-                height: 250px;
-                flex-shrink: 0;
-                mask-image: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .modal-col-data {
-                padding: 1.5rem;
-                overflow: visible;
-            }
-
-            .modal-name-display {
-                font-size: 3rem;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
+            .modal-card { grid-template-columns: 1fr; height: auto; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
+            .modal-col-img { height: 250px; flex-shrink: 0; mask-image: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+            .modal-col-data { padding: 1.5rem; overflow: visible; }
+            .modal-name-display { font-size: 3rem; }
+            .dashboard-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .battle-area { flex-direction: column; gap: 20px; }
         }
-
-        @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 
@@ -706,6 +507,7 @@
     </div>
     <div class="grid-overlay"></div>
     <div id="flashOverlay"></div>
+    <div id="elementalOverlay"></div>
     <div id="particleContainer"></div>
 
     <div class="app">
@@ -716,20 +518,24 @@
 
         <div class="controls-bar">
             <div class="filter-group">
-                <button class="filter-btn active" onclick="filterGrid('all', this)"
-                    style="--active-color:#fff">All</button>
-                <button class="filter-btn" onclick="filterGrid('electric', this)"
-                    style="--active-color:#fbbf24">Electric</button>
+                <button class="filter-btn active" onclick="filterGrid('all', this)" style="--active-color:#fff">All</button>
+                <button class="filter-btn" onclick="filterGrid('electric', this)" style="--active-color:#fbbf24">Electric</button>
                 <button class="filter-btn" onclick="filterGrid('ice', this)" style="--active-color:#22d3ee">Ice</button>
-                <button class="filter-btn" onclick="filterGrid('impact', this)"
-                    style="--active-color:#ef4444">Impact</button>
+                <button class="filter-btn" onclick="filterGrid('impact', this)" style="--active-color:#ef4444">Impact</button>
             </div>
+            <div class="filter-group">
+                 <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">🧙‍♂️ Muddlewick has Chosen</button>
+            </div>
+        </div>
+        
+        <div id="battleInstructions" style="text-align:center; margin-bottom:1rem; color:#a855f7; font-weight:bold; display:none; text-transform:uppercase; letter-spacing:2px; animation:fadeSlideDown 0.5s forwards;">
+             <div id="selectText" style="margin-bottom: 20px; font-size: 1.2rem;">Select 2 Heroes to Fight!</div>
+             <button id="startFightBtn" class="battle-btn-initiate" onclick="openBattleArena()">INITIATE BATTLE</button>
         </div>
 
         <div id="heroGrid" class="hero-grid"></div>
     </div>
 
-    <!-- DOSSIER MODAL -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
         <div id="modalCard" class="modal-card" onclick="event.stopPropagation()">
             <div class="close-btn" onclick="closeModal()">×</div>
@@ -747,14 +553,12 @@
                 <p id="modalDescription" class="modal-desc"></p>
                 <div class="dashboard-grid">
                     <div class="dash-panel">
-                        <div class="panel-label"
-                            style="font-size:0.7rem; text-transform:uppercase; color:#64748b; font-weight:800; margin-bottom:1.2rem; letter-spacing:2px; display:flex; justify-content:space-between;">
+                        <div class="panel-label" style="font-size:0.7rem; text-transform:uppercase; color:#64748b; font-weight:800; margin-bottom:1.2rem; letter-spacing:2px; display:flex; justify-content:space-between;">
                             <span>Signature Moves</span> <span>PWR</span></div>
                         <div id="modalMoves"></div>
                     </div>
                     <div class="dash-panel">
-                        <div class="panel-label"
-                            style="font-size:0.7rem; text-transform:uppercase; color:#64748b; font-weight:800; margin-bottom:1.2rem; letter-spacing:2px; display:flex; justify-content:space-between;">
+                        <div class="panel-label" style="font-size:0.7rem; text-transform:uppercase; color:#64748b; font-weight:800; margin-bottom:1.2rem; letter-spacing:2px; display:flex; justify-content:space-between;">
                             <span>Attributes</span> <span>LVL</span></div>
                         <div id="modalStats"></div>
                     </div>
@@ -762,165 +566,439 @@
             </div>
         </div>
     </div>
+    
+    <div id="battleOverlay" class="battle-overlay">
+         <div class="battle-stage" id="battleStage">
+              <div class="close-btn" onclick="closeBattle()">×</div>
+              
+              <div id="combatStartOverlay" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:100; background:rgba(0,0,0,0.4); backdrop-filter:blur(2px);">
+                  <button class="battle-btn-commence" onclick="beginCombatSequence()">START COMBAT</button>
+              </div>
+
+              <div class="battle-header">
+                   <div class="battle-title" id="battleTitle">BOSS BATTLE</div>
+              </div>
+              
+              <div class="battle-area">
+                   <div class="side" id="villainSide">
+                        <h2 style="color:#a855f7; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;" id="villainName">Baddie</h2>
+                        <img id="villainImg" class="side-img" src="">
+                        <div class="hp-bar-container">
+                             <div id="villainHP" class="hp-fill hp-villain"></div>
+                        </div>
+                   </div>
+                   
+                   <div style="font-family:'Bangers'; font-size:4rem; color:#fff; text-shadow:0 0 20px white;">VS</div>
+                   
+                   <div class="side" id="heroesSide">
+                        <h2 style="color:#22c55e; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;">The Heroes</h2>
+                        <div style="display:flex; justify-content:center; gap:10px;">
+                             <img id="hero1Img" class="side-img" style="width:100px; height:100px;" src="">
+                             <img id="hero2Img" class="side-img" style="width:100px; height:100px;" src="">
+                        </div>
+                        <div class="hp-bar-container">
+                             <div id="heroesHP" class="hp-fill hp-heroes"></div>
+                        </div>
+                   </div>
+              </div>
+              
+              <div class="battle-log">
+                   <span id="battleText">Waiting for command...</span>
+              </div>
+         </div>
+    </div>
 
     <script>
-        /* HERO DATA (Full Bios Restored) */
+        /* HERO DATA */
         const heroes = [
-            {
-                id: "art", type: "electric", icon: "⚡", role: "Speedster Class", name: "Art", alias: "Velocity", image: "images/art.png",
-                description: "Known as the fastest kid alive, Art can circumvent the globe before his toast pops up. He generates a velocity field that allows him to run up vertical skyscrapers and across water without sinking. When the team is in trouble, Art is already there.",
-                moves: [{ name: "Hypersonic Sprint", pwr: 94 }, { name: "Vertical Wall Run", pwr: 75 }, { name: "Vacuum Funnel", pwr: 88 }],
-                stats: { bravery: 4, speed: 5, strength: 3, teamwork: 4, focus: 5 }
-            },
-            {
-                id: "alexei", type: "electric", icon: "⚡", role: "Tech Artificer", name: "Alexei", alias: "Magnet Master", image: "images/alexei.png",
-                description: "A mechanical prodigy with a magnetic personality. Alexei can sense the atomic structure of any metal nearby, reshaping scrap heaps into complex defensive fortresses in seconds. His mind works like a supercomputer.",
-                moves: [{ name: "Magnetic Crush", pwr: 90 }, { name: "Scrap Shield", pwr: 85 }, { name: "Tech Disruption", pwr: 70 }],
-                stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 }
-            },
-            {
-                id: "florrie", type: "ice", icon: "❄️", role: "Cryomancer", name: "Florrie", alias: "Frostbeam", image: "images/florrie.png",
-                description: "With a single touch, Florrie can lower the temperature of a room to absolute zero. She uses her powers creatively, building ice bridges for rescue missions or creating slippery surfaces to trip up villains.",
-                moves: [{ name: "Flash Freeze", pwr: 88 }, { name: "Glacial Wall", pwr: 92 }, { name: "Ice Slide", pwr: 65 }],
-                stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "joshua", type: "impact", icon: "💥", role: "Guardian Tank", name: "Joshua", alias: "Shield Guardian", image: "images/joshua.png",
-                description: "The unbreakable heart of the team, Joshua wields a shield made of pure kinetic energy. He doesn't just block attacks; he absorbs their energy to charge up his own strength. Joshua ensures no teammate is left behind.",
-                moves: [{ name: "Titan Charge", pwr: 95 }, { name: "Energy Reflect", pwr: 85 }, { name: "Shield Bash", pwr: 80 }],
-                stats: { bravery: 5, speed: 3, strength: 4, teamwork: 5, focus: 3 }
-            },
-            {
-                id: "lulu", type: "electric", icon: "⚡", role: "Speed Striker", name: "Lulu", alias: "Red Comet", image: "images/lulu.png",
-                description: "Lulu vibrates at such a high frequency that he appears as a red blur. Specializing in stealth and rapid strikes, he can disarm a room of bad guys before they even blink. He is the spark that ignites the team.",
-                moves: [{ name: "Mach-1 Strike", pwr: 93 }, { name: "Red Blur", pwr: 82 }, { name: "After-Image", pwr: 70 }],
-                stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "manny", type: "impact", icon: "💥", role: "Heavy Hitter", name: "Manny", alias: "Earth Hammer", image: "images/manny.png",
-                description: "Manny is connected to the very core of the planet, allowing him to channel seismic energy through his fists. He can reshape the battlefield by creating tremors or raising stone walls. He is the gentlest soul on the team.",
-                moves: [{ name: "Seismic Slam", pwr: 96 }, { name: "Tremor Wave", pwr: 85 }, { name: "Fortify", pwr: 90 }],
-                stats: { bravery: 5, speed: 2, strength: 5, teamwork: 5, focus: 3 }
-            },
-            {
-                id: "maurits", type: "ice", icon: "❄️", role: "Storm Mage", name: "Maurits", alias: "Storm Caller", image: "images/maurits.png",
-                description: "Maurits commands the atmosphere itself, summoning rain, wind, and lightning at will. Whether the team needs a fog screen for stealth or a lightning bolt for power, he delivers. His mood often reflects the weather.",
-                moves: [{ name: "Lightning Bolt", pwr: 94 }, { name: "Blizzard Howl", pwr: 88 }, { name: "Fog Cover", pwr: 60 }],
-                stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 }
-            },
-            {
-                id: "noa", type: "impact", icon: "💥", role: "Sniper Scout", name: "Noa", alias: "Sky Archer", image: "images/noa.png",
-                description: "Possessing telescopic vision and unerring accuracy, Noa can spot a danger from three miles away. She uses specialized trick arrows that can trap, stun, or illuminate targets. She is the eyes of the team.",
-                moves: [{ name: "Sure Shot", pwr: 95 }, { name: "Eagle Eye", pwr: 50 }, { name: "Ricochet Arrow", pwr: 82 }],
-                stats: { bravery: 4, speed: 4, strength: 3, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "noah", type: "ice", icon: "❄️", role: "Sonic Controller", name: "Noah", alias: "Soundwave", image: "images/noah.png",
-                description: "Noah sees the world in frequencies and vibrations. She can create absolute silence to hide the team's footsteps or unleash a sonic boom that knocks opponents off their feet. She can 'see' through walls using echolocation.",
-                moves: [{ name: "Sonic Boom", pwr: 91 }, { name: "Silence Bubble", pwr: 70 }, { name: "Echo Pulse", pwr: 85 }],
-                stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "phaedra", type: "ice", icon: "❄️", role: "Wind Dancer", name: "Phaedra", alias: "Whirlwind", image: "images/phaedra.png",
-                description: "Phaedra dances on the air currents, moving with a grace that defies gravity. She can conjure powerful tornadoes to sweep enemies away or create soft air cushions to save falling civilians. She reminds the team that power can be light, elegant, and free.",
-                moves: [{ name: "Tornado Spin", pwr: 96 }, { name: "Hurricane Blast", pwr: 92 }, { name: "Air Cushion", pwr: 82 }],
-                stats: { bravery: 4, speed: 5, strength: 3, teamwork: 5, focus: 5 }
-            },
-            {
-                id: "rex", type: "electric", icon: "⚡", role: "Trickster", name: "Rex", alias: "Triple Strike", image: "images/rex.png",
-                description: "Rex exists in three places at once, splitting into temporal clones to overwhelm opponents. He uses this ability to solve complex puzzles and confuse villains, making them wonder which Rex is the real one.",
-                moves: [{ name: "Tri-Attack", pwr: 92 }, { name: "Clone Swap", pwr: 75 }, { name: "Confusion", pwr: 65 }],
-                stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 3 }
-            },
-            {
-                id: "rory", type: "impact", icon: "💥", role: "Duelist", name: "Rory", alias: "Blue Flash", image: "images/rory.png",
-                description: "Rory wields twin blades made of solidified plasma that can cut through any material known to science. He moves with the discipline of a master swordsman, glowing with a blue aura that lights up the darkest caverns.",
-                moves: [{ name: "Blade Dance", pwr: 93 }, { name: "Cross Slash", pwr: 88 }, { name: "Flash Cut", pwr: 90 }],
-                stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "viola", type: "impact", icon: "💥", role: "Blade Master", name: "Viola", alias: "Twin Saber", image: "images/viola.png",
-                description: "Viola turns combat into an art form, using her twin energy sabers to deflect incoming projectiles with perfect timing. She is the team's defensive specialist, creating a spinning barrier of light. Her elegance is her weapon.",
-                moves: [{ name: "Saber Deflect", pwr: 94 }, { name: "Twin Strike", pwr: 89 }, { name: "Pushback", pwr: 80 }],
-                stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "wilbur", type: "impact", icon: "💥", role: "Titan", name: "Wilbur", alias: "Titan Punch", image: "images/wilbur.png",
-                description: "Possessing the strength of a hundred men, Wilbur is the team's muscle. Yet, he treats the world with extreme care, able to lift a collapsing building one moment and pick up a fragile flower the next.",
-                moves: [{ name: "Mega Punch", pwr: 98 }, { name: "Ground Breaker", pwr: 92 }, { name: "Atlas Lift", pwr: 85 }],
-                stats: { bravery: 5, speed: 3, strength: 5, teamwork: 5, focus: 4 }
-            },
-            {
-                id: "zane", type: "electric", icon: "⚡", role: "Technomancer", name: "Zane", alias: "Storm Pulse", image: "images/zane.png",
-                description: "Zane is a living battery, crackling with raw static electricity. He can interface with any computer by touching it, overload enemy robots, or fire precise bolts of lightning. When the lights go out, Zane powers the city.",
-                moves: [{ name: "Overload", pwr: 95 }, { name: "Static Shock", pwr: 85 }, { name: "EMP Blast", pwr: 90 }],
-                stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 }
-            }
+            { id: "art", type: "electric", icon: "⚡", role: "Speedster Class", name: "Art", alias: "Velocity", image: "images/art.png", description: "Known as the fastest kid alive, Art can circumvent the globe before his toast pops up.", moves: [{ name: "Hypersonic Sprint", pwr: 94 }, { name: "Vertical Wall Run", pwr: 75 }, { name: "Vacuum Funnel", pwr: 88 }], stats: { bravery: 4, speed: 5, strength: 3, teamwork: 4, focus: 5 } },
+            { id: "alexei", type: "electric", icon: "⚡", role: "Tech Artificer", name: "Alexei", alias: "Magnet Master", image: "images/alexei.png", description: "A mechanical prodigy with a magnetic personality. Alexei can sense the atomic structure of any metal nearby.", moves: [{ name: "Magnetic Crush", pwr: 90 }, { name: "Scrap Shield", pwr: 85 }, { name: "Tech Disruption", pwr: 70 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 } },
+            { id: "florrie", type: "ice", icon: "❄️", role: "Cryomancer", name: "Florrie", alias: "Frostbeam", image: "images/florrie.png", description: "With a single touch, Florrie can lower the temperature of a room to absolute zero.", moves: [{ name: "Flash Freeze", pwr: 88 }, { name: "Glacial Wall", pwr: 92 }, { name: "Ice Slide", pwr: 65 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "joshua", type: "impact", icon: "💥", role: "Guardian Tank", name: "Joshua", alias: "Shield Guardian", image: "images/joshua.png", description: "The unbreakable heart of the team, Joshua wields a shield made of pure kinetic energy.", moves: [{ name: "Titan Charge", pwr: 95 }, { name: "Energy Reflect", pwr: 85 }, { name: "Shield Bash", pwr: 80 }], stats: { bravery: 5, speed: 3, strength: 4, teamwork: 5, focus: 3 } },
+            { id: "lulu", type: "electric", icon: "⚡", role: "Speed Striker", name: "Lulu", alias: "Red Comet", image: "images/lulu.png", description: "Lulu vibrates at such a high frequency that he appears as a red blur. Specializing in stealth.", moves: [{ name: "Mach-1 Strike", pwr: 93 }, { name: "Red Blur", pwr: 82 }, { name: "After-Image", pwr: 70 }], stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "manny", type: "impact", icon: "💥", role: "Heavy Hitter", name: "Manny", alias: "Earth Hammer", image: "images/manny.png", description: "Manny is connected to the very core of the planet, allowing him to channel seismic energy through his fists.", moves: [{ name: "Seismic Slam", pwr: 96 }, { name: "Tremor Wave", pwr: 85 }, { name: "Fortify", pwr: 90 }], stats: { bravery: 5, speed: 2, strength: 5, teamwork: 5, focus: 3 } },
+            { id: "maurits", type: "ice", icon: "❄️", role: "Storm Mage", name: "Maurits", alias: "Storm Caller", image: "images/maurits.png", description: "Maurits commands the atmosphere itself, summoning rain, wind, and lightning at will.", moves: [{ name: "Lightning Bolt", pwr: 94 }, { name: "Blizzard Howl", pwr: 88 }, { name: "Fog Cover", pwr: 60 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 } },
+            { id: "noa", type: "impact", icon: "💥", role: "Sniper Scout", name: "Noa", alias: "Sky Archer", image: "images/noa.png", description: "Possessing telescopic vision and unerring accuracy, Noa can spot a danger from three miles away.", moves: [{ name: "Sure Shot", pwr: 95 }, { name: "Eagle Eye", pwr: 50 }, { name: "Ricochet Arrow", pwr: 82 }], stats: { bravery: 4, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "noah", type: "ice", icon: "❄️", role: "Sonic Controller", name: "Noah", alias: "Soundwave", image: "images/noah.png", description: "Noah sees the world in frequencies and vibrations. She can create absolute silence or unleash a sonic boom.", moves: [{ name: "Sonic Boom", pwr: 91 }, { name: "Silence Bubble", pwr: 70 }, { name: "Echo Pulse", pwr: 85 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "phaedra", type: "ice", icon: "❄️", role: "Wind Dancer", name: "Phaedra", alias: "Whirlwind", image: "images/phaedra.png", description: "Phaedra dances on the air currents, moving with a grace that defies gravity.", moves: [{ name: "Tornado Spin", pwr: 96 }, { name: "Hurricane Blast", pwr: 92 }, { name: "Air Cushion", pwr: 82 }], stats: { bravery: 4, speed: 5, strength: 3, teamwork: 5, focus: 5 } },
+            { id: "rex", type: "electric", icon: "⚡", role: "Trickster", name: "Rex", alias: "Triple Strike", image: "images/rex.png", description: "Rex exists in three places at once, splitting into temporal clones to overwhelm opponents.", moves: [{ name: "Tri-Attack", pwr: 92 }, { name: "Clone Swap", pwr: 75 }, { name: "Confusion", pwr: 65 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 3 } },
+            { id: "rory", type: "impact", icon: "💥", role: "Duelist", name: "Rory", alias: "Blue Flash", image: "images/rory.png", description: "Rory wields twin blades made of solidified plasma that can cut through any material.", moves: [{ name: "Blade Dance", pwr: 93 }, { name: "Cross Slash", pwr: 88 }, { name: "Flash Cut", pwr: 90 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "viola", type: "impact", icon: "💥", role: "Blade Master", name: "Viola", alias: "Twin Saber", image: "images/viola.png", description: "Viola turns combat into an art form, using her twin energy sabers to deflect incoming projectiles.", moves: [{ name: "Saber Deflect", pwr: 94 }, { name: "Twin Strike", pwr: 89 }, { name: "Pushback", pwr: 80 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "wilbur", type: "impact", icon: "💥", role: "Titan", name: "Wilbur", alias: "Titan Punch", image: "images/wilbur.png", description: "Possessing the strength of a hundred men, Wilbur is the team's muscle.", moves: [{ name: "Mega Punch", pwr: 98 }, { name: "Ground Breaker", pwr: 92 }, { name: "Atlas Lift", pwr: 85 }], stats: { bravery: 5, speed: 3, strength: 5, teamwork: 5, focus: 4 } },
+            { id: "zane", type: "electric", icon: "⚡", role: "Technomancer", name: "Zane", alias: "Storm Pulse", image: "images/zane.png", description: "Zane is a living battery, crackling with raw static electricity.", moves: [{ name: "Overload", pwr: 95 }, { name: "Static Shock", pwr: 85 }, { name: "EMP Blast", pwr: 90 }], stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 } }
         ];
         heroes.sort((a, b) => a.name.localeCompare(b.name));
 
-        /* --- CINEMATIC AUDIO ENGINE --- */
+        const villains = [
+             { name: "Wooden Scorpion", img: "https://placehold.co/400x400/5d4037/d7ccc8?text=Wooden+Scorpion\n(STING!)", move: "Tail Sting" },
+             { name: "Giant Robot", img: "https://placehold.co/400x400/37474f/cfd8dc?text=Giant+Robot\n(LASER!)", move: "Laser Eye" },
+             { name: "Wooden Tiger", img: "https://placehold.co/400x400/e65100/ffe0b2?text=Wooden+Tiger\n(CLAW!)", move: "Claw Swipe" },
+             { name: "Wooden Bats", img: "https://placehold.co/400x400/263238/eceff1?text=Wooden+Bats\n(SCREECH!)", move: "Sonic Screech" }
+        ];
+
+        /* --- AUDIO ENGINE & MUSIC SYNTH --- */
         const AudioEngine = {
             ctx: null,
+            interval: null,
             init: function () { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
 
-            createNoise: function () {
-                const bufferSize = this.ctx.sampleRate * 2;
-                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-                return buffer;
-            },
-
-            hover: function () {
-                if (!this.ctx) return;
+            playTone: function(freq, type, duration) {
+                if(!this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                const filter = this.ctx.createBiquadFilter();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(50, this.ctx.currentTime);
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(200, this.ctx.currentTime);
-                filter.frequency.linearRampToValueAtTime(800, this.ctx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
-                osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
-            },
-
-            click: function () {
-                if (!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.1);
-            },
-
-            whoosh: function () {
-                if (!this.ctx) return;
-                const noise = this.ctx.createBufferSource();
-                noise.buffer = this.createNoise();
-                const filter = this.ctx.createBiquadFilter();
-                const gain = this.ctx.createGain();
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(100, this.ctx.currentTime);
-                filter.frequency.exponentialRampToValueAtTime(3000, this.ctx.currentTime + 0.5);
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
                 gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
-                noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                noise.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + duration);
+            },
+
+            // Soft "Cinematic Heartbeat" Music Generator
+            startMusic: function() {
+                if(!this.ctx) this.init();
+                if(this.interval) return;
+                
+                this.ctx.resume();
+                let beat = 0;
+                const tempo = 600; 
+                
+                this.interval = setInterval(() => {
+                    const t = this.ctx.currentTime;
+                    // KICK DRUM
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.frequency.setValueAtTime(100, t);
+                    osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
+                    gain.gain.setValueAtTime(0.3, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                    osc.start(t); osc.stop(t + 0.5);
+
+                    // BASS
+                    if(beat % 2 !== 0) {
+                        const bassOsc = this.ctx.createOscillator();
+                        const bassGain = this.ctx.createGain();
+                        bassOsc.type = 'sine';
+                        bassOsc.connect(bassGain); bassGain.connect(this.ctx.destination);
+                        bassOsc.frequency.setValueAtTime(50, t); 
+                        bassOsc.frequency.linearRampToValueAtTime(40, t + 0.4);
+                        bassGain.gain.setValueAtTime(0.1, t);
+                        bassGain.gain.linearRampToValueAtTime(0, t + 0.5);
+                        bassOsc.start(t); bassOsc.stop(t + 0.5);
+                    }
+                    beat++;
+                }, tempo);
+            },
+
+            stopMusic: function() {
+                if(this.interval) {
+                    clearInterval(this.interval);
+                    this.interval = null;
+                }
+            },
+
+            hitSound: function() {
+                if(!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(100, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(10, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
             }
         };
 
-        // Auto-Init Audio on First Click
-        document.addEventListener('click', () => {
-            AudioEngine.init();
-        }, { once: true });
+        // Auto-Init Audio
+        document.addEventListener('click', () => { AudioEngine.init(); }, { once: true });
+
+        /* --- BATTLE LOGIC --- */
+        let isBattleSelecting = false;
+        let isBattleActive = false; 
+        let selectedHeroes = [];
+        let currentVillain = null;
+
+        // BATTLE STATE
+        let currentHeroHP = 100;
+        let currentVillainHP = 100;
+
+        function toggleBattleMode() {
+            AudioEngine.playTone(400, 'sine', 0.1);
+            const btn = document.getElementById('muddlewickBtn');
+            const instructions = document.getElementById('battleInstructions');
+            const selectTxt = document.getElementById('selectText');
+            
+            isBattleSelecting = !isBattleSelecting;
+            selectedHeroes = [];
+            document.querySelectorAll('.hero-card').forEach(c => {
+                 c.classList.remove('selected', 'dimmed');
+            });
+            document.getElementById('startFightBtn').style.display = 'none';
+            selectTxt.innerText = "Select 2 Heroes to Fight!";
+            selectTxt.style.color = "#a855f7";
+
+            if(isBattleSelecting) {
+                 btn.classList.add('active');
+                 btn.innerText = "Cancel Challenge";
+                 instructions.style.display = 'block';
+                 document.querySelectorAll('.hero-card').forEach(c => c.classList.add('dimmed'));
+            } else {
+                 btn.classList.remove('active');
+                 btn.innerText = "🧙‍♂️ Muddlewick has Chosen";
+                 instructions.style.display = 'none';
+                 document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('dimmed'));
+            }
+        }
+
+        function handleBattleSelection(id) {
+             const card = document.getElementById(`card-${id}`);
+             const startBtn = document.getElementById('startFightBtn');
+             const selectTxt = document.getElementById('selectText');
+             
+             if(selectedHeroes.includes(id)) {
+                  AudioEngine.playTone(200, 'sine', 0.1);
+                  selectedHeroes = selectedHeroes.filter(h => h !== id);
+                  card.classList.remove('selected');
+                  card.classList.add('dimmed');
+             } else {
+                  if(selectedHeroes.length < 2) {
+                       AudioEngine.playTone(600, 'sine', 0.1);
+                       selectedHeroes.push(id);
+                       card.classList.add('selected');
+                       card.classList.remove('dimmed');
+                  }
+             }
+
+             if(selectedHeroes.length === 2) {
+                  startBtn.style.display = 'inline-block';
+                  selectTxt.innerText = "TEAM READY!";
+                  selectTxt.style.color = "#4ade80"; 
+                  document.querySelectorAll('.hero-card:not(.selected)').forEach(c => c.classList.add('dimmed'));
+             } else {
+                  startBtn.style.display = 'none';
+                  selectTxt.innerText = "Select 2 Heroes to Fight!";
+                  selectTxt.style.color = "#a855f7"; 
+             }
+        }
+
+        function openBattleArena() {
+             AudioEngine.playTone(800, 'sine', 0.3);
+             
+             currentVillain = villains[Math.floor(Math.random() * villains.length)];
+             
+             document.getElementById('villainName').innerText = currentVillain.name;
+             document.getElementById('villainImg').src = currentVillain.img;
+             
+             const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
+             const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
+             
+             document.getElementById('hero1Img').src = hero1.image;
+             document.getElementById('hero2Img').src = hero2.image;
+             
+             // RESET HEALTH
+             currentHeroHP = 100;
+             currentVillainHP = 100;
+             updateHealthUI('villain', 100);
+             updateHealthUI('heroes', 100);
+             
+             document.getElementById('battleText').innerText = "Waiting for command...";
+             document.getElementById('battleStage').classList.remove('slow-mo', 'shake-hard');
+             
+             // Reset Overlays
+             const elOverlay = document.getElementById('elementalOverlay');
+             elOverlay.className = ''; 
+             elOverlay.style.opacity = 0;
+
+             document.getElementById('combatStartOverlay').style.display = 'flex';
+             document.getElementById('battleOverlay').classList.add('active');
+        }
+
+        function updateHealthUI(side, pct) {
+            const bar = document.getElementById(side === 'villain' ? 'villainHP' : 'heroesHP');
+            bar.style.width = pct + '%';
+            if(pct > 60) bar.style.background = side === 'villain' ? '#ef4444' : '#22c55e'; // Green/Red
+            else if(pct > 30) bar.style.background = 'orange';
+            else bar.style.background = '#dc2626'; // Deep Red
+        }
+
+        function beginCombatSequence() {
+             document.getElementById('combatStartOverlay').style.display = 'none';
+             isBattleActive = true;
+             AudioEngine.startMusic();
+             
+             const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
+             const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
+             
+             runDynamicBattle(hero1, hero2);
+        }
+        
+        function closeBattle() {
+             isBattleActive = false;
+             AudioEngine.stopMusic();
+             document.getElementById('battleOverlay').classList.remove('active');
+             toggleBattleMode(); 
+        }
+
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        function hitEffect(element) {
+            element.classList.add('shake');
+            element.classList.add('damage-flash');
+            AudioEngine.hitSound();
+            setTimeout(() => {
+                element.classList.remove('shake');
+                element.classList.remove('damage-flash');
+            }, 500);
+        }
+
+        /* --- ELEMENTAL FINALE LOGIC --- */
+        function triggerElementalFinale(type) {
+            const overlay = document.getElementById('elementalOverlay');
+            const stage = document.getElementById('battleStage');
+            
+            // Set Overlay
+            if(type === 'electric') overlay.className = 'overlay-electric';
+            if(type === 'ice') overlay.className = 'overlay-ice';
+            if(type === 'impact') overlay.className = 'overlay-impact';
+            
+            // Trigger Effects
+            overlay.style.opacity = 1;
+            stage.classList.add('shake-hard');
+            AudioEngine.playTone(150, 'sawtooth', 0.8); // Big crash sound
+            
+            // Massive Particles
+            createMegaBurst(type);
+            setTimeout(() => createMegaBurst(type), 200);
+            setTimeout(() => createMegaBurst(type), 400);
+
+            // Cleanup
+            setTimeout(() => {
+                overlay.style.opacity = 0;
+                stage.classList.remove('shake-hard');
+            }, 1000);
+        }
+
+        /* --- DYNAMIC BATTLE ENGINE --- */
+        async function runDynamicBattle(h1, h2) {
+            const log = document.getElementById('battleText');
+            const vImg = document.getElementById('villainImg');
+            const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
+            const stage = document.getElementById('battleStage');
+
+            // 1. Determine Winner (70% Heroes Win)
+            const heroesWin = Math.random() < 0.7; 
+            
+            // 2. Setup Moves Helpers
+            const getStandardMove = (h) => h.moves[0] || h.moves[1];
+            const getUltimateMove = (h) => h.moves.reduce((prev, current) => (prev.pwr > current.pwr) ? prev : current);
+
+            log.innerText = `Muddlewick summons a ${currentVillain.name}!`;
+            await delay(2000); if(!isBattleActive) return;
+
+            // 3. GENERATE BATTLE SEQUENCE (6-8 Turns)
+            const totalTurns = Math.floor(Math.random() * 3) + 6; 
+            
+            for(let i = 0; i < totalTurns; i++) {
+                if(!isBattleActive) return;
+                
+                const isHeroTurn = (i % 2 === 0) ? Math.random() > 0.4 : Math.random() > 0.6;
+                
+                if(isHeroTurn) {
+                    // HERO ATTACKS
+                    const attacker = Math.random() > 0.5 ? h1 : h2;
+                    const move = getStandardMove(attacker);
+                    
+                    log.innerText = `${attacker.name} uses ${move.name}!`;
+                    AudioEngine.playTone(600 + (Math.random()*200), 'sine', 0.2);
+                    await delay(800);
+                    hitEffect(vImg);
+                    
+                    const damage = 15 + Math.random() * 10;
+                    currentVillainHP = Math.max(10, currentVillainHP - damage); 
+                    updateHealthUI('villain', currentVillainHP);
+                    log.innerText = "A solid hit!";
+
+                } else {
+                    // VILLAIN ATTACKS
+                    log.innerText = `${currentVillain.name} strikes with ${currentVillain.move}!`;
+                    await delay(800);
+                    hitEffect(hImgs[0]); hitEffect(hImgs[1]);
+                    
+                    const damage = 15 + Math.random() * 10;
+                    currentHeroHP = Math.max(10, currentHeroHP - damage); 
+                    updateHealthUI('heroes', currentHeroHP);
+                    log.innerText = "The heroes take damage!";
+                }
+
+                await delay(2000);
+            }
+
+            if(!isBattleActive) return;
+
+            // 4. THE FINALE
+            if(heroesWin) {
+                // HEROES WIN SCENARIO
+                log.innerText = `${currentVillain.name} roars and attacks furiously!`;
+                hitEffect(hImgs[0]); hitEffect(hImgs[1]);
+                currentHeroHP = 10; 
+                updateHealthUI('heroes', currentHeroHP);
+                log.innerText = "The heroes are down to their last spark!";
+                await delay(2500); if(!isBattleActive) return;
+
+                // Slow Mo Tension
+                AudioEngine.stopMusic();
+                stage.classList.add('slow-mo');
+                
+                const finisher = Math.random() > 0.5 ? h1 : h2;
+                const ult = getUltimateMove(finisher);
+                log.innerText = `But ${finisher.name} prepares ${ult.name}...`;
+                await delay(2500); if(!isBattleActive) return;
+
+                // ELEMENTAL EXPLOSION
+                stage.classList.remove('slow-mo');
+                triggerElementalFinale(finisher.type);
+                hitEffect(vImg);
+                updateHealthUI('villain', 0);
+                log.innerText = "K.O.!!!";
+                await delay(2000); if(!isBattleActive) return;
+                
+                log.innerText = `The ${currentVillain.name} is defeated! The Heroes Win!`;
+                playVictoryTunes();
+
+            } else {
+                // HEROES LOSE SCENARIO (30% Chance)
+                const trier = h1;
+                log.innerText = `${trier.name} tries to end it, but misses!`;
+                await delay(2000); if(!isBattleActive) return;
+
+                log.innerText = `${currentVillain.name} unleashes TOTAL CHAOS!`;
+                stage.classList.add('shake-hard'); // Shake for bad guy too
+                AudioEngine.playTone(100, 'sawtooth', 0.5);
+                await delay(1000); stage.classList.remove('shake-hard');
+                
+                hitEffect(hImgs[0]); hitEffect(hImgs[1]);
+                updateHealthUI('heroes', 0);
+                
+                log.innerText = "The heroes are overwhelmed!";
+                await delay(2000); if(!isBattleActive) return;
+
+                AudioEngine.stopMusic();
+                log.innerText = "Muddlewick laughs... The Heroes must retreat!";
+                AudioEngine.playTone(150, 'sine', 1.0); 
+            }
+        }
+        
+        function playVictoryTunes() {
+             createMegaBurst('electric'); // Confetti
+             setTimeout(() => createMegaBurst('ice'), 500);
+             AudioEngine.playTone(400, 'sine', 0.1);
+             setTimeout(() => AudioEngine.playTone(600, 'sine', 0.1), 100);
+             setTimeout(() => AudioEngine.playTone(800, 'sine', 0.2), 200);
+        }
 
         /* --- RENDER --- */
         const grid = document.getElementById("heroGrid");
@@ -929,12 +1007,11 @@
             grid.innerHTML = heroes.map(hero => {
                 const isHidden = filterType !== 'all' && hero.type !== filterType;
                 if (isHidden) return '';
-
                 return `
       <div class="hero-card-container">
         <div class="hero-card" id="card-${hero.id}" data-type="${hero.type}" 
              onclick="triggerMegaReveal('${hero.id}')" 
-             onmouseenter="AudioEngine.hover()"
+             onmouseenter="AudioEngine.playTone(100, 'sine', 0.05)"
              onmousemove="tiltCard(event, this)" 
              onmouseleave="resetTilt(this)">
           <div class="class-badge">${hero.role.split(' ')[0]}</div>
@@ -951,30 +1028,33 @@
       </div>
     `;
             }).join("");
-
             setTimeout(() => {
                 document.querySelectorAll('.hero-card').forEach((card, i) => {
                     setTimeout(() => card.classList.add('reveal'), i * 50);
                 });
             }, 50);
         }
-
         renderGrid();
 
-        /* --- REVEAL LOGIC --- */
+        /* --- REVEAL / SELECT LOGIC --- */
         function triggerMegaReveal(id) {
-            AudioEngine.click();
+            // IF IN BATTLE MODE:
+            if(isBattleSelecting) {
+                 handleBattleSelection(id);
+                 return;
+            }
+            // NORMAL MODE:
+            AudioEngine.playTone(600, 'sine', 0.1);
             const hero = heroes.find(h => h.id === id);
             const flash = document.getElementById('flashOverlay');
             flash.classList.add('active');
             setTimeout(() => flash.classList.remove('active'), 150);
             createMegaBurst(hero.type);
-            setTimeout(() => { openModal(hero); AudioEngine.whoosh(); }, 100);
+            setTimeout(() => { openModal(hero); AudioEngine.playTone(200, 'sine', 0.2); }, 100);
         }
 
         function createMegaBurst(type) {
             const container = document.getElementById('particleContainer');
-            container.innerHTML = '';
             const colors = type === 'electric' ? ['#fbbf24', '#fffbeb'] : type === 'ice' ? ['#22d3ee', '#ecfeff'] : ['#ef4444', '#fef2f2'];
             for (let i = 0; i < 40; i++) {
                 const p = document.createElement('div');
@@ -1014,12 +1094,12 @@
 
             movesEl.innerHTML = hero.moves.map(m => `<div class="move-row"><span class="move-name">${m.name}</span><span class="move-val">${m.pwr}</span></div>`).join("");
             statsEl.innerHTML = `
-    ${createStatRow('Bravery', hero.stats.bravery, statClass)}
-    ${createStatRow('Speed', hero.stats.speed, statClass)}
-    ${createStatRow('Strength', hero.stats.strength, statClass)}
-    ${createStatRow('Teamwork', hero.stats.teamwork, statClass)}
-    ${createStatRow('Focus', hero.stats.focus, statClass)}
-  `;
+                ${createStatRow('Bravery', hero.stats.bravery, statClass)}
+                ${createStatRow('Speed', hero.stats.speed, statClass)}
+                ${createStatRow('Strength', hero.stats.strength, statClass)}
+                ${createStatRow('Teamwork', hero.stats.teamwork, statClass)}
+                ${createStatRow('Focus', hero.stats.focus, statClass)}
+            `;
             overlay.classList.add("active");
             setTimeout(() => { document.querySelectorAll('.stat-fill').forEach((bar, i) => setTimeout(() => bar.style.width = bar.getAttribute('data-pct'), i * 100)); }, 300);
         }
@@ -1030,13 +1110,14 @@
         }
 
         function closeModal() {
-            AudioEngine.click();
+            AudioEngine.playTone(300, 'sine', 0.1);
             overlay.classList.remove("active");
             document.querySelectorAll('.stat-fill').forEach(bar => bar.style.width = '0%');
         }
 
         /* --- TILT --- */
         function tiltCard(e, card) {
+            if(card.classList.contains('selected')) return;
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -8;
@@ -1044,30 +1125,22 @@
             card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
             card.querySelector('.card-foil').style.backgroundPosition = `${50 + (x / rect.width) * 50}% ${50 + (y / rect.height) * 50}%`;
         }
-        function resetTilt(card) { card.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`; }
+        function resetTilt(card) { 
+             if(card.classList.contains('selected')) { card.style.transform = `scale(1.05)`; } 
+             else { card.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`; }
+        }
 
-        /* --- FILTER & AMBIENCE --- */
+        /* --- FILTER --- */
         function filterGrid(type, btn) {
-            AudioEngine.click();
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if(isBattleSelecting) return;
+            AudioEngine.playTone(500, 'sine', 0.05);
+            document.querySelectorAll('.filter-btn:not(#muddlewickBtn)').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // Update Ambience
             const root = document.documentElement;
-            if (type === 'electric') {
-                root.style.setProperty('--nebula-1', 'rgba(251, 191, 36, 0.2)');
-                root.style.setProperty('--nebula-2', 'rgba(245, 158, 11, 0.1)');
-            } else if (type === 'ice') {
-                root.style.setProperty('--nebula-1', 'rgba(34, 211, 238, 0.2)');
-                root.style.setProperty('--nebula-2', 'rgba(14, 165, 233, 0.1)');
-            } else if (type === 'impact') {
-                root.style.setProperty('--nebula-1', 'rgba(239, 68, 68, 0.2)');
-                root.style.setProperty('--nebula-2', 'rgba(220, 38, 38, 0.1)');
-            } else {
-                root.style.setProperty('--nebula-1', 'rgba(76, 29, 149, 0.2)');
-                root.style.setProperty('--nebula-2', 'rgba(56, 189, 248, 0.1)');
-            }
-
+            if (type === 'electric') { root.style.setProperty('--nebula-1', 'rgba(251, 191, 36, 0.2)'); root.style.setProperty('--nebula-2', 'rgba(245, 158, 11, 0.1)'); } 
+            else if (type === 'ice') { root.style.setProperty('--nebula-1', 'rgba(34, 211, 238, 0.2)'); root.style.setProperty('--nebula-2', 'rgba(14, 165, 233, 0.1)'); } 
+            else if (type === 'impact') { root.style.setProperty('--nebula-1', 'rgba(239, 68, 68, 0.2)'); root.style.setProperty('--nebula-2', 'rgba(220, 38, 38, 0.1)'); } 
+            else { root.style.setProperty('--nebula-1', 'rgba(76, 29, 149, 0.2)'); root.style.setProperty('--nebula-2', 'rgba(56, 189, 248, 0.1)'); }
             document.querySelectorAll('.hero-card-container').forEach(c => c.classList.add('hidden'));
             setTimeout(() => renderGrid(type), 300);
         }
