@@ -5456,8 +5456,9 @@
             selectTxt.style.color = "#a855f7";
 
             if(isBattleSelecting) {
-                 // Reset story battle mode when starting a Muddlewick battle
-                 window.storyBattleMode = false;
+                 // Don't reset storyBattleMode here - it's set by world map battles
+                 // Re-render grid to show locked heroes in story mode
+                 renderGrid();
                  btn.classList.add('active');
                  btn.innerText = "Cancel Challenge";
                  instructions.style.display = 'block';
@@ -5466,6 +5467,8 @@
                  btn.classList.remove('active');
                  btn.innerText = "⚔️ Battle";
                  instructions.style.display = 'none';
+                 // Re-render grid to remove locked status when exiting battle mode
+                 renderGrid();
                  document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('dimmed'));
             }
         }
@@ -5474,6 +5477,12 @@
              const card = document.getElementById(`card-${id}`);
              // NOTE: scrollIntoView removed to fix animation glitch
              // card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+             // Prevent selecting locked heroes in story mode
+             if (window.storyBattleMode && !StoryModeSystem.isHeroUnlocked(id)) {
+                 AudioEngine.playTone(200, 'sawtooth', 0.2);
+                 return;
+             }
 
              const startBtn = document.getElementById('startFightBtn');
              const selectTxt = document.getElementById('selectText');
@@ -6400,8 +6409,8 @@
                 if (isHidden) return '';
                 // New: Calculate colour for border
                 const color = hero.type === 'electric' ? '#fbbf24' : hero.type === 'ice' ? '#22d3ee' : '#ef4444';
-                // All characters unlocked on main screen (world map has separate locking)
-                const isLocked = false;
+                // Check if hero is locked (only when in story battle mode)
+                const isLocked = (isBattleSelecting && window.storyBattleMode) ? !StoryModeSystem.isHeroUnlocked(hero.id) : false;
                 const lockedClass = isLocked ? 'locked-hero' : '';
                 const onclickHandler = isLocked ? '' : `triggerMegaReveal('${hero.id}')`;
                 return `
