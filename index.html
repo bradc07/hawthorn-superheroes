@@ -79,6 +79,16 @@
             to { transform: translateY(-2000px); }
         }
 
+        /* PERFORMANCE: Disable parallax for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .stars, .nebula-layer, .hero-card, .flying-card {
+                animation: none !important;
+                transition: none !important;
+                transform: none !important;
+            }
+            .hero-card:hover { transform: none !important; }
+        }
+
         .nebula-layer {
             position: absolute;
             inset: -50%;
@@ -125,12 +135,18 @@
             font-size: clamp(4rem, 12vw, 8rem);
             letter-spacing: 4px;
             line-height: 0.9;
-            background: linear-gradient(180deg, #ffffff 20%, #94a3b8 100%);
+            background: linear-gradient(to right, #fff 20%, #fbbf24 40%, #fbbf24 60%, #fff 80%);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 40px rgba(255, 255, 255, 0.15));
             margin-bottom: 1rem;
             transform: skewY(-2deg);
+            animation: shine 5s linear infinite;
+        }
+        
+        @keyframes shine {
+            to { background-position: 200% center; }
         }
 
         .subtitle {
@@ -240,6 +256,14 @@
             transform: translateY(100px) rotateX(10deg);
             box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
             border: 2px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 3px solid var(--hero-color, rgba(255,255,255,0.1));
+        }
+        
+        /* Accessibility Focus Style */
+        .hero-card:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px #fff, 0 50px 80px -20px rgba(0,0,0,0.9);
+            transform: translateY(0) scale(1.05);
         }
 
         .hero-card.reveal {
@@ -286,10 +310,14 @@
         .hero-card:hover .scan-line { opacity: 1; animation: scanDown 2s infinite linear; }
         @keyframes scanDown { 0% { background-position: 0% 0%; } 100% { background-position: 0% 200%; } }
 
+        /* UPGRADED FOIL: Uses mix-blend-mode for better holographic look */
         .card-foil {
             position: absolute; inset: 0; z-index: 20; opacity: 0; transition: opacity 0.4s; pointer-events: none;
-            background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.4) 30%, rgba(255, 0, 255, 0.3) 40%, rgba(0, 255, 255, 0.3) 50%, rgba(255, 255, 0, 0.3) 60%, transparent 80%);
-            mix-blend-mode: overlay; transform: translateZ(1px); background-size: 200% 200%;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.3) 0%, transparent 60%),
+                        linear-gradient(115deg, transparent 30%, rgba(255, 0, 255, 0.3) 45%, rgba(0, 255, 255, 0.3) 55%, transparent 70%);
+            mix-blend-mode: color-dodge; 
+            transform: translateZ(1px); 
+            background-size: 150% 150%, 200% 200%;
         }
         .hero-card:hover .card-foil { opacity: 1; }
 
@@ -324,21 +352,36 @@
         /* --- MODAL (BIO) --- */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 1600; display: flex; align-items: center; justify-content: center;
-            background: rgba(2, 6, 23, 0.6); backdrop-filter: blur(0px); transition: 0.4s; pointer-events: none; opacity: 0;
+            background: rgba(2, 6, 23, 0); backdrop-filter: blur(0px); transition: 0.4s; pointer-events: none; opacity: 0;
         }
-        .modal-overlay.active { background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(15px); pointer-events: all; opacity: 1; }
+        .modal-overlay.active { 
+            background: rgba(2, 6, 23, 0.92); backdrop-filter: blur(20px); pointer-events: all; opacity: 1; 
+        }
 
         .modal-card {
             width: min(1100px, 95%); height: min(700px, 90vh); background: rgba(15, 23, 42, 0.9); border-radius: 16px;
             box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 50px 100px -20px rgba(0, 0, 0, 0.8);
-            transform: scale(0.95) translateY(20px); transition: 0.5s var(--ease-smooth); display: grid;
+            transform: scale(0.8) rotateY(-15deg); opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
+            transform-style: preserve-3d;
+            display: grid;
             grid-template-columns: 45% 55%; overflow: hidden; position: relative;
         }
-        .modal-overlay.active .modal-card { transform: scale(1) translateY(0); background: rgba(15, 23, 42, 0.95); }
+        .modal-overlay.active .modal-card { 
+            transform: scale(1) rotateY(0deg); opacity: 1; background: rgba(15, 23, 42, 0.95);
+        }
 
         .modal-col-img { position: relative; height: 100%; overflow: hidden; }
         .modal-image-full { width: 100%; height: 100%; object-fit: cover; object-position: center top; mask-image: linear-gradient(to right, black 80%, transparent 100%); }
-        .modal-col-data { padding: 3rem; display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 70%); overflow-y: auto; position: relative; }
+        
+        .modal-col-data { 
+            padding: 3rem; display: flex; flex-direction: column; background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.03), transparent 70%); overflow-y: auto; position: relative;
+            opacity: 0; transform: translateX(30px); transition: opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s;
+        }
+        .modal-overlay.active .modal-col-data { 
+            opacity: 1; transform: translateX(0); 
+        }
+
         .modal-name-display {
             font-family: "Bangers"; font-size: 5rem; line-height: 0.9; margin-bottom: 0.5rem; text-transform: uppercase;
             letter-spacing: 2px; background: linear-gradient(180deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -359,11 +402,84 @@
         .fill-ice { background: #22d3ee; box-shadow: 0 0 15px #22d3ee; }
         .fill-impact { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
 
+        .modal-type-badge {
+            transform: scale(0) rotate(-180deg);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+        }
+        .modal-overlay.active .modal-type-badge {
+            transform: scale(1) rotate(0deg);
+        }
+
         .close-btn {
             position: absolute; top: 20px; right: 20px; font-size: 2rem; color: rgba(255, 255, 255, 0.5); cursor: pointer;
             z-index: 20; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         .close-btn:hover { color: #fff; transform: rotate(90deg); }
+
+        /* --- NEW ANIMATION CLASSES --- */
+        .flying-card {
+            position: fixed; z-index: 2000; pointer-events: none; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 0 100px rgba(255, 255, 255, 0.5); transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+        .flying-card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .energy-ring {
+            position: fixed; border-radius: 50%; pointer-events: none; z-index: 1999; border: 4px solid;
+            animation: ringExplosion 0.8s ease-out forwards;
+        }
+        @keyframes ringExplosion {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+        }
+        
+        .speed-line {
+            position: fixed; height: 3px; background: linear-gradient(90deg, transparent, var(--line-color), transparent);
+            pointer-events: none; z-index: 1998; animation: speedLineZoom 0.5s ease-out forwards;
+        }
+        @keyframes speedLineZoom {
+            0% { transform: scaleX(0); opacity: 1; }
+            50% { transform: scaleX(1); opacity: 1; }
+            100% { transform: scaleX(0); opacity: 0; }
+        }
+
+        /* SYNERGY OVERLAY - FIXED POSITION */
+        .synergy-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2500; /* Higher than battle */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.85);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .synergy-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+            backdrop-filter: blur(10px);
+        }
+        .synergy-text {
+            font-family: "Bangers";
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: #fff;
+            text-shadow: 0 0 30px currentColor;
+            transform: scale(0);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            line-height: 1;
+            z-index: 2501;
+        }
+        .synergy-overlay.active .synergy-text {
+            transform: scale(1);
+        }
+        /* Element Colors for Text */
+        .synergy-electric .synergy-text { color: #fbbf24; text-shadow: 0 0 40px #fbbf24; }
+        .synergy-ice .synergy-text { color: #22d3ee; text-shadow: 0 0 40px #22d3ee; }
+        .synergy-impact .synergy-text { color: #ef4444; text-shadow: 0 0 40px #ef4444; }
+
 
         /* --- BATTLE ARENA MODAL --- */
         .battle-overlay {
@@ -376,15 +492,44 @@
             width: 100%; max-width: 1000px; height: 80vh; background: radial-gradient(circle at center, #1e1b4b 0%, #000 70%);
             border: 2px solid #a855f7; border-radius: 20px; box-shadow: 0 0 50px rgba(168, 85, 247, 0.3);
             display: flex; flex-direction: column; padding: 2rem; position: relative; overflow: hidden;
-            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1); /* For Slow Mo Zoom */
+            transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            perspective: 1000px; /* Enable 3D for floor */
         }
-        /* Zoom effect class */
         .battle-stage.slow-mo { transform: scale(1.1); filter: contrast(1.2); }
+        
+        /* LOW HEALTH DANGER PULSE */
+        @keyframes dangerPulse {
+            0% { box-shadow: inset 0 0 0 rgba(239, 68, 68, 0); border-color: #a855f7; }
+            50% { box-shadow: inset 0 0 50px rgba(239, 68, 68, 0.3); border-color: #ef4444; }
+            100% { box-shadow: inset 0 0 0 rgba(239, 68, 68, 0); border-color: #a855f7; }
+        }
+        .battle-stage.danger {
+            animation: dangerPulse 1s infinite;
+        }
 
         .battle-stage::before {
              content: ""; position: absolute; inset:0; 
              background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a855f7' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
              opacity: 0.5;
+             z-index: 1;
+        }
+        
+        /* 3D FLOOR UPGRADE */
+        .battle-stage::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background:
+                linear-gradient(transparent 0%, rgba(168, 85, 247, 0.3) 2%, transparent 3%),
+                linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.3) 2%, transparent 3%);
+            background-size: 50px 50px;
+            transform: rotateX(60deg);
+            z-index: 0;
+            pointer-events: none;
+            mask-image: linear-gradient(to top, black 20%, transparent 80%);
         }
         
         .battle-header { text-align: center; margin-bottom: 2rem; z-index: 2; }
@@ -397,7 +542,6 @@
             transition: transform 0.2s; border-radius: 12px;
         }
         
-        /* Shake Animation */
         .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake { 
             0% { transform: translate(0, 0); }
@@ -410,7 +554,6 @@
             100% { transform: translate(0, 0); }
         }
 
-        /* Violent Finale Shake */
         .shake-hard { animation: shakeHard 0.6s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shakeHard {
             0% { transform: translate(0, 0) rotate(0deg); }
@@ -421,7 +564,6 @@
             100% { transform: translate(0, 0) rotate(0deg); }
         }
 
-        /* Damage Flash */
         .damage-flash { animation: flashRed 0.3s ease-out; }
         @keyframes flashRed {
             0% { filter: sepia(1) saturate(5) hue-rotate(-50deg) brightness(2); }
@@ -429,12 +571,19 @@
         }
 
         .hp-bar-container {
-            width: 100%; height: 20px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 1rem;
-            border: 1px solid rgba(255,255,255,0.2); overflow: hidden;
+            width: 100%; height: 24px; background: rgba(0,0,0,0.5); border-radius: 4px; margin-top: 1rem;
+            border: 2px solid rgba(255,255,255,0.3); overflow: hidden;
+            transform: skewX(-20deg);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-        .hp-fill { height: 100%; width: 100%; transition: width 0.5s ease-out, background 0.5s ease-out; }
-        .hp-villain { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
-        .hp-heroes { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+        /* SEGMENTED HEALTH BAR UPGRADE */
+        .hp-fill { 
+            height: 100%; width: 100%; transition: width 0.5s ease-out, background 0.5s ease-out; 
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.2) 10px, rgba(0,0,0,0.2) 20px);
+            background-size: 28px 28px;
+        }
+        .hp-villain { background-color: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .hp-heroes { background-color: #22c55e; box-shadow: 0 0 10px #22c55e; }
 
         .battle-log {
             margin-top: 2rem; height: 100px; background: rgba(0,0,0,0.6); border: 1px solid #a855f7; border-radius: 8px;
@@ -442,17 +591,15 @@
             justify-content: center; text-align: center; z-index: 2;
         }
 
-        /* INITIATE BUTTON (Outside) */
         .battle-btn-initiate {
              font-family: 'Bangers'; font-size: 2.5rem; padding: 20px 60px; 
              background: linear-gradient(135deg, #9333ea, #7e22ce); color: white; border: 2px solid #d8b4fe; border-radius: 12px;
              margin-top: 20px; cursor: pointer; box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
-             display: none; /* hidden until 2 selected */
+             display: none;
              transition: 0.3s; animation: pulseBtn 1s infinite alternate;
         }
         .battle-btn-initiate:hover { transform: scale(1.05); background: #a855f7; }
 
-        /* START COMBAT BUTTON (Inside Modal) */
         .battle-btn-commence {
              font-family: 'Bangers'; font-size: 3rem; padding: 30px 80px; 
              background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: 2px solid #86efac; border-radius: 16px;
@@ -464,13 +611,11 @@
         @keyframes pulseBtn { from { box-shadow: 0 0 20px #9333ea; } to { box-shadow: 0 0 50px #d8b4fe; } }
         @keyframes pulseGreen { from { box-shadow: 0 0 20px #22c55e; } to { box-shadow: 0 0 60px #86efac; } }
 
-        /* FX */
         #flashOverlay {
             position: fixed; inset: 0; background: #fff; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.1s; mix-blend-mode: overlay;
         }
         #flashOverlay.active { opacity: 0.8; }
-        
-        /* Elemental Overlays for Finale */
+
         #elementalOverlay {
             position: fixed; inset: 0; pointer-events: none; z-index: 1900; opacity: 0; transition: opacity 0.5s;
         }
@@ -479,22 +624,350 @@
         .overlay-impact { background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 80%); }
 
         #particleContainer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1500; overflow: hidden; }
-        .particle { position: absolute; border-radius: 50%; animation: burstOut 0.8s ease-out forwards; }
+        .particle { 
+            position: absolute; 
+            /* border-radius removed to allow shapes */
+            animation: burstOut 0.8s ease-out forwards; 
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #fff; /* For text particles */
+        }
         @keyframes burstOut {
             0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0) rotate(180deg); }
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .modal-card { grid-template-columns: 1fr; height: auto; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
-            .modal-col-img { height: 250px; flex-shrink: 0; mask-image: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-            .modal-col-data { padding: 1.5rem; overflow: visible; }
-            .modal-name-display { font-size: 3rem; }
-            .dashboard-grid { grid-template-columns: 1fr; gap: 1rem; }
-            .battle-area { flex-direction: column; gap: 20px; }
+        .projectile {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            filter: blur(4px);
+            animation: projectileFly 0.6s ease-out forwards;
         }
-        @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        .projectile::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            background: inherit;
+            filter: blur(8px);
+            opacity: 0.6;
+        }
+        .projectile::after {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border-radius: 50%;
+            background: white;
+            opacity: 0.8;
+        }
+        @keyframes projectileFly {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) scale(0.5);
+                opacity: 0;
+            }
+            20% { opacity: 1; }
+            100% {
+                transform: translate(var(--end-x), var(--end-y)) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .projectile-trail {
+            position: absolute;
+            width: 200px;
+            height: 4px;
+            pointer-events: none;
+            z-index: 99;
+            opacity: 0.6;
+            animation: trailFade 0.6s ease-out forwards;
+            transform-origin: left center;
+        }
+        @keyframes trailFade {
+            0% { opacity: 0.8; width: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; width: 200px; }
+        }
+
+        .damage-number {
+            position: absolute;
+            font-family: 'Bangers';
+            font-size: 4rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 20px currentColor, 0 4px 10px rgba(0,0,0,0.8);
+            pointer-events: none;
+            z-index: 150;
+            animation: damageFloat 1.2s ease-out forwards;
+        }
+        @keyframes damageFloat {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { transform: translateY(-20px) scale(1.3); opacity: 1; }
+            50% { transform: translateY(-60px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(-120px) scale(0.8); opacity: 0; }
+        }
+
+        .damage-number.critical {
+            font-size: 5rem;
+            color: #fbbf24;
+            animation: criticalFloat 1.5s ease-out forwards;
+        }
+        @keyframes criticalFloat {
+            0% { transform: translateY(0) scale(0.3) rotate(-10deg); opacity: 0; }
+            15% { transform: translateY(-30px) scale(1.5) rotate(5deg); opacity: 1; }
+            30% { transform: translateY(-50px) scale(1.3) rotate(-5deg); }
+            60% { transform: translateY(-90px) scale(1.2) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-150px) scale(0.8) rotate(0deg); opacity: 0; }
+        }
+
+        .charging {
+            position: relative;
+            animation: chargeGlow 1s ease-in-out infinite;
+        }
+        .charging::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--charge-color) 0%, transparent 70%);
+            animation: chargePulse 0.8s ease-in-out infinite;
+            z-index: -1;
+        }
+        @keyframes chargeGlow {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 10px var(--charge-color)); }
+            50% { filter: brightness(1.5) drop-shadow(0 0 30px var(--charge-color)); }
+        }
+        @keyframes chargePulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.3); opacity: 0.9; }
+        }
+
+        .battle-stage.focus-left .side:first-child,
+        .battle-stage.focus-right .side:last-child {
+            transform: scale(1.15);
+            filter: brightness(1.3) drop-shadow(0 0 40px currentColor);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s;
+        }
+
+        .combo-counter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bangers';
+            font-size: 3rem;
+            color: #fbbf24;
+            text-shadow: 0 0 20px #fbbf24, 0 4px 10px rgba(0,0,0,0.8);
+            z-index: 200;
+            opacity: 0;
+            animation: comboAppear 0.3s ease-out forwards;
+        }
+        @keyframes comboAppear {
+            0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+            100% { opacity: 1; transform: translateX(-50%) scale(1); }
+        }
+        .combo-counter.high {
+            font-size: 4rem;
+            color: #ef4444;
+            animation: comboShake 0.5s ease-in-out infinite;
+        }
+        @keyframes comboShake {
+            0%, 100% { transform: translateX(-50%) rotate(0deg); }
+            25% { transform: translateX(-50%) rotate(-3deg) scale(1.05); }
+            75% { transform: translateX(-50%) rotate(3deg) scale(1.05); }
+        }
+
+        .impact-ring {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 4px solid;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 120;
+            animation: ringExpand 0.6s ease-out forwards;
+        }
+        @keyframes ringExpand {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+        }
+
+        @keyframes shakeLight {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 5px); }
+            75% { transform: translate(5px, -5px); }
+        }
+        .battle-stage.shake-light { animation: shakeLight 0.3s ease-in-out; }
+
+        .victory-pose {
+            animation: victoryBounce 1s ease-in-out infinite;
+        }
+        @keyframes victoryBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        .battle-stage.intensity-low { filter: brightness(0.8); }
+        .battle-stage.intensity-high { filter: brightness(1.3) saturate(1.5); }
+        
+        .speech-bubble {
+            position: absolute;
+            bottom: 100%; 
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            background: #fff;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-family: 'Bangers';
+            font-size: 1.2rem;
+            white-space: nowrap;
+            z-index: 200;
+            box-shadow: 4px 4px 0px rgba(0,0,0,1);
+            border: 2px solid #000;
+            pointer-events: none;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .speech-bubble::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            border-width: 8px 8px 0; border-style: solid; border-color: #000 transparent transparent transparent;
+        }
+        @keyframes popIn { to { transform: translateX(-50%) scale(1); } }
+        
+        .dodge-left { animation: dodgeLeft 0.5s ease-in-out; }
+        .dodge-right { animation: dodgeRight 0.5s ease-in-out; }
+
+        @keyframes dodgeLeft {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-50px) skewX(-10deg); }
+        }
+        @keyframes dodgeRight {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(50px) skewX(10deg); }
+        }
+        
+        .enraged-boss {
+            filter: sepia(1) hue-rotate(-50deg) saturate(3) drop-shadow(0 0 20px #ef4444) !important;
+            animation: rapidPulse 0.5s infinite alternate !important;
+        }
+        @keyframes rapidPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+        
+        .screen-flash-white { animation: flashWhite 0.2s ease-out; }
+        @keyframes flashWhite {
+            0% { background: white; opacity: 0.8; }
+            100% { background: transparent; opacity: 0; }
+        }
+
+        .post-battle-modal {
+            position: absolute; inset: 0; z-index: 500;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s;
+        }
+        .post-battle-modal.active { opacity: 1; pointer-events: all; }
+        
+        .victory-header {
+            font-family: "Bangers"; font-size: 6rem;
+            background: linear-gradient(180deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.5));
+            margin-bottom: 1rem; transform: scale(0.5); transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .post-battle-modal.active .victory-header { transform: scale(1); }
+        
+        .star-row { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .star {
+            font-size: 4rem; color: #334155; transition: 0.3s; transform: scale(0);
+        }
+        .star.active { color: #fbbf24; filter: drop-shadow(0 0 20px #fbbf24); animation: popStar 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popStar { from { transform: scale(0) rotate(-180deg); } to { transform: scale(1) rotate(0); } }
+        
+        .score-details {
+            font-family: "Rajdhani"; font-size: 1.5rem; text-align: center; color: #94a3b8; margin-bottom: 2rem;
+        }
+        .score-row { display: flex; justify-content: space-between; width: 300px; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .score-val { color: #fff; font-weight: bold; }
+
+        /* --- VILLAIN DOSSIER THEME --- */
+        .villain-theme {
+            background: linear-gradient(135deg, #1a0505 0%, #2d0a18 100%);
+            border: 1px solid #7f1d1d;
+            box-shadow: 0 0 60px rgba(220, 38, 38, 0.15);
+        }
+
+        .villain-header-band {
+            font-family: "Rajdhani";
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #ef4444;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ef4444;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        .warning-stripe {
+            height: 12px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                #7f1d1d,
+                #7f1d1d 10px,
+                #000 10px,
+                #000 20px
+            );
+            margin-top: auto;
+            opacity: 0.8;
+        }
+        
+        .dossier-btn {
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            font-family: "Rajdhani";
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dossier-btn:hover {
+            background: #ef4444;
+            color: #000;
+            box-shadow: 0 0 20px #ef4444;
+        }
+
+        .villain-stat-fill { 
+            background: #ef4444; 
+            box-shadow: 0 0 10px #ef4444; 
+        }
+        
+        .weakness-box {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 6px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .weakness-box strong { color: #ef4444; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 
@@ -509,6 +982,11 @@
     <div id="flashOverlay"></div>
     <div id="elementalOverlay"></div>
     <div id="particleContainer"></div>
+    
+    <!-- SYNERGY OVERLAY CONTAINER -->
+    <div id="synergyOverlay" class="synergy-overlay">
+         <div id="synergyText" class="synergy-text"></div>
+    </div>
 
     <div class="app">
         <header>
@@ -525,6 +1003,7 @@
             </div>
             <div class="filter-group">
                  <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">🧙‍♂️ Muddlewick has Chosen</button>
+                 <button class="filter-btn" id="muteBtn" onclick="AudioEngine.toggleMute()" title="Toggle Sound">🔊</button>
             </div>
         </div>
         
@@ -566,6 +1045,55 @@
             </div>
         </div>
     </div>
+
+    <!-- VILLAIN DOSSIER MODAL -->
+    <div id="villainModal" class="modal-overlay" onclick="closeVillainModal()">
+        <div class="modal-card villain-theme" onclick="event.stopPropagation()">
+            <div class="close-btn" onclick="closeVillainModal()">×</div>
+            
+            <div class="modal-col-img">
+                <img id="vmImage" class="modal-image-full" style="filter: contrast(1.2) sepia(0.2);">
+                <div class="warning-stripe" style="position:absolute; bottom:0; left:0;"></div>
+                <div id="vmTypeBadge" class="modal-type-badge"
+                    style="position:absolute; top:30px; left:30px; width:70px; height:70px; border-radius:12px; background:rgba(0,0,0,0.8); border:2px solid #ef4444; color:#ef4444; display:flex; align-items:center; justify-content:center; font-size:2.5rem; backdrop-filter:blur(10px); z-index:5; box-shadow:0 0 20px rgba(239, 68, 68, 0.4);">
+                </div>
+            </div>
+            
+            <div class="modal-col-data">
+                <div class="villain-header-band">
+                    <span>⚠ THREAT ASSESSMENT ⚠</span>
+                </div>
+                
+                <div class="modal-header-group">
+                    <div id="vmName" class="modal-name-display" style="color:#fff; -webkit-text-fill-color: initial; background: none; text-shadow: 0 0 20px rgba(0,0,0,0.5);"></div>
+                    <div id="vmType" class="modal-role-display" style="color:#ef4444;"></div>
+                </div>
+                
+                <p id="vmDesc" class="modal-desc" style="border-left-color: #ef4444; color: #e2e8f0;"></p>
+                
+                <div class="dashboard-grid">
+                    <div class="dash-panel" style="border-color: rgba(239, 68, 68, 0.3);">
+                        <div class="panel-label" style="color: #ef4444;">Combat Profile</div>
+                        <div style="margin-bottom: 15px;">
+                            <div style="font-size:0.8rem; color:#94a3b8; text-transform:uppercase; font-weight:700;">Signature Move</div>
+                            <div id="vmSignature" style="font-family:'Bangers'; font-size:1.6rem; color:#fff; letter-spacing:1px;"></div>
+                        </div>
+                        <div class="weakness-box">
+                            <div id="vmWeakness"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="dash-panel" style="border-color: rgba(239, 68, 68, 0.3);">
+                        <div class="panel-label" style="color: #ef4444;">Threat Stats</div>
+                        <div id="vmStats"></div>
+                    </div>
+                </div>
+
+                <!-- NEW START BUTTON -->
+                <button id="vmStartBtn" class="battle-btn-commence" onclick="enterArena()">ENTER BATTLE ARENA</button>
+            </div>
+        </div>
+    </div>
     
     <div id="battleOverlay" class="battle-overlay">
          <div class="battle-stage" id="battleStage">
@@ -574,6 +1102,18 @@
               <div id="combatStartOverlay" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:100; background:rgba(0,0,0,0.4); backdrop-filter:blur(2px);">
                   <button class="battle-btn-commence" onclick="beginCombatSequence()">START COMBAT</button>
               </div>
+              
+              <!-- POST BATTLE MODAL (NEW) -->
+              <div id="postBattleModal" class="post-battle-modal">
+                   <div class="victory-header" id="pbTitle">VICTORY!</div>
+                   <div class="star-row" id="pbStars">
+                       <!-- Stars injected by JS -->
+                   </div>
+                   <div class="score-details" id="pbScore">
+                       <!-- Score details injected by JS -->
+                   </div>
+                   <button class="battle-btn-commence" onclick="closeBattle()">CONTINUE</button>
+              </div>
 
               <div class="battle-header">
                    <div class="battle-title" id="battleTitle">BOSS BATTLE</div>
@@ -581,8 +1121,11 @@
               
               <div class="battle-area">
                    <div class="side" id="villainSide">
-                        <h2 style="color:#a855f7; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;" id="villainName">Baddie</h2>
-                        <img id="villainImg" class="side-img" src="">
+                        <h2 style="color:#a855f7; font-family:'Bangers'; letter-spacing:2px; margin-bottom:0;" id="villainName">Baddie</h2>
+                        <button class="dossier-btn" onclick="openVillainModal()">⚠ View Dossier</button>
+                        <div style="position:relative; display:inline-block; margin-top: 10px;">
+                            <img id="villainImg" class="side-img" src="">
+                        </div>
                         <div class="hp-bar-container">
                              <div id="villainHP" class="hp-fill hp-villain"></div>
                         </div>
@@ -593,8 +1136,12 @@
                    <div class="side" id="heroesSide">
                         <h2 style="color:#22c55e; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;">The Heroes</h2>
                         <div style="display:flex; justify-content:center; gap:10px;">
-                             <img id="hero1Img" class="side-img" style="width:100px; height:100px;" src="">
-                             <img id="hero2Img" class="side-img" style="width:100px; height:100px;" src="">
+                             <div style="position:relative;">
+                                <img id="hero1Img" class="side-img" style="width:100px; height:100px;" src="">
+                             </div>
+                             <div style="position:relative;">
+                                <img id="hero2Img" class="side-img" style="width:100px; height:100px;" src="">
+                             </div>
                         </div>
                         <div class="hp-bar-container">
                              <div id="heroesHP" class="hp-fill hp-heroes"></div>
@@ -611,39 +1158,120 @@
     <script>
         /* HERO DATA */
         const heroes = [
-            { id: "art", type: "electric", icon: "⚡", role: "Speedster Class", name: "Art", alias: "Velocity", image: "images/art.png", description: "Known as the fastest kid alive, Art can circumvent the globe before his toast pops up.", moves: [{ name: "Hypersonic Sprint", pwr: 94 }, { name: "Vertical Wall Run", pwr: 75 }, { name: "Vacuum Funnel", pwr: 88 }], stats: { bravery: 4, speed: 5, strength: 3, teamwork: 4, focus: 5 } },
-            { id: "alexei", type: "electric", icon: "⚡", role: "Tech Artificer", name: "Alexei", alias: "Magnet Master", image: "images/alexei.png", description: "A mechanical prodigy with a magnetic personality. Alexei can sense the atomic structure of any metal nearby.", moves: [{ name: "Magnetic Crush", pwr: 90 }, { name: "Scrap Shield", pwr: 85 }, { name: "Tech Disruption", pwr: 70 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 } },
-            { id: "florrie", type: "ice", icon: "❄️", role: "Cryomancer", name: "Florrie", alias: "Frostbeam", image: "images/florrie.png", description: "With a single touch, Florrie can lower the temperature of a room to absolute zero.", moves: [{ name: "Flash Freeze", pwr: 88 }, { name: "Glacial Wall", pwr: 92 }, { name: "Ice Slide", pwr: 65 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 } },
-            { id: "joshua", type: "impact", icon: "💥", role: "Guardian Tank", name: "Joshua", alias: "Shield Guardian", image: "images/joshua.png", description: "The unbreakable heart of the team, Joshua wields a shield made of pure kinetic energy.", moves: [{ name: "Titan Charge", pwr: 95 }, { name: "Energy Reflect", pwr: 85 }, { name: "Shield Bash", pwr: 80 }], stats: { bravery: 5, speed: 3, strength: 4, teamwork: 5, focus: 3 } },
-            { id: "lulu", type: "electric", icon: "⚡", role: "Speed Striker", name: "Lulu", alias: "Red Comet", image: "images/lulu.png", description: "Lulu vibrates at such a high frequency that he appears as a red blur. Specializing in stealth.", moves: [{ name: "Mach-1 Strike", pwr: 93 }, { name: "Red Blur", pwr: 82 }, { name: "After-Image", pwr: 70 }], stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 } },
-            { id: "manny", type: "impact", icon: "💥", role: "Heavy Hitter", name: "Manny", alias: "Earth Hammer", image: "images/manny.png", description: "Manny is connected to the very core of the planet, allowing him to channel seismic energy through his fists.", moves: [{ name: "Seismic Slam", pwr: 96 }, { name: "Tremor Wave", pwr: 85 }, { name: "Fortify", pwr: 90 }], stats: { bravery: 5, speed: 2, strength: 5, teamwork: 5, focus: 3 } },
-            { id: "maurits", type: "ice", icon: "❄️", role: "Storm Mage", name: "Maurits", alias: "Storm Caller", image: "images/maurits.png", description: "Maurits commands the atmosphere itself, summoning rain, wind, and lightning at will.", moves: [{ name: "Lightning Bolt", pwr: 94 }, { name: "Blizzard Howl", pwr: 88 }, { name: "Fog Cover", pwr: 60 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 } },
-            { id: "noa", type: "impact", icon: "💥", role: "Sniper Scout", name: "Noa", alias: "Sky Archer", image: "images/noa.png", description: "Possessing telescopic vision and unerring accuracy, Noa can spot a danger from three miles away.", moves: [{ name: "Sure Shot", pwr: 95 }, { name: "Eagle Eye", pwr: 50 }, { name: "Ricochet Arrow", pwr: 82 }], stats: { bravery: 4, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
-            { id: "noah", type: "ice", icon: "❄️", role: "Sonic Controller", name: "Noah", alias: "Soundwave", image: "images/noah.png", description: "Noah sees the world in frequencies and vibrations. She can create absolute silence or unleash a sonic boom.", moves: [{ name: "Sonic Boom", pwr: 91 }, { name: "Silence Bubble", pwr: 70 }, { name: "Echo Pulse", pwr: 85 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 } },
-            { id: "phaedra", type: "ice", icon: "❄️", role: "Wind Dancer", name: "Phaedra", alias: "Whirlwind", image: "images/phaedra.png", description: "Phaedra dances on the air currents, moving with a grace that defies gravity.", moves: [{ name: "Tornado Spin", pwr: 96 }, { name: "Hurricane Blast", pwr: 92 }, { name: "Air Cushion", pwr: 82 }], stats: { bravery: 4, speed: 5, strength: 3, teamwork: 5, focus: 5 } },
-            { id: "rex", type: "electric", icon: "⚡", role: "Trickster", name: "Rex", alias: "Triple Strike", image: "images/rex.png", description: "Rex exists in three places at once, splitting into temporal clones to overwhelm opponents.", moves: [{ name: "Tri-Attack", pwr: 92 }, { name: "Clone Swap", pwr: 75 }, { name: "Confusion", pwr: 65 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 3 } },
-            { id: "rory", type: "impact", icon: "💥", role: "Duelist", name: "Rory", alias: "Blue Flash", image: "images/rory.png", description: "Rory wields twin blades made of solidified plasma that can cut through any material.", moves: [{ name: "Blade Dance", pwr: 93 }, { name: "Cross Slash", pwr: 88 }, { name: "Flash Cut", pwr: 90 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
-            { id: "viola", type: "impact", icon: "💥", role: "Blade Master", name: "Viola", alias: "Twin Saber", image: "images/viola.png", description: "Viola turns combat into an art form, using her twin energy sabers to deflect incoming projectiles.", moves: [{ name: "Saber Deflect", pwr: 94 }, { name: "Twin Strike", pwr: 89 }, { name: "Pushback", pwr: 80 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
-            { id: "wilbur", type: "impact", icon: "💥", role: "Titan", name: "Wilbur", alias: "Titan Punch", image: "images/wilbur.png", description: "Possessing the strength of a hundred men, Wilbur is the team's muscle.", moves: [{ name: "Mega Punch", pwr: 98 }, { name: "Ground Breaker", pwr: 92 }, { name: "Atlas Lift", pwr: 85 }], stats: { bravery: 5, speed: 3, strength: 5, teamwork: 5, focus: 4 } },
-            { id: "zane", type: "electric", icon: "⚡", role: "Technomancer", name: "Zane", alias: "Storm Pulse", image: "images/zane.png", description: "Zane is a living battery, crackling with raw static electricity.", moves: [{ name: "Overload", pwr: 95 }, { name: "Static Shock", pwr: 85 }, { name: "EMP Blast", pwr: 90 }], stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 } }
+            { id: "art", type: "electric", icon: "⚡", role: "Speedster Class", name: "Art", alias: "Velocity", image: "images/art.png", pronoun: "his", description: "The fastest kid alive! Art can race around the entire world before his breakfast toast pops up. When he runs, he leaves a golden lightning trail behind him. Nothing can slow him down. He zooms up tall buildings, runs across oceans like they're nothing, and can even vibrate so fast that he becomes invisible! Last week, he stopped a runaway train by running in front of it and pushing it to a stop. His super speed also makes his brain work faster, so he can read an entire book in three seconds and ace every test!", moves: [{ name: "Hypersonic Sprint", pwr: 94 }, { name: "Vertical Wall Run", pwr: 75 }, { name: "Vacuum Funnel", pwr: 88 }], stats: { bravery: 4, speed: 5, strength: 3, teamwork: 4, focus: 5 } },
+            { id: "alexei", type: "electric", icon: "⚡", role: "Tech Artificer", name: "Alexei", alias: "Magnet Master", image: "images/alexei.png", pronoun: "his", description: "A genius inventor with magnetic superpowers! Alexei can sense every piece of metal around him, even if it's hidden inside walls. He can pull metal objects to him from across the room and reshape them with his mind. Once, he turned old bike parts into a flying drone in under a minute! When the team needed to cross a river, he lifted a metal bridge from the scrapyard and moved it into place. He's built hundreds of gadgets in his secret workshop, and he always carries spare parts in his backpack for emergency inventions. His best creation? A magnetic skateboard that can ride up walls!", moves: [{ name: "Magnetic Crush", pwr: 90 }, { name: "Scrap Shield", pwr: 85 }, { name: "Tech Disruption", pwr: 70 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 } },
+            { id: "florrie", type: "ice", icon: "❄️", role: "Cryomancer", name: "Florrie", alias: "Frostbeam", image: "images/florrie.png", pronoun: "her", description: "The coolest hero in town, literally! With just a touch, Florrie can freeze anything solid. She creates beautiful ice sculptures that come to life as frozen guardians to protect the team. She can freeze the water in the air to make ice bridges, walls, or even ice slides to surf on! During one battle, she froze an entire lake in two seconds to stop enemies from escaping. When she's really focused, she can lower the temperature of an entire room to freezing. Her breath creates icy fog that she uses to hide her team from enemies. She once made an ice palace that lasted all summer!", moves: [{ name: "Flash Freeze", pwr: 88 }, { name: "Glacial Wall", pwr: 92 }, { name: "Ice Slide", pwr: 65 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "joshua", type: "impact", icon: "💥", role: "Guardian Tank", name: "Joshua", alias: "Shield Guardian", image: "images/joshua.png", pronoun: "his", description: "The ultimate protector! Joshua's shield isn't made of metal. It's pure energy that glows bright blue. Every time something hits his shield, it makes it stronger! He can absorb the force of explosions, laser beams, or super strong punches, then release that energy as protective force fields around his teammates. During a robot attack, he absorbed twenty laser blasts and then reflected them all back at once! Joshua is also incredibly brave and will always put himself between danger and his friends. His shield can grow big enough to protect an entire building from falling debris!", moves: [{ name: "Titan Charge", pwr: 95 }, { name: "Energy Reflect", pwr: 85 }, { name: "Shield Bash", pwr: 80 }], stats: { bravery: 5, speed: 3, strength: 4, teamwork: 5, focus: 3 } },
+            { id: "lulu", type: "electric", icon: "⚡", role: "Speed Striker", name: "Lulu", alias: "Red Comet", image: "images/lulu.png", pronoun: "his", description: "A crimson speedster who moves so fast he's just a red blur! Lulu vibrates his body at super high speeds, which lets him phase through solid walls like a ghost. He can disrupt electronic locks and security systems just by touching them. When he runs at top speed, he creates sonic booms and can run up walls and even across ceilings! During a bank robbery, he vibrated through the vault door, grabbed the money back, and returned it before the robbers even knew what happened. His speed is so incredible that he can be in three different places in the same second, making it look like there are multiple Lulus fighting at once!", moves: [{ name: "Mach-1 Strike", pwr: 93 }, { name: "Red Blur", pwr: 82 }, { name: "After-Image", pwr: 70 }], stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "manny", type: "impact", icon: "💥", role: "Heavy Hitter", name: "Manny", alias: "Earth Hammer", image: "images/manny.png", pronoun: "his", description: "Connected to the planet itself! Manny can feel vibrations through the ground and knows when trouble is coming from miles away. When he punches the ground, he creates earthquakes that only affect bad guys. He's the strongest hero on the team and can lift cars, buses, or even small buildings! When a skyscraper started to collapse, Manny held it up with his bare hands while everyone evacuated. When he plants his feet, nothing can move him. He becomes as solid as a mountain. He also talks to rocks and can make stone walls rise up from the ground to protect his team. Once, he created an entire stone fortress in ten seconds!", moves: [{ name: "Seismic Slam", pwr: 96 }, { name: "Tremor Wave", pwr: 85 }, { name: "Fortify", pwr: 90 }], stats: { bravery: 5, speed: 2, strength: 5, teamwork: 5, focus: 3 } },
+            { id: "maurits", type: "ice", icon: "❄️", role: "Storm Mage", name: "Maurits", alias: "Storm Caller", image: "images/maurits.png", pronoun: "his", description: "Master of the weather! Maurits can summon thunderstorms, blizzards, and hurricanes with a wave of his hand. He rides on storm clouds like they're magic carpets and can call down lightning strikes with pinpoint accuracy. When a forest fire threatened the city, he summoned a rainstorm that put it out in minutes. When he's angry, the sky turns dark and thunder rumbles overhead. He can also create gentle rain to help plants grow or thick fog to hide his team. His eyes glow bright white when he uses his weather powers, and he can sense changes in the atmosphere before anyone else. He once created a small tornado to lift a cat safely out of a tree!", moves: [{ name: "Lightning Bolt", pwr: 94 }, { name: "Blizzard Howl", pwr: 88 }, { name: "Fog Cover", pwr: 60 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 5 } },
+            { id: "noa", type: "impact", icon: "💥", role: "Sniper Scout", name: "Noa", alias: "Sky Archer", image: "images/noa.png", pronoun: "her", description: "She never misses! Noa's eyes can zoom in like a telescope, letting her see dangers from three miles away. She can even see in the dark and spot invisible enemies! Her bow creates arrows made of pure energy that can explode, freeze, or electrify on impact. The amazing part? Her arrows can curve around buildings and obstacles to hit targets she can't even see directly. Last month, she shot an arrow that curved around five buildings to stop a getaway car! She's also an expert tracker and can follow trails that are days old. She once found a lost puppy by following its tiny paw prints across the entire city!", moves: [{ name: "Sure Shot", pwr: 95 }, { name: "Eagle Eye", pwr: 50 }, { name: "Ricochet Arrow", pwr: 82 }], stats: { bravery: 4, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "noah", type: "ice", icon: "❄️", role: "Sonic Controller", name: "Noah", alias: "Soundwave", image: "images/noah.png", pronoun: "her", description: "The hero who controls all sound! Noah can hear a whisper from across the city and knows every sound by heart. She can create zones of total silence where no one can hear anything, perfect for sneaky missions. When she wants to, she releases sonic booms powerful enough to shatter steel and knock back enemies without hurting her friends. During an alien invasion, she used a sonic blast to crack open their spaceship's hull! Noah can also mimic any voice perfectly and use echolocation like a bat to see in complete darkness. When she concentrates, she can even make sounds solid, creating sound walls for protection. She once sang a note so perfect it made everyone cry happy tears!", moves: [{ name: "Sonic Boom", pwr: 91 }, { name: "Silence Bubble", pwr: 70 }, { name: "Echo Pulse", pwr: 85 }], stats: { bravery: 4, speed: 3, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "phaedra", type: "ice", icon: "❄️", role: "Wind Dancer", name: "Phaedra", alias: "Whirlwind", image: "images/phaedra.png", pronoun: "her", description: "She dances on air and commands the wind! Phaedra can fly by riding wind currents and never needs to touch the ground. She creates tornadoes that lift enemies into the sky, gentle breezes that catch falling people, and wind barriers that deflect bullets and energy blasts. When a bus full of kids drove off a bridge, she created a cushion of air that gently lowered it to the ground! When she spins, she becomes a human hurricane that can blow away anything in her path. She can also sense changes in air pressure, which means she knows when something's about to happen. Her greatest trick? Making air so thick it becomes like an invisible cushion to save people from any fall!", moves: [{ name: "Tornado Spin", pwr: 96 }, { name: "Hurricane Blast", pwr: 92 }, { name: "Air Cushion", pwr: 82 }], stats: { bravery: 4, speed: 5, strength: 3, teamwork: 5, focus: 5 } },
+            { id: "rex", type: "electric", icon: "⚡", role: "Trickster", name: "Rex", alias: "Triple Strike", image: "images/rex.png", pronoun: "his", description: "The boy who exists in three places at once! Rex has mastered time powers that let him split into three identical copies. Each copy can think and act independently, making him the ultimate multitasker! His time abilities also let him glimpse a few seconds into the future, so he can dodge attacks before they even happen. During one mission, his three copies surrounded a villain from all sides and caught him in three seconds! When his three copies work together, they can pull off combination moves that seem impossible. Sometimes he uses his power to try something, see if it works, then rewind time to do it perfectly. He once aced a test by seeing the questions in the future!", moves: [{ name: "Tri-Attack", pwr: 92 }, { name: "Clone Swap", pwr: 75 }, { name: "Confusion", pwr: 65 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 3 } },
+            { id: "rory", type: "impact", icon: "💥", role: "Duelist", name: "Rory", alias: "Blue Flash", image: "images/rory.png", pronoun: "his", description: "A plasma blade master! Rory's twin swords aren't metal. They're made of super hot blue plasma that can slice through almost anything. He moves like lightning in combat, his blades creating dazzling patterns of blue light. He's mastered an ancient sword fighting style that he learned from mysterious warrior monks. When a giant robot attacked downtown, he sliced it into pieces in under five seconds! Rory can also use his blades to deflect energy attacks back at enemies and even cut through solid steel doors. When he focuses his energy, his swords extend into long plasma whips that can reach enemies fifty feet away!", moves: [{ name: "Blade Dance", pwr: 93 }, { name: "Cross Slash", pwr: 88 }, { name: "Flash Cut", pwr: 90 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "viola", type: "impact", icon: "💥", role: "Blade Master", name: "Viola", alias: "Twin Saber", image: "images/viola.png", pronoun: "her", description: "The most graceful fighter you'll ever see! Viola's twin energy sabers glow with purple light and can cut through any material. She fights like she's dancing, flowing around attacks and using her opponents' own force against them. Her incredible reflexes let her deflect bullets and energy blasts with her sabers. Once, she deflected a hundred laser shots in ten seconds without getting hit once! Viola can also create temporary energy shields with her blades and throw them like boomerangs that always return to her hands. She's trained in twelve different martial arts and never wastes a single movement. In one battle, she disarmed twenty robots without breaking a sweat!", moves: [{ name: "Saber Deflect", pwr: 94 }, { name: "Twin Strike", pwr: 89 }, { name: "Pushback", pwr: 80 }], stats: { bravery: 5, speed: 4, strength: 3, teamwork: 5, focus: 4 } },
+            { id: "wilbur", type: "impact", icon: "💥", role: "Titan", name: "Wilbur", alias: "Titan Punch", image: "images/wilbur.png", pronoun: "his", description: "The gentle giant with the strength of a hundred men! Despite being the strongest person on Earth, Wilbur is kind and uses his power carefully. He can lift entire trucks over his head, punch through concrete walls, and create shockwaves by clapping his hands together. When an earthquake hit the city, he held up a collapsing building for two hours while people escaped! His incredible strength also makes him nearly invincible. Bullets bounce off his skin! Wilbur loves using his power to help people by lifting fallen trees, moving heavy debris after disasters, and carrying people to safety. When he stomps, the ground shakes for blocks. He once arm wrestled a tank and won!", moves: [{ name: "Mega Punch", pwr: 98 }, { name: "Ground Breaker", pwr: 92 }, { name: "Atlas Lift", pwr: 85 }], stats: { bravery: 5, speed: 3, strength: 5, teamwork: 5, focus: 4 } },
+            { id: "zane", type: "electric", icon: "⚡", role: "Technomancer", name: "Zane", alias: "Storm Pulse", image: "images/zane.png", pronoun: "his", description: "A walking power plant! Zane's body crackles with lightning and electricity at all times. He can drain power from any machine nearby to supercharge himself, or share his energy to power up broken devices. His lightning bolts are so precise he can hit targets the size of a coin from across the room. When the city had a blackout, he powered the entire hospital with his electricity for three days! Zane can also create EMP pulses that shut down all electronics in an area, perfect for stopping robots and tech villains. When he's fully charged, electricity arcs between his fingertips and his hair stands straight up. He never needs to charge his phone because he IS the charger!", moves: [{ name: "Overload", pwr: 95 }, { name: "Static Shock", pwr: 85 }, { name: "EMP Blast", pwr: 90 }], stats: { bravery: 5, speed: 5, strength: 3, teamwork: 5, focus: 4 } }
         ];
         heroes.sort((a, b) => a.name.localeCompare(b.name));
 
+        // UPDATED: Villains now have elemental types for strategic matchups
         const villains = [
-             { name: "Wooden Scorpion", img: "https://placehold.co/400x400/5d4037/d7ccc8?text=Wooden+Scorpion\n(STING!)", move: "Tail Sting" },
-             { name: "Giant Robot", img: "https://placehold.co/400x400/37474f/cfd8dc?text=Giant+Robot\n(LASER!)", move: "Laser Eye" },
-             { name: "Wooden Tiger", img: "https://placehold.co/400x400/e65100/ffe0b2?text=Wooden+Tiger\n(CLAW!)", move: "Claw Swipe" },
-             { name: "Wooden Bats", img: "https://placehold.co/400x400/263238/eceff1?text=Wooden+Bats\n(SCREECH!)", move: "Sonic Screech" }
+             { 
+                 name: "Neon Tiger", 
+                 type: "electric", 
+                 img: "images/tiger.png", 
+                 move: "Razor Slash",
+                 description: "A genetically enhanced predator escaped from a secret lab. Covered in bioluminescent stripes that crackle with stolen electricity, it stalks the neon-lit streets hunting for energy sources to drain.",
+                 stats: { danger: 4, speed: 5, cunning: 3, power: 3 },
+                 weakness: "Ground/Impact attacks disrupt its electrical field.",
+                 signature: "Voltage Claw"
+             },
+             { 
+                 name: "Cyber Grizzly", 
+                 type: "impact", 
+                 img: "images/bear.png", 
+                 move: "Crushing Maul",
+                 description: "A robotic beast built from scrapped military hardware. Its crushing strength can flatten cars like tin cans, and its roar creates sonic shockwaves that shatter glass.",
+                 stats: { danger: 5, speed: 2, cunning: 2, power: 5 },
+                 weakness: "Cold temperatures freeze its hydraulic fluid.",
+                 signature: "Titan Bite"
+             },
+             { 
+                 name: "Shadow Panther", 
+                 type: "ice", 
+                 img: "images/panthers.png", 
+                 move: "Silent Strike",
+                 description: "A spectral feline that phases between dimensions. Leaves trails of freezing mist wherever it stalks, lowering the ambient temperature to absolute zero in seconds.",
+                 stats: { danger: 4, speed: 5, cunning: 5, power: 3 },
+                 weakness: "Bright electrical flashes disrupt its stealth cloak.",
+                 signature: "Frost Bite"
+             },
+             { 
+                 name: "Thunder Gorilla", 
+                 type: "electric", 
+                 img: "images/gorilla.png", 
+                 move: "Seismic Smash",
+                 description: "An ancient primate awakened by a lightning strike. Channels storm energy through its massive fists, capable of generating localized thunderstorms when it beats its chest.",
+                 stats: { danger: 5, speed: 3, cunning: 3, power: 5 },
+                 weakness: "Ice can ground its electrical discharge.",
+                 signature: "Storm Slam"
+             },
+             { 
+                 name: "Omega Droid", 
+                 type: "impact", 
+                 img: "images/robot.png", 
+                 move: "Plasma Beam",
+                 description: "The final creation of a mad inventor. Cold, calculating, and programmed only to destroy. It learns from every battle, upgrading its armor in real-time.",
+                 stats: { danger: 5, speed: 4, cunning: 5, power: 4 },
+                 weakness: "Overloads from excessive electricity.",
+                 signature: "Annihilation Beam"
+             }
         ];
+
+        /* --- PRELOADER --- */
+        function preloadImages() {
+            const imageUrls = [...heroes.map(h => h.image), ...villains.map(v => v.img)];
+            imageUrls.forEach(url => {
+                const img = new Image();
+                img.src = url;
+            });
+        }
+        window.addEventListener('load', preloadImages);
 
         /* --- AUDIO ENGINE & MUSIC SYNTH --- */
         const AudioEngine = {
             ctx: null,
             interval: null,
-            init: function () { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
+            isMuted: false,
+            
+            init: function () { 
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    // Load saved state
+                    const savedMute = localStorage.getItem('hawthorn_muted');
+                    if(savedMute === 'true') {
+                        this.isMuted = true;
+                        document.getElementById('muteBtn').innerText = '🔇';
+                    }
+                } 
+            },
+
+            toggleMute: function() {
+                this.init();
+                this.isMuted = !this.isMuted;
+                localStorage.setItem('hawthorn_muted', this.isMuted);
+                
+                const btn = document.getElementById('muteBtn');
+                btn.innerText = this.isMuted ? '🔇' : '🔊';
+
+                if(this.isMuted) this.stopMusic();
+                else if(isBattleActive) this.startMusic();
+            },
 
             playTone: function(freq, type, duration) {
-                if(!this.ctx) return;
+                if(this.isMuted || !this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = type;
@@ -655,13 +1283,14 @@
             },
 
             // Soft "Cinematic Heartbeat" Music Generator
-            startMusic: function() {
-                if(!this.ctx) this.init();
-                if(this.interval) return;
+            startMusic: function(isDanger = false) {
+                if(this.isMuted || !this.ctx) { this.init(); return; }
+                if(this.interval) clearInterval(this.interval);
                 
                 this.ctx.resume();
                 let beat = 0;
-                const tempo = 600; 
+                // TEMPO INCREASES IN DANGER MODE
+                const tempo = isDanger ? 300 : 600; 
                 
                 this.interval = setInterval(() => {
                     const t = this.ctx.currentTime;
@@ -670,7 +1299,7 @@
                     const gain = this.ctx.createGain();
                     osc.type = 'sine';
                     osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.frequency.setValueAtTime(100, t);
+                    osc.frequency.setValueAtTime(isDanger ? 120 : 100, t); // Higher pitch danger kick
                     osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
                     gain.gain.setValueAtTime(0.3, t);
                     gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
@@ -682,7 +1311,7 @@
                         const bassGain = this.ctx.createGain();
                         bassOsc.type = 'sine';
                         bassOsc.connect(bassGain); bassGain.connect(this.ctx.destination);
-                        bassOsc.frequency.setValueAtTime(50, t); 
+                        bassOsc.frequency.setValueAtTime(isDanger ? 60 : 50, t); 
                         bassOsc.frequency.linearRampToValueAtTime(40, t + 0.4);
                         bassGain.gain.setValueAtTime(0.1, t);
                         bassGain.gain.linearRampToValueAtTime(0, t + 0.5);
@@ -700,7 +1329,7 @@
             },
 
             hitSound: function() {
-                if(!this.ctx) return;
+                if(this.isMuted || !this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'sawtooth';
@@ -716,15 +1345,218 @@
         // Auto-Init Audio
         document.addEventListener('click', () => { AudioEngine.init(); }, { once: true });
 
+        /* --- VISUAL EFFECTS SYSTEM --- */
+        const VisualFX = {
+            // Projectile launcher
+            fireProjectile: function(fromElement, toElement, type) {
+                const stage = document.getElementById('battleStage');
+                const fromRect = fromElement.getBoundingClientRect();
+                const toRect = toElement.getBoundingClientRect();
+                const stageRect = stage.getBoundingClientRect();
+
+                const startX = fromRect.left + fromRect.width/2 - stageRect.left;
+                const startY = fromRect.top + fromRect.height/2 - stageRect.top;
+                const endX = toRect.left + toRect.width/2 - stageRect.left;
+                const endY = toRect.top + toRect.height/2 - stageRect.top;
+
+                // Color based on type
+                const colors = {
+                    electric: '#fbbf24',
+                    ice: '#22d3ee',
+                    impact: '#ef4444'
+                };
+                const color = colors[type] || '#fff';
+
+                // Create projectile
+                const projectile = document.createElement('div');
+                projectile.className = 'projectile';
+                projectile.style.background = color;
+                projectile.style.boxShadow = `0 0 30px ${color}`;
+                projectile.style.left = startX + 'px';
+                projectile.style.top = startY + 'px';
+                projectile.style.setProperty('--start-x', '0px');
+                projectile.style.setProperty('--start-y', '0px');
+                projectile.style.setProperty('--end-x', (endX - startX) + 'px');
+                projectile.style.setProperty('--end-y', (endY - startY) + 'px');
+
+                stage.appendChild(projectile);
+
+                // Create trail
+                const trail = document.createElement('div');
+                trail.className = 'projectile-trail';
+                trail.style.background = `linear-gradient(90deg, ${color}, transparent)`;
+                trail.style.left = startX + 'px';
+                trail.style.top = startY + 'px';
+                const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+                trail.style.transform = `rotate(${angle}deg)`;
+                stage.appendChild(trail);
+
+                // Cleanup
+                setTimeout(() => {
+                    projectile.remove();
+                    trail.remove();
+                }, 800);
+            },
+
+            // Show floating damage number
+            showDamage: function(element, damage, isCritical = false, multiplier = 1) {
+                const rect = element.getBoundingClientRect();
+                const stage = document.getElementById('battleStage');
+                const stageRect = stage.getBoundingClientRect();
+
+                const damageNum = document.createElement('div');
+                damageNum.className = 'damage-number' + (isCritical ? ' critical' : '');
+                damageNum.textContent = Math.round(damage);
+                damageNum.style.left = (rect.left + rect.width/2 - stageRect.left) + 'px';
+                damageNum.style.top = (rect.top + rect.height/2 - stageRect.top) + 'px';
+
+                if(isCritical) damageNum.textContent += '!';
+                else if(multiplier > 1.2) damageNum.textContent += '↑'; // Bonus indicator
+                else if(multiplier < 0.8) damageNum.textContent += '↓'; // Weak indicator
+
+                stage.appendChild(damageNum);
+                setTimeout(() => damageNum.remove(), 1500);
+            },
+            
+            // Show Speech Bubble
+            showSpeech: function(element, text, color = '#fff') {
+                const bubble = document.createElement('div');
+                bubble.className = 'speech-bubble';
+                bubble.innerText = text;
+                bubble.style.borderColor = color;
+                
+                // Attach to the side-img parent, not the image itself so it doesn't rotate with the image
+                element.parentNode.appendChild(bubble);
+                
+                setTimeout(() => {
+                    bubble.style.opacity = 0;
+                    setTimeout(() => bubble.remove(), 300);
+                }, 1500);
+            },
+
+            // Create impact ring
+            createImpactRing: function(element, color) {
+                const rect = element.getBoundingClientRect();
+                const stage = document.getElementById('battleStage');
+                const stageRect = stage.getBoundingClientRect();
+
+                const ring = document.createElement('div');
+                ring.className = 'impact-ring';
+                ring.style.borderColor = color;
+                ring.style.left = (rect.left + rect.width/2 - stageRect.left) + 'px';
+                ring.style.top = (rect.top + rect.height/2 - stageRect.top) + 'px';
+
+                stage.appendChild(ring);
+                setTimeout(() => ring.remove(), 600);
+            },
+
+            // Charge up animation
+            chargeUp: function(element, type) {
+                const colors = {
+                    electric: '#fbbf24',
+                    ice: '#22d3ee',
+                    impact: '#ef4444'
+                };
+                element.style.setProperty('--charge-color', colors[type] || '#fff');
+                element.classList.add('charging');
+
+                return () => element.classList.remove('charging');
+            },
+
+            // Camera focus
+            focusOn: function(side) {
+                const stage = document.getElementById('battleStage');
+                stage.classList.remove('focus-left', 'focus-right');
+                if(side) {
+                    stage.classList.add('focus-' + side);
+                }
+            },
+
+            // Screen shake with intensity
+            shake: function(intensity = 'normal') {
+                const stage = document.getElementById('battleStage');
+                stage.classList.remove('shake-light', 'shake', 'shake-hard');
+
+                if(intensity === 'light') stage.classList.add('shake-light');
+                else if(intensity === 'hard') stage.classList.add('shake-hard');
+                else stage.classList.add('shake');
+
+                setTimeout(() => {
+                    stage.classList.remove('shake-light', 'shake', 'shake-hard');
+                }, 600);
+            },
+
+            // Update background intensity
+            setIntensity: function(level) {
+                const stage = document.getElementById('battleStage');
+                stage.classList.remove('intensity-low', 'intensity-high');
+                if(level === 'low') stage.classList.add('intensity-low');
+                if(level === 'high') stage.classList.add('intensity-high');
+            }
+        };
+
+        // Combo Counter Manager
+        const ComboSystem = {
+            count: 0,
+            element: null,
+
+            init: function() {
+                if(!this.element) {
+                    this.element = document.createElement('div');
+                    this.element.className = 'combo-counter';
+                    document.getElementById('battleStage').appendChild(this.element);
+                }
+            },
+
+            increment: function() {
+                this.init();
+                this.count++;
+                this.element.textContent = `${this.count} HIT COMBO!`;
+                this.element.classList.remove('high');
+
+                if(this.count >= 5) {
+                    this.element.classList.add('high');
+                }
+
+                // Reset opacity to trigger animation
+                this.element.style.opacity = '0';
+                setTimeout(() => this.element.style.animation = 'none', 10);
+                setTimeout(() => this.element.style.animation = '', 20);
+            },
+
+            reset: function() {
+                this.count = 0;
+                if(this.element) {
+                    this.element.style.opacity = '0';
+                }
+            }
+        };
+
+        /* --- BATTLE STATS TRACKER (NEW) --- */
+        const BattleStats = {
+            maxCombo: 0,
+            critsDealt: 0,
+            startHP: 100,
+            reset: function() {
+                this.maxCombo = 0;
+                this.critsDealt = 0;
+            },
+            checkCombo: function() {
+                if(ComboSystem.count > this.maxCombo) this.maxCombo = ComboSystem.count;
+            }
+        };
+
         /* --- BATTLE LOGIC --- */
         let isBattleSelecting = false;
-        let isBattleActive = false; 
+        let isBattleActive = false;
         let selectedHeroes = [];
         let currentVillain = null;
+        let synergyActive = false; // New Synergy Flag
 
         // BATTLE STATE
         let currentHeroHP = 100;
         let currentVillainHP = 100;
+        const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
         function toggleBattleMode() {
             AudioEngine.playTone(400, 'sine', 0.1);
@@ -756,6 +1588,9 @@
 
         function handleBattleSelection(id) {
              const card = document.getElementById(`card-${id}`);
+             // NOTE: scrollIntoView removed to fix animation glitch
+             // card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
              const startBtn = document.getElementById('startFightBtn');
              const selectTxt = document.getElementById('selectText');
              
@@ -766,10 +1601,10 @@
                   card.classList.add('dimmed');
              } else {
                   if(selectedHeroes.length < 2) {
-                       AudioEngine.playTone(600, 'sine', 0.1);
-                       selectedHeroes.push(id);
-                       card.classList.add('selected');
-                       card.classList.remove('dimmed');
+                        AudioEngine.playTone(600, 'sine', 0.1);
+                        selectedHeroes.push(id);
+                        card.classList.add('selected');
+                        card.classList.remove('dimmed');
                   }
              }
 
@@ -785,36 +1620,66 @@
              }
         }
 
-        function openBattleArena() {
+        // NEW: Initiate Battle Click Handler
+        async function openBattleArena() {
              AudioEngine.playTone(800, 'sine', 0.3);
-             
-             currentVillain = villains[Math.floor(Math.random() * villains.length)];
-             
-             document.getElementById('villainName').innerText = currentVillain.name;
-             document.getElementById('villainImg').src = currentVillain.img;
-             
+
+             // 1. SYNERGY CHECK
              const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
              const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
              
+             synergyActive = (hero1.type === hero2.type);
+             
+             if(synergyActive) {
+                 await playSynergyAnimation(hero1.type);
+             }
+
+             // 2. SETUP BATTLE DATA (Select Villain, Reset HP)
+             setupBattleState(hero1, hero2);
+
+             // 3. SHOW DOSSIER AUTOMATICALLY
+             openVillainModal(true); 
+        }
+
+        function setupBattleState(hero1, hero2) {
+             currentVillain = villains[Math.floor(Math.random() * villains.length)];
+
+             // Populate Battle Arena Elements (Hidden for now)
+             document.getElementById('villainName').innerText = currentVillain.name;
+             document.getElementById('villainImg').src = currentVillain.img;
+             document.getElementById('villainImg').className = 'side-img'; 
+
              document.getElementById('hero1Img').src = hero1.image;
              document.getElementById('hero2Img').src = hero2.image;
-             
+
              // RESET HEALTH
              currentHeroHP = 100;
              currentVillainHP = 100;
              updateHealthUI('villain', 100);
              updateHealthUI('heroes', 100);
-             
-             document.getElementById('battleText').innerText = "Waiting for command...";
-             document.getElementById('battleStage').classList.remove('slow-mo', 'shake-hard');
-             
-             // Reset Overlays
-             const elOverlay = document.getElementById('elementalOverlay');
-             elOverlay.className = ''; 
-             elOverlay.style.opacity = 0;
 
-             document.getElementById('combatStartOverlay').style.display = 'flex';
-             document.getElementById('battleOverlay').classList.add('active');
+             // HIDE POST BATTLE
+             document.getElementById('postBattleModal').classList.remove('active');
+
+             // RESET STAGE
+             document.getElementById('battleText').innerText = "Waiting for command...";
+             const stage = document.getElementById('battleStage');
+             stage.classList.remove('slow-mo', 'shake-hard', 'shake', 'shake-light', 'focus-left', 'focus-right', 'intensity-low', 'intensity-high', 'danger');
+
+             // RESET VISUALS
+             document.getElementById('elementalOverlay').className = '';
+             document.getElementById('elementalOverlay').style.opacity = 0;
+             document.querySelectorAll('.side-img').forEach(img => {
+                 img.classList.remove('victory-pose', 'charging');
+             });
+        }
+
+        // NEW: Button handler inside Dossier
+        function enterArena() {
+            closeVillainModal();
+            document.getElementById('combatStartOverlay').style.display = 'flex';
+            document.getElementById('battleOverlay').classList.add('active');
+            AudioEngine.playTone(600, 'sine', 0.2); // Entry sound
         }
 
         function updateHealthUI(side, pct) {
@@ -823,12 +1688,29 @@
             if(pct > 60) bar.style.background = side === 'villain' ? '#ef4444' : '#22c55e'; // Green/Red
             else if(pct > 30) bar.style.background = 'orange';
             else bar.style.background = '#dc2626'; // Deep Red
+            
+            // DANGER STATE TRIGGER
+            if (side === 'heroes') {
+                const stage = document.getElementById('battleStage');
+                if (pct < 30 && pct > 0) {
+                    if (!stage.classList.contains('danger')) {
+                        stage.classList.add('danger');
+                        AudioEngine.startMusic(true); // Start Fast Tempo
+                    }
+                } else {
+                    if (stage.classList.contains('danger')) {
+                        stage.classList.remove('danger');
+                        AudioEngine.startMusic(false); // Reset Tempo
+                    }
+                }
+            }
         }
 
         function beginCombatSequence() {
              document.getElementById('combatStartOverlay').style.display = 'none';
              isBattleActive = true;
-             AudioEngine.startMusic();
+             BattleStats.reset();
+             AudioEngine.startMusic(false);
              
              const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
              const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
@@ -840,6 +1722,7 @@
              isBattleActive = false;
              AudioEngine.stopMusic();
              document.getElementById('battleOverlay').classList.remove('active');
+             document.getElementById('postBattleModal').classList.remove('active');
              toggleBattleMode(); 
         }
 
@@ -853,6 +1736,180 @@
                 element.classList.remove('shake');
                 element.classList.remove('damage-flash');
             }, 500);
+        }
+        
+        // TYPEWRITER EFFECT REMOVED - Replaced with direct text update
+        function updateBattleLog(text) {
+             document.getElementById('battleText').innerText = text;
+        }
+        
+        /* --- SYNERGY ANIMATION --- */
+        async function playSynergyAnimation(type) {
+            const overlay = document.getElementById('synergyOverlay');
+            const textEl = document.getElementById('synergyText');
+            
+            let text = "";
+            let className = "";
+            
+            if (type === 'electric') { 
+                text = "⚡ THUNDERSTORM SYNERGY ⚡"; 
+                className = "synergy-electric"; 
+            }
+            if (type === 'ice') { 
+                text = "❄️ BLIZZARD SYNERGY ❄️"; 
+                className = "synergy-ice"; 
+            }
+            if (type === 'impact') { 
+                text = "💥 TITAN SMASH SYNERGY 💥"; 
+                className = "synergy-impact"; 
+            }
+            
+            overlay.className = `synergy-overlay ${className} active`;
+            textEl.innerText = text;
+            
+            // Trigger elemental burst effects
+            createMegaBurst(type);
+            setTimeout(() => createMegaBurst(type), 200);
+            setTimeout(() => createMegaBurst(type), 400);
+            
+            // Enhanced sounds per element
+            if (type === 'electric') {
+                AudioEngine.playTone(100, 'sawtooth', 0.2);
+                setTimeout(() => AudioEngine.playTone(200, 'square', 0.15), 100);
+                setTimeout(() => AudioEngine.playTone(400, 'sawtooth', 0.2), 200);
+            } else if (type === 'ice') {
+                AudioEngine.playTone(1000, 'sine', 0.15);
+                setTimeout(() => AudioEngine.playTone(1200, 'sine', 0.1), 150);
+                setTimeout(() => AudioEngine.playTone(800, 'sine', 0.2), 300);
+            } else if (type === 'impact') {
+                AudioEngine.playTone(60, 'sawtooth', 0.4);
+                setTimeout(() => AudioEngine.playTone(40, 'sawtooth', 0.3), 200);
+            }
+            
+            await delay(2500);
+            
+            overlay.classList.remove('active');
+            await delay(500);
+        }
+
+        /* --- VILLAIN MODAL LOGIC --- */
+        function openVillainModal(isPreBattle = false) {
+            if(!currentVillain) return;
+            
+            const vModal = document.getElementById('villainModal');
+            const vImg = document.getElementById('vmImage');
+            const vName = document.getElementById('vmName');
+            const vType = document.getElementById('vmType');
+            const vDesc = document.getElementById('vmDesc');
+            const vSig = document.getElementById('vmSignature');
+            const vWeak = document.getElementById('vmWeakness');
+            const vStats = document.getElementById('vmStats');
+            const vBadge = document.getElementById('vmTypeBadge');
+            const startBtn = document.getElementById('vmStartBtn');
+
+            // Show/Hide button based on context
+            if (isPreBattle) {
+                startBtn.style.display = 'block';
+            } else {
+                startBtn.style.display = 'none';
+            }
+
+            // Icons based on type
+            const icons = { electric: '⚡', ice: '❄️', impact: '💥' };
+            
+            vImg.src = currentVillain.img;
+            vName.innerText = currentVillain.name;
+            vType.innerText = `Class: ${currentVillain.type.toUpperCase()}`;
+            vDesc.innerText = currentVillain.description;
+            vSig.innerText = currentVillain.signature;
+            vWeak.innerHTML = `<strong>Weakness:</strong> ${currentVillain.weakness}`;
+            vBadge.innerText = icons[currentVillain.type];
+
+            // Render Stats
+            vStats.innerHTML = `
+                ${createStatRow('Danger', currentVillain.stats.danger, 'villain-stat-fill')}
+                ${createStatRow('Speed', currentVillain.stats.speed, 'villain-stat-fill')}
+                ${createStatRow('Cunning', currentVillain.stats.cunning, 'villain-stat-fill')}
+                ${createStatRow('Power', currentVillain.stats.power, 'villain-stat-fill')}
+            `;
+
+            vModal.classList.add('active');
+            
+            // Trigger stat bars
+            setTimeout(() => { 
+                vModal.querySelectorAll('.stat-fill').forEach((bar, i) => {
+                    setTimeout(() => bar.style.width = bar.getAttribute('data-pct'), i * 100);
+                });
+            }, 300);
+            
+            AudioEngine.playTone(100, 'sawtooth', 0.3);
+        }
+
+        function closeVillainModal() {
+            const vModal = document.getElementById('villainModal');
+            vModal.classList.remove('active');
+            vModal.querySelectorAll('.stat-fill').forEach(bar => bar.style.width = '0%');
+        }
+
+        /* --- POST BATTLE REPORT (NEW) --- */
+        function showVictoryScreen(victory) {
+            const modal = document.getElementById('postBattleModal');
+            const title = document.getElementById('pbTitle');
+            const starsEl = document.getElementById('pbStars');
+            const scoreEl = document.getElementById('pbScore');
+            
+            let stars = 0;
+            let score = 0;
+            
+            if(victory) {
+                title.innerText = "VICTORY!";
+                title.style.background = "linear-gradient(180deg, #fbbf24, #f59e0b)";
+                title.style.webkitBackgroundClip = "text";
+                
+                // Calculate Score
+                const hpBonus = Math.round(currentHeroHP * 10);
+                const comboBonus = BattleStats.maxCombo * 50;
+                const critBonus = BattleStats.critsDealt * 100;
+                score = 1000 + hpBonus + comboBonus + critBonus;
+                
+                // Calculate Stars (EASIER NOW)
+                if(currentHeroHP >= 30) stars = 3; // 3 Stars: >30% HP
+                else if(currentHeroHP >= 10) stars = 2; // 2 Stars: >10% HP
+                else stars = 1;
+                
+                // Render Details
+                scoreEl.innerHTML = `
+                    <div class="score-row"><span>Battle Win</span> <span class="score-val">+1000</span></div>
+                    <div class="score-row"><span>Health Bonus</span> <span class="score-val">+${hpBonus}</span></div>
+                    <div class="score-row"><span>Max Combo (${BattleStats.maxCombo})</span> <span class="score-val">+${comboBonus}</span></div>
+                    <div class="score-row"><span>Criticals (${BattleStats.critsDealt})</span> <span class="score-val">+${critBonus}</span></div>
+                    <div style="border-top:1px solid #fff; margin-top:10px; padding-top:5px; font-size:2rem; color:#fbbf24;">${score}</div>
+                `;
+            } else {
+                title.innerText = "DEFEAT";
+                title.style.background = "linear-gradient(180deg, #ef4444, #991b1b)";
+                title.style.webkitBackgroundClip = "text";
+                scoreEl.innerHTML = `<div style="color:#fff; margin-top:20px;">Don't give up! Try different heroes!</div>`;
+                stars = 0;
+            }
+            
+            // Render Stars
+            starsEl.innerHTML = '';
+            for(let i=0; i<3; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerText = '★';
+                starsEl.appendChild(star);
+                
+                if(i < stars) {
+                    setTimeout(() => {
+                        star.classList.add('active');
+                        AudioEngine.playTone(600 + (i*200), 'sine', 0.1);
+                    }, 500 + (i * 400));
+                }
+            }
+            
+            modal.classList.add('active');
         }
 
         /* --- ELEMENTAL FINALE LOGIC --- */
@@ -882,113 +1939,361 @@
             }, 1000);
         }
 
-        /* --- DYNAMIC BATTLE ENGINE --- */
+        /* --- STRATEGIC BATTLE ENGINE --- */
+        // IMPROVEMENT: Elemental Advantage Calculation
+        function getMultiplier(atkType, defType) {
+            // Rock Paper Scissors: Electric > Ice > Impact > Electric
+            if (atkType === 'electric' && defType === 'ice') return 1.5;
+            if (atkType === 'ice' && defType === 'impact') return 1.5;
+            if (atkType === 'impact' && defType === 'electric') return 1.5;
+            
+            if (atkType === 'electric' && defType === 'impact') return 0.7; // Weak
+            if (atkType === 'ice' && defType === 'electric') return 0.7;
+            if (atkType === 'impact' && defType === 'ice') return 0.7;
+            
+            return 1.0; // Neutral
+        }
+
         async function runDynamicBattle(h1, h2) {
             const log = document.getElementById('battleText');
             const vImg = document.getElementById('villainImg');
+            const vSide = document.getElementById('villainSide');
+            const hSide = document.getElementById('heroesSide');
             const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
             const stage = document.getElementById('battleStage');
 
-            // 1. Determine Winner (70% Heroes Win)
-            const heroesWin = Math.random() < 0.7; 
-            
+            // Reset combo and effects
+            ComboSystem.reset();
+            VisualFX.focusOn(null);
+            VisualFX.setIntensity(null);
+
+            // 1. Determine Winner (65% Heroes Win + Synergy Boost)
+            // If synergy active, win chance increases to 85%
+            const winChance = synergyActive ? 0.85 : 0.65;
+            const heroesWin = Math.random() < winChance;
+
             // 2. Setup Moves Helpers
             const getStandardMove = (h) => h.moves[0] || h.moves[1];
             const getUltimateMove = (h) => h.moves.reduce((prev, current) => (prev.pwr > current.pwr) ? prev : current);
 
-            log.innerText = `Muddlewick summons a ${currentVillain.name}!`;
-            await delay(2000); if(!isBattleActive) return;
+            updateBattleLog(`Muddlewick summons a ${currentVillain.name}!`);
+            VisualFX.shake('light');
+            await delay(1500); if(!isBattleActive) return;
 
-            // 3. GENERATE BATTLE SEQUENCE (6-8 Turns)
-            const totalTurns = Math.floor(Math.random() * 3) + 6; 
-            
+            // 3. GENERATE BATTLE SEQUENCE (7-10 Turns)
+            const totalTurns = Math.floor(Math.random() * 4) + 7;
+            let heroComboCount = 0;
+
             for(let i = 0; i < totalTurns; i++) {
                 if(!isBattleActive) return;
-                
-                const isHeroTurn = (i % 2 === 0) ? Math.random() > 0.4 : Math.random() > 0.6;
-                
+
+                const isHeroTurn = (i % 2 === 0) ? Math.random() > 0.35 : Math.random() > 0.6;
+
                 if(isHeroTurn) {
-                    // HERO ATTACKS
-                    const attacker = Math.random() > 0.5 ? h1 : h2;
+                    // === HERO ATTACKS ===
+                    const attackerIndex = Math.random() > 0.5 ? 0 : 1;
+                    const attacker = attackerIndex === 0 ? h1 : h2;
+                    const attackerImg = hImgs[attackerIndex];
                     const move = getStandardMove(attacker);
-                    
-                    log.innerText = `${attacker.name} uses ${move.name}!`;
-                    AudioEngine.playTone(600 + (Math.random()*200), 'sine', 0.2);
-                    await delay(800);
-                    hitEffect(vImg);
-                    
-                    const damage = 15 + Math.random() * 10;
-                    currentVillainHP = Math.max(10, currentVillainHP - damage); 
-                    updateHealthUI('villain', currentVillainHP);
-                    log.innerText = "A solid hit!";
+                    const isCritical = Math.random() > 0.75;
+                    const taunts = ["Take this!", "Too slow!", "Full power!", "For Hawthorn!", "Hiyah!"];
+                    const randomTaunt = taunts[Math.floor(Math.random() * taunts.length)];
+
+                    // Calculate Advantage
+                    let multiplier = getMultiplier(attacker.type, currentVillain.type);
+                    if(synergyActive) multiplier += 0.2; // Synergy Boost
+
+                    // FOCUS ON HERO
+                    VisualFX.focusOn('right');
+
+                    // SPEECH BUBBLE & CHARGE
+                    updateBattleLog(`${attacker.name} prepares ${move.name}...`);
+                    VisualFX.showSpeech(attackerImg, randomTaunt);
+                    const stopCharge = VisualFX.chargeUp(attackerImg, attacker.type);
+                    AudioEngine.playTone(400, 'sine', 0.3);
+                    await delay(800); if(!isBattleActive) return;
+
+                    stopCharge();
+
+                    // LAUNCH ATTACK
+                    updateBattleLog(`${attacker.name} uses ${move.name}!`);
+                    VisualFX.fireProjectile(attackerImg, vImg, attacker.type);
+                    AudioEngine.playTone(700 + (Math.random()*300), 'square', 0.2);
+                    await delay(600); if(!isBattleActive) return;
+
+                    // DODGE OR HIT?
+                    const dodgeChance = 0.15;
+                    if (Math.random() < dodgeChance) {
+                        // DODGE!
+                        updateBattleLog(`${currentVillain.name} dodges the attack!`);
+                        VisualFX.showSpeech(vImg, "Missed me!");
+                        vImg.classList.add('dodge-right'); 
+                        setTimeout(() => vImg.classList.remove('dodge-right'), 500);
+                        AudioEngine.playTone(150, 'sawtooth', 0.1); // Whiff
+                        
+                        await delay(1000);
+                    } else {
+                        // HIT!
+                        VisualFX.focusOn('left');
+                        
+                        // Apply multiplier logic
+                        let baseDamage = isCritical ? (20 + Math.random() * 15) : (12 + Math.random() * 10);
+                        let finalDamage = baseDamage * multiplier;
+                        
+                        hitEffect(vImg);
+                        AudioEngine.hitSound();
+
+                        const colors = { electric: '#fbbf24', ice: '#22d3ee', impact: '#ef4444' };
+                        VisualFX.createImpactRing(vImg, colors[attacker.type]);
+                        
+                        // NEW: HIT STOP ON CRITICAL
+                        if(isCritical) await delay(150);
+
+                        VisualFX.showDamage(vImg, finalDamage, isCritical, multiplier);
+                        VisualFX.shake(isCritical ? 'normal' : 'light');
+                        
+                        // Text Feedback
+                        if(multiplier > 1.2) updateBattleLog("IT'S SUPER EFFECTIVE!");
+                        else if(multiplier < 0.8) updateBattleLog("It's not very effective...");
+                        else if(isCritical) {
+                            document.getElementById('flashOverlay').classList.add('screen-flash-white');
+                            setTimeout(() => document.getElementById('flashOverlay').classList.remove('screen-flash-white'), 200);
+                            updateBattleLog("CRITICAL HIT!");
+                            BattleStats.critsDealt++;
+                        } else {
+                            updateBattleLog(`${currentVillain.name} staggers!`);
+                        }
+                        
+                        // if(isCritical || multiplier > 1) await delay(500);
+
+                        currentVillainHP = Math.max(10, currentVillainHP - finalDamage);
+                        updateHealthUI('villain', currentVillainHP);
+                        ComboSystem.increment();
+                        BattleStats.checkCombo();
+                    }
 
                 } else {
-                    // VILLAIN ATTACKS
-                    log.innerText = `${currentVillain.name} strikes with ${currentVillain.move}!`;
-                    await delay(800);
-                    hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                    
-                    const damage = 15 + Math.random() * 10;
-                    currentHeroHP = Math.max(10, currentHeroHP - damage); 
-                    updateHealthUI('heroes', currentHeroHP);
-                    log.innerText = "The heroes take damage!";
+                    // === VILLAIN ATTACKS ===
+                    heroComboCount = 0;
+                    ComboSystem.reset();
+
+                    VisualFX.focusOn('left');
+
+                    updateBattleLog(`${currentVillain.name} charges ${currentVillain.move}!`);
+                    VisualFX.showSpeech(vImg, "GRAAAH!", "#ef4444");
+                    const stopCharge = VisualFX.chargeUp(vImg, 'impact');
+                    AudioEngine.playTone(200, 'sawtooth', 0.4);
+                    await delay(1000); if(!isBattleActive) return;
+
+                    stopCharge();
+
+                    updateBattleLog(`${currentVillain.name} unleashes ${currentVillain.move}!`);
+
+                    // Fire at both heroes
+                    VisualFX.fireProjectile(vImg, hImgs[0], 'impact');
+                    await delay(200);
+                    VisualFX.fireProjectile(vImg, hImgs[1], 'impact');
+
+                    await delay(400); if(!isBattleActive) return;
+
+                    // DODGE OR HIT? (Heroes can dodge too!)
+                    const dodgeChance = 0.1;
+                    if(Math.random() < dodgeChance) {
+                        VisualFX.focusOn('right');
+                        updateBattleLog("The heroes dodge just in time!");
+                        hImgs[0].classList.add('dodge-left');
+                        hImgs[1].classList.add('dodge-left');
+                        setTimeout(() => {
+                             hImgs[0].classList.remove('dodge-left');
+                             hImgs[1].classList.remove('dodge-left');
+                        }, 500);
+                        AudioEngine.playTone(150, 'sawtooth', 0.1);
+                        await delay(1000);
+                    } else {
+                        VisualFX.focusOn('right');
+                        const damage = 12 + Math.random() * 12;
+                        hitEffect(hImgs[0]); hitEffect(hImgs[1]);
+                        AudioEngine.hitSound();
+                        VisualFX.createImpactRing(hImgs[0], '#ef4444');
+                        VisualFX.showDamage(hImgs[0], damage);
+                        VisualFX.shake('normal');
+
+                        currentHeroHP = Math.max(10, currentHeroHP - damage);
+                        updateHealthUI('heroes', currentHeroHP);
+                        updateBattleLog("The heroes take a hit!");
+                    }
                 }
 
-                await delay(2000);
+                VisualFX.focusOn(null);
+
+                // BOSS ENRAGE PHASE
+                if (currentVillainHP < 40 && !vImg.classList.contains('enraged-boss')) {
+                    isBattleActive = false; // Pause momentarily
+                    AudioEngine.stopMusic();
+                    VisualFX.focusOn('left');
+                    
+                    updateBattleLog(`${currentVillain.name} is ENRAGED!`);
+                    VisualFX.showSpeech(vImg, "ROAAAR!!!", "#ef4444");
+                    vImg.classList.add('enraged-boss');
+                    AudioEngine.playTone(100, 'sawtooth', 1.0); // Big roar sound
+                    VisualFX.shake('hard');
+                    
+                    await delay(2000); 
+                    
+                    AudioEngine.startMusic();
+                    isBattleActive = true;
+                }
+
+                await delay(1000);
             }
 
             if(!isBattleActive) return;
 
             // 4. THE FINALE
+            ComboSystem.reset();
+            VisualFX.focusOn(null);
+
             if(heroesWin) {
-                // HEROES WIN SCENARIO
-                log.innerText = `${currentVillain.name} roars and attacks furiously!`;
+                // === HEROES WIN SCENARIO ===
+                VisualFX.setIntensity('high');
+
+                updateBattleLog(`${currentVillain.name} roars with fury!`);
+                await delay(1500); if(!isBattleActive) return;
+
+                VisualFX.focusOn('left');
+                const stopCharge = VisualFX.chargeUp(vImg, 'impact');
+                updateBattleLog(`${currentVillain.name} prepares a devastating attack!`);
+                await delay(1500); if(!isBattleActive) return;
+                stopCharge();
+
+                // Big villain attack
+                VisualFX.fireProjectile(vImg, hImgs[0], 'impact');
+                VisualFX.fireProjectile(vImg, hImgs[1], 'impact');
+                await delay(500);
+
+                VisualFX.focusOn('right');
+                VisualFX.shake('hard');
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                currentHeroHP = 10; 
+                AudioEngine.playTone(100, 'sawtooth', 0.6);
+                VisualFX.showDamage(hImgs[0], 40);
+                VisualFX.showDamage(hImgs[1], 40);
+
+                currentHeroHP = 5;
                 updateHealthUI('heroes', currentHeroHP);
-                log.innerText = "The heroes are down to their last spark!";
-                await delay(2500); if(!isBattleActive) return;
+                updateBattleLog("The heroes are barely standing!");
+                await delay(2000); if(!isBattleActive) return;
 
                 // Slow Mo Tension
                 AudioEngine.stopMusic();
                 stage.classList.add('slow-mo');
-                
-                const finisher = Math.random() > 0.5 ? h1 : h2;
-                const ult = getUltimateMove(finisher);
-                log.innerText = `But ${finisher.name} prepares ${ult.name}...`;
-                await delay(2500); if(!isBattleActive) return;
+                VisualFX.focusOn('right');
 
-                // ELEMENTAL EXPLOSION
+                const finisher = Math.random() > 0.5 ? h1 : h2;
+                const finisherImg = finisher === h1 ? hImgs[0] : hImgs[1];
+                const ult = getUltimateMove(finisher);
+
+                updateBattleLog(`${finisher.name} gathers their last strength...`);
+                await delay(2000); if(!isBattleActive) return;
+
+                const stopChargeUlt = VisualFX.chargeUp(finisherImg, finisher.type);
+                updateBattleLog(`${finisher.name} channels ${ult.name}!`);
+                VisualFX.showSpeech(finisherImg, "IT'S OVER!");
+                AudioEngine.playTone(800, 'sine', 1.5);
+                await delay(2000); if(!isBattleActive) return;
+
+                stopChargeUlt();
+
+                // ULTIMATE ATTACK
                 stage.classList.remove('slow-mo');
+                VisualFX.focusOn(null);
+                updateBattleLog(`${ult.name.toUpperCase()}!!!`);
+
+                // Multiple projectiles for ultimate
+                VisualFX.fireProjectile(finisherImg, vImg, finisher.type);
+                await delay(100);
+                VisualFX.fireProjectile(finisherImg, vImg, finisher.type);
+                await delay(100);
+                VisualFX.fireProjectile(finisherImg, vImg, finisher.type);
+
+                await delay(400);
+
+                VisualFX.focusOn('left');
                 triggerElementalFinale(finisher.type);
                 hitEffect(vImg);
+                VisualFX.showDamage(vImg, 999, true);
                 updateHealthUI('villain', 0);
-                log.innerText = "K.O.!!!";
+
+                updateBattleLog("K.O.!!!");
                 await delay(2000); if(!isBattleActive) return;
-                
-                log.innerText = `The ${currentVillain.name} is defeated! The Heroes Win!`;
+
+                // VICTORY
+                VisualFX.focusOn('right');
+                hImgs.forEach(img => img.classList.add('victory-pose'));
+                updateBattleLog(`The ${currentVillain.name} is defeated! The Heroes Win!`);
                 playVictoryTunes();
+                VisualFX.setIntensity(null);
+                
+                // SHOW POST BATTLE REPORT
+                await delay(2000);
+                showVictoryScreen(true);
 
             } else {
-                // HEROES LOSE SCENARIO (30% Chance)
-                const trier = h1;
-                log.innerText = `${trier.name} tries to end it, but misses!`;
-                await delay(2000); if(!isBattleActive) return;
+                // === HEROES LOSE SCENARIO ===
+                VisualFX.setIntensity('high');
 
-                log.innerText = `${currentVillain.name} unleashes TOTAL CHAOS!`;
-                stage.classList.add('shake-hard'); // Shake for bad guy too
-                AudioEngine.playTone(100, 'sawtooth', 0.5);
-                await delay(1000); stage.classList.remove('shake-hard');
-                
+                const trier = h1;
+                const trierImg = hImgs[0];
+
+                VisualFX.focusOn('right');
+                updateBattleLog(`${trier.name} attempts a final strike!`);
+                VisualFX.showSpeech(trierImg, "One last shot!");
+                const stopCharge = VisualFX.chargeUp(trierImg, trier.type);
+                await delay(1500); if(!isBattleActive) return;
+
+                stopCharge();
+                VisualFX.fireProjectile(trierImg, vImg, trier.type);
+                await delay(600);
+
+                updateBattleLog(`But ${currentVillain.name} dodges!`);
+                VisualFX.showSpeech(vImg, "Ha! Weak!");
+                vImg.classList.add('dodge-right');
+                setTimeout(() => vImg.classList.remove('dodge-right'), 500);
+                await delay(1500); if(!isBattleActive) return;
+
+                VisualFX.focusOn('left');
+                updateBattleLog(`${currentVillain.name} unleashes TOTAL CHAOS!`);
+                const stopVillainCharge = VisualFX.chargeUp(vImg, 'impact');
+                await delay(1000);
+                stopVillainCharge();
+
+                VisualFX.shake('hard');
+                AudioEngine.playTone(100, 'sawtooth', 0.8);
+
+                for(let i = 0; i < 5; i++) {
+                    VisualFX.fireProjectile(vImg, hImgs[0], 'impact');
+                    VisualFX.fireProjectile(vImg, hImgs[1], 'impact');
+                    await delay(150);
+                }
+
+                await delay(400);
+                VisualFX.focusOn('right');
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
+                VisualFX.showDamage(hImgs[0], 100);
+                VisualFX.showDamage(hImgs[1], 100);
                 updateHealthUI('heroes', 0);
-                
-                log.innerText = "The heroes are overwhelmed!";
+
+                updateBattleLog("The heroes are overwhelmed!");
                 await delay(2000); if(!isBattleActive) return;
 
                 AudioEngine.stopMusic();
-                log.innerText = "Muddlewick laughs... The Heroes must retreat!";
-                AudioEngine.playTone(150, 'sine', 1.0); 
+                VisualFX.focusOn(null);
+                VisualFX.setIntensity('low');
+                updateBattleLog("Muddlewick laughs... The Heroes must retreat!");
+                AudioEngine.playTone(150, 'sine', 1.0);
+                
+                // SHOW POST BATTLE REPORT
+                await delay(2000);
+                showVictoryScreen(false);
             }
         }
         
@@ -1007,13 +2312,20 @@
             grid.innerHTML = heroes.map(hero => {
                 const isHidden = filterType !== 'all' && hero.type !== filterType;
                 if (isHidden) return '';
+                // New: Calculate colour for border
+                const color = hero.type === 'electric' ? '#fbbf24' : hero.type === 'ice' ? '#22d3ee' : '#ef4444';
                 return `
       <div class="hero-card-container">
         <div class="hero-card" id="card-${hero.id}" data-type="${hero.type}" 
+             style="--hero-color: ${color};"
              onclick="triggerMegaReveal('${hero.id}')" 
              onmouseenter="AudioEngine.playTone(100, 'sine', 0.05)"
              onmousemove="tiltCard(event, this)" 
-             onmouseleave="resetTilt(this)">
+             onmouseleave="resetTilt(this)"
+             tabindex="0" 
+             role="button"
+             aria-label="Select Hero: ${hero.name}"
+             onkeypress="if(event.key === 'Enter') triggerMegaReveal('${hero.id}')">
           <div class="class-badge">${hero.role.split(' ')[0]}</div>
           <div class="scan-line"></div>
           <div class="card-foil"></div>
@@ -1036,33 +2348,127 @@
         }
         renderGrid();
 
+        /* --- DRAMATIC CARD FLIGHT ANIMATION --- */
+        function animateCardToCenter(cardElement, hero) {
+            const rect = cardElement.getBoundingClientRect();
+            // Calculate Center Target
+            const centerX = window.innerWidth / 2 - rect.width / 2;
+            const centerY = window.innerHeight / 2 - rect.height / 2;
+            const colors = {
+                electric: '#fbbf24',
+                ice: '#22d3ee', 
+                impact: '#ef4444'
+            };
+            const color = colors[hero.type];
+            
+            // Create flying clone
+            const clone = document.createElement('div');
+            clone.className = 'flying-card';
+            clone.style.width = rect.width + 'px';
+            clone.style.height = rect.height + 'px';
+            clone.innerHTML = `<img src="${hero.image}" alt="${hero.name}">`;
+            clone.style.transition = 'none'; // Ensure no transition initially
+            
+            // Start Setup (Current Position)
+            clone.style.left = rect.left + 'px';
+            clone.style.top = rect.top + 'px';
+            clone.style.transform = 'none'; // Ensure reset
+            
+            document.body.appendChild(clone);
+            
+            // FORCE REFLOW: Critical step for reliable CSS transitions
+            void clone.offsetWidth; 
+
+            // Create energy rings
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const ring = document.createElement('div');
+                    ring.className = 'energy-ring';
+                    ring.style.left = (rect.left + rect.width/2) + 'px';
+                    ring.style.top = (rect.top + rect.height/2) + 'px';
+                    ring.style.width = '100px';
+                    ring.style.height = '100px';
+                    ring.style.borderColor = color;
+                    document.body.appendChild(ring);
+                    setTimeout(() => ring.remove(), 800);
+                }, i * 100);
+            }
+            
+            // Create speed lines
+            for (let i = 0; i < 8; i++) {
+                const line = document.createElement('div');
+                line.className = 'speed-line';
+                line.style.setProperty('--line-color', color);
+                line.style.left = (rect.left + rect.width/2 - 100) + 'px';
+                line.style.top = (rect.top + rect.height/2 + (i - 4) * 30) + 'px';
+                line.style.width = '200px';
+                document.body.appendChild(line);
+                setTimeout(() => line.remove(), 500);
+            }
+            
+            // Trigger Animation via Timeout to guarantee start state is registered
+            setTimeout(() => {
+                clone.style.transition = 'all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                clone.style.left = centerX + 'px';
+                clone.style.top = centerY + 'px';
+                
+                // RESTORED SPIN: 360 degrees
+                clone.style.transform = 'scale(1.2) rotateY(360deg)'; 
+                
+                clone.style.boxShadow = `0 0 100px ${color}, 0 0 200px rgba(255,255,255,0.5)`;
+                clone.style.zIndex = '2000';
+            }, 20);
+            
+            // Remove clone and open modal
+            setTimeout(() => {
+                clone.style.opacity = '0';
+                clone.style.transform = 'scale(1.5) rotateY(360deg)'; // Match rotation end
+                setTimeout(() => clone.remove(), 300);
+                openModal(hero);
+            }, 800);
+        }
+
         /* --- REVEAL / SELECT LOGIC --- */
         function triggerMegaReveal(id) {
-            // IF IN BATTLE MODE:
+            // NOTE: scrollIntoView removed to ensure animation consistency and avoid scroll jumps
+            const card = document.getElementById(`card-${id}`);
+
             if(isBattleSelecting) {
                  handleBattleSelection(id);
                  return;
             }
-            // NORMAL MODE:
             AudioEngine.playTone(600, 'sine', 0.1);
             const hero = heroes.find(h => h.id === id);
+            
             const flash = document.getElementById('flashOverlay');
             flash.classList.add('active');
             setTimeout(() => flash.classList.remove('active'), 150);
+            
             createMegaBurst(hero.type);
-            setTimeout(() => { openModal(hero); AudioEngine.playTone(200, 'sine', 0.2); }, 100);
+            
+            // Use new dramatic animation instead of direct modal open
+            animateCardToCenter(card, hero);
+            AudioEngine.playTone(200, 'sine', 0.2);
         }
 
         function createMegaBurst(type) {
             const container = document.getElementById('particleContainer');
             const colors = type === 'electric' ? ['#fbbf24', '#fffbeb'] : type === 'ice' ? ['#22d3ee', '#ecfeff'] : ['#ef4444', '#fef2f2'];
+            // UPDATED: Added shapes array
+            const shapes = ['⚡', '★', '●', '■'];
+            
             for (let i = 0; i < 40; i++) {
                 const p = document.createElement('div');
                 p.classList.add('particle');
+                // Set random shape content
+                p.innerText = shapes[Math.floor(Math.random() * shapes.length)];
+                p.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
                 const angle = Math.random() * Math.PI * 2;
                 const velocity = 200 + Math.random() * 400;
-                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                p.style.width = (3 + Math.random() * 5) + 'px'; p.style.height = p.style.width;
+                
+                p.style.width = (10 + Math.random() * 10) + 'px'; 
+                p.style.height = p.style.width;
                 p.style.left = window.innerWidth / 2 + 'px'; p.style.top = window.innerHeight / 2 + 'px';
                 p.style.setProperty('--tx', Math.cos(angle) * velocity + 'px');
                 p.style.setProperty('--ty', Math.sin(angle) * velocity + 'px');
@@ -1117,13 +2523,18 @@
 
         /* --- TILT --- */
         function tiltCard(e, card) {
+            if(isTouch) return; // Disable on touch devices
             if(card.classList.contains('selected')) return;
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+            
+            // Pass CSS variables for foil position
+            card.style.setProperty('--x', `${(x / rect.width) * 100}%`);
+            card.style.setProperty('--y', `${(y / rect.height) * 100}%`);
+
             const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -8;
             const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 8;
             card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-            card.querySelector('.card-foil').style.backgroundPosition = `${50 + (x / rect.width) * 50}% ${50 + (y / rect.height) * 50}%`;
         }
         function resetTilt(card) { 
              if(card.classList.contains('selected')) { card.style.transform = `scale(1.05)`; } 
