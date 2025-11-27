@@ -2072,7 +2072,7 @@
             interval: null,
             isMuted: false,
             
-            init: function () { 
+            init: function () {
                 if (!this.ctx) {
                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
                     // Load saved state
@@ -2081,7 +2081,12 @@
                         this.isMuted = true;
                         document.getElementById('muteBtn').innerText = '🔇';
                     }
-                } 
+                    // Load saved SFX volume
+                    const savedVolume = localStorage.getItem('hawthorn_sfx_volume');
+                    if(savedVolume !== null) {
+                        this.sfxVolume = parseFloat(savedVolume);
+                    }
+                }
             },
 
             toggleMute: function() {
@@ -2165,6 +2170,280 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+            },
+
+            // === ELEMENT-SPECIFIC HIT SOUNDS ===
+
+            electricHit: function() {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // Primary oscillator: Sawtooth sweep (zap/crackle)
+                const osc1 = this.ctx.createOscillator();
+                const gain1 = this.ctx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(800, t);
+                osc1.frequency.exponentialRampToValueAtTime(200, t + 0.15);
+                gain1.gain.setValueAtTime(0.25 * vol, t);
+                gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+                osc1.connect(gain1); gain1.connect(this.ctx.destination);
+                osc1.start(t); osc1.stop(t + 0.15);
+
+                // Secondary oscillator: Square wave buzz
+                const osc2 = this.ctx.createOscillator();
+                const gain2 = this.ctx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(1600, t);
+                gain2.gain.setValueAtTime(0.08 * vol, t);
+                gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+                osc2.connect(gain2); gain2.connect(this.ctx.destination);
+                osc2.start(t); osc2.stop(t + 0.15);
+            },
+
+            iceHit: function() {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // Primary oscillator: Crystalline sine sweep
+                const osc1 = this.ctx.createOscillator();
+                const gain1 = this.ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(1200, t);
+                osc1.frequency.exponentialRampToValueAtTime(600, t + 0.2);
+                gain1.gain.setValueAtTime(0.2 * vol, t);
+                gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+                osc1.connect(gain1); gain1.connect(this.ctx.destination);
+                osc1.start(t); osc1.stop(t + 0.2);
+
+                // "Tinkle" effect: Multiple quick high pings
+                const tinkleFreqs = [1800, 2200, 1600, 2400];
+                tinkleFreqs.forEach((freq, i) => {
+                    const delay = 0.03 + (i * 0.04);
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, t + delay);
+                    gain.gain.setValueAtTime(0.15 * vol, t + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + delay + 0.05);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(t + delay); osc.stop(t + delay + 0.05);
+                });
+            },
+
+            impactHit: function() {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // Primary oscillator: Triangle wave sweep (thud)
+                const osc1 = this.ctx.createOscillator();
+                const gain1 = this.ctx.createGain();
+                osc1.type = 'triangle';
+                osc1.frequency.setValueAtTime(150, t);
+                osc1.frequency.exponentialRampToValueAtTime(40, t + 0.25);
+                gain1.gain.setValueAtTime(0.3 * vol, t);
+                gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+                osc1.connect(gain1); gain1.connect(this.ctx.destination);
+                osc1.start(t); osc1.stop(t + 0.25);
+
+                // Sub oscillator: Low sine for weight
+                const osc2 = this.ctx.createOscillator();
+                const gain2 = this.ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(60, t);
+                gain2.gain.setValueAtTime(0.2 * vol, t);
+                gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+                osc2.connect(gain2); gain2.connect(this.ctx.destination);
+                osc2.start(t); osc2.stop(t + 0.25);
+            },
+
+            playHitSound: function(elementType) {
+                switch(elementType) {
+                    case 'electric': this.electricHit(); break;
+                    case 'ice': this.iceHit(); break;
+                    case 'impact': this.impactHit(); break;
+                    default: this.hitSound(); // Fallback to existing
+                }
+            },
+
+            // === ADDITIONAL SOUND EFFECTS ===
+
+            dodgeSound: function() {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // Filtered noise sweep (whoosh)
+                const bufferSize = this.ctx.sampleRate * 0.2;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for(let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * (1 - i/bufferSize);
+                }
+
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(2000, t);
+                filter.frequency.exponentialRampToValueAtTime(300, t + 0.2);
+
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.3 * vol, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+                noise.start(t);
+            },
+
+            blockSound: function() {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // High metallic ping with harmonics
+                const osc1 = this.ctx.createOscillator();
+                const gain1 = this.ctx.createGain();
+                osc1.type = 'triangle';
+                osc1.frequency.setValueAtTime(600, t);
+                gain1.gain.setValueAtTime(0.25 * vol, t);
+                gain1.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+                osc1.connect(gain1); gain1.connect(this.ctx.destination);
+                osc1.start(t); osc1.stop(t + 0.3);
+
+                // Harmonic overtones
+                [1200, 1800].forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, t);
+                    gain.gain.setValueAtTime(0.1 * vol, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(t); osc.stop(t + 0.25);
+                });
+            },
+
+            healSound: function() {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // Ascending warm chimes
+                const freqs = [400, 600, 800];
+                freqs.forEach((freq, i) => {
+                    const delay = i * 0.12;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, t + delay);
+                    gain.gain.setValueAtTime(0.2 * vol, t + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + delay + 0.15);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(t + delay); osc.stop(t + delay + 0.15);
+                });
+            },
+
+            chargeSound: function(elementType) {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                let osc, gain, filter;
+
+                switch(elementType) {
+                    case 'electric':
+                        // Buzzing crescendo
+                        osc = this.ctx.createOscillator();
+                        gain = this.ctx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(200, t);
+                        osc.frequency.linearRampToValueAtTime(400, t + 0.8);
+                        gain.gain.setValueAtTime(0.1 * vol, t);
+                        gain.gain.linearRampToValueAtTime(0.25 * vol, t + 0.8);
+                        osc.connect(gain); gain.connect(this.ctx.destination);
+                        osc.start(t);
+                        break;
+
+                    case 'ice':
+                        // Crystallizing shimmer
+                        osc = this.ctx.createOscillator();
+                        gain = this.ctx.createGain();
+                        filter = this.ctx.createBiquadFilter();
+                        filter.type = 'bandpass';
+                        filter.frequency.value = 1500;
+                        filter.Q.value = 3;
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(800, t);
+                        osc.frequency.linearRampToValueAtTime(1200, t + 0.8);
+                        gain.gain.setValueAtTime(0.1 * vol, t);
+                        gain.gain.linearRampToValueAtTime(0.2 * vol, t + 0.8);
+                        osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+                        osc.start(t);
+                        break;
+
+                    case 'impact':
+                    default:
+                        // Rumbling buildup
+                        osc = this.ctx.createOscillator();
+                        gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(60, t);
+                        osc.frequency.linearRampToValueAtTime(120, t + 0.8);
+                        gain.gain.setValueAtTime(0.15 * vol, t);
+                        gain.gain.linearRampToValueAtTime(0.3 * vol, t + 0.8);
+                        osc.connect(gain); gain.connect(this.ctx.destination);
+                        osc.start(t);
+                        break;
+                }
+
+                // Return stop function
+                return () => {
+                    if(osc) {
+                        const stopTime = this.ctx.currentTime;
+                        gain.gain.cancelScheduledValues(stopTime);
+                        gain.gain.setValueAtTime(gain.gain.value, stopTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, stopTime + 0.05);
+                        osc.stop(stopTime + 0.05);
+                    }
+                };
+            },
+
+            criticalHit: function(elementType) {
+                if(this.isMuted || !this.ctx) return;
+                const t = this.ctx.currentTime;
+                const vol = this.sfxVolume || 1.0;
+
+                // Play element hit at higher volume
+                const originalVol = this.sfxVolume;
+                this.sfxVolume = Math.min(1.0, (this.sfxVolume || 1.0) * 1.3);
+                this.playHitSound(elementType);
+                this.sfxVolume = originalVol;
+
+                // Add extra "punch" layer - low thump
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(80, t);
+                osc.frequency.exponentialRampToValueAtTime(20, t + 0.3);
+                gain.gain.setValueAtTime(0.35 * vol, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(t); osc.stop(t + 0.3);
+            },
+
+            // === VOLUME CONTROL ===
+
+            sfxVolume: 1.0,
+
+            setSFXVolume: function(volume) {
+                this.sfxVolume = Math.max(0, Math.min(1, volume));
+                localStorage.setItem('hawthorn_sfx_volume', this.sfxVolume);
             }
         };
 
@@ -2851,7 +3130,7 @@
                     VisualFX.showDamage(img, value, false, 1, true); // true for heal
                     this.createHealingParticles(img);
                 });
-                AudioEngine.playTone(800, 'sine', 0.4);
+                AudioEngine.healSound();
             },
 
             applyDefense: function(value, duration) {
@@ -3566,10 +3845,11 @@
                     updateBattleLog(`${attacker.name} prepares ${move.name}...`);
                     VisualFX.showSpeech(attackerImg, randomTaunt);
                     const stopCharge = VisualFX.chargeUp(attackerImg, attacker.type);
-                    AudioEngine.playTone(400, 'sine', 0.3);
+                    const stopChargeSound = AudioEngine.chargeSound(attacker.type);
                     await delay(800); if(!isBattleActive) return;
 
                     stopCharge();
+                    if(stopChargeSound) stopChargeSound();
 
                     // LAUNCH ATTACK
                     updateBattleLog(`${attacker.name} uses ${move.name}!`);
@@ -3583,21 +3863,25 @@
                         // DODGE!
                         updateBattleLog(`${currentVillain.name} dodges the attack!`);
                         VisualFX.showSpeech(vImg, "Missed me!");
-                        vImg.classList.add('dodge-right'); 
+                        vImg.classList.add('dodge-right');
                         setTimeout(() => vImg.classList.remove('dodge-right'), 500);
-                        AudioEngine.playTone(150, 'sawtooth', 0.1); // Whiff
-                        
+                        AudioEngine.dodgeSound();
+
                         await delay(1000);
                     } else {
                         // HIT!
                         VisualFX.focusOn('left');
-                        
+
                         // Apply multiplier logic
                         let baseDamage = isCritical ? (20 + Math.random() * 15) : (12 + Math.random() * 10);
                         let finalDamage = baseDamage * multiplier;
-                        
+
                         hitEffect(vImg);
-                        AudioEngine.hitSound();
+                        if(isCritical) {
+                            AudioEngine.criticalHit(attacker.type);
+                        } else {
+                            AudioEngine.playHitSound(attacker.type);
+                        }
 
                         const colors = { electric: '#fbbf24', ice: '#22d3ee', impact: '#ef4444' };
                         VisualFX.createImpactRing(vImg, colors[attacker.type]);
@@ -3638,10 +3922,11 @@
                     updateBattleLog(`${currentVillain.name} charges ${currentVillain.move}!`);
                     VisualFX.showSpeech(vImg, "GRAAAH!", "#ef4444");
                     const stopCharge = VisualFX.chargeUp(vImg, 'impact');
-                    AudioEngine.playTone(200, 'sawtooth', 0.4);
+                    const stopChargeSound = AudioEngine.chargeSound(currentVillain.type || 'impact');
                     await delay(1000); if(!isBattleActive) return;
 
                     stopCharge();
+                    if(stopChargeSound) stopChargeSound();
 
                     updateBattleLog(`${currentVillain.name} unleashes ${currentVillain.move}!`);
 
@@ -3672,7 +3957,7 @@
                              hImgs[0].classList.remove('dodge-left');
                              hImgs[1].classList.remove('dodge-left');
                         }, 500);
-                        AudioEngine.playTone(150, 'sawtooth', 0.1);
+                        AudioEngine.dodgeSound();
                         await delay(1000);
                     } else {
                         VisualFX.focusOn('right');
@@ -3686,7 +3971,11 @@
                         }
 
                         hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                        AudioEngine.hitSound();
+                        if(defenseEffect) {
+                            AudioEngine.blockSound();
+                        } else {
+                            AudioEngine.playHitSound(currentVillain.type || 'impact');
+                        }
                         VisualFX.createImpactRing(hImgs[0], '#ef4444');
                         VisualFX.showDamage(hImgs[0], damage);
                         VisualFX.shake('normal');
