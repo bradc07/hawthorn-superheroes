@@ -720,6 +720,120 @@
             100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
         }
 
+        /* TIER BADGES */
+        .tier-badge {
+            display: inline-block;
+            font-family: 'Rajdhani';
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            text-transform: uppercase;
+            border: 2px solid currentColor;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .tier-elite {
+            animation: elitePulse 1s infinite alternate;
+        }
+
+        @keyframes elitePulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* ABILITY VISUAL EFFECTS */
+        .ability-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Bangers';
+            font-size: 2rem;
+            color: #fbbf24;
+            text-shadow: 0 0 20px currentColor;
+            z-index: 50;
+            pointer-events: none;
+            animation: abilityPop 0.8s ease-out forwards;
+        }
+
+        @keyframes abilityPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
+        }
+
+        /* STUN EFFECT */
+        .stunned {
+            filter: brightness(0.5) saturate(0.3);
+            position: relative;
+        }
+
+        .stun-stars {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            animation: spinStars 2s linear infinite;
+        }
+
+        @keyframes spinStars {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* EVASION EFFECT */
+        .evading {
+            opacity: 0.3;
+            filter: blur(2px);
+            animation: phaseShift 0.5s ease-in-out;
+        }
+
+        @keyframes phaseShift {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+        }
+
+        /* ARMOR EFFECT */
+        .armor-flash {
+            animation: armorSparks 0.3s ease-out;
+        }
+
+        @keyframes armorSparks {
+            0% { filter: brightness(2) saturate(2); }
+            100% { filter: none; }
+        }
+
+        /* REGENERATE EFFECT */
+        .regenerating {
+            animation: healPulse 0.8s ease-out;
+        }
+
+        @keyframes healPulse {
+            0% { filter: brightness(1.5) saturate(1.5) hue-rotate(90deg); }
+            100% { filter: none; }
+        }
+
+        /* FLOATING TEXT FOR ABILITIES */
+        .floating-text {
+            position: absolute;
+            font-family: 'Rajdhani';
+            font-weight: 800;
+            font-size: 1.2rem;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-80px); }
+        }
+
         /* RESPONSIVE */
         @media (max-width: 900px) {
             .modal-card { grid-template-columns: 1fr; height: auto; max-height: 90vh; overflow-y: auto; display: flex; flex-direction: column; }
@@ -921,7 +1035,11 @@
                 description: "A genetically enhanced predator escaped from a secret lab. Covered in bioluminescent stripes that crackle with stolen electricity. Hunts with terrifying speed and precision.",
                 stats: { danger: 4, speed: 5, cunning: 4, power: 4 },
                 weakness: "Impact-type heroes can overpower its agility with raw force",
-                signature: "Lightning-fast slashes that leave electrical burns"
+                signature: "Lightning-fast slashes that leave electrical burns",
+                ability: "double_strike",
+                abilityName: "Lightning Reflexes",
+                abilityDesc: "30% chance to attack twice in one turn",
+                abilityChance: 0.3
              },
              {
                 name: "Cyber Grizzly",
@@ -931,7 +1049,11 @@
                 description: "A robotic beast built from scrapped military hardware. Its crushing strength can flatten cars like tin cans. Nearly unstoppable once it begins its rampage.",
                 stats: { danger: 5, speed: 2, cunning: 2, power: 5 },
                 weakness: "Electric-type heroes can short-circuit its systems",
-                signature: "Devastating ground pounds that create shockwaves"
+                signature: "Devastating ground pounds that create shockwaves",
+                ability: "armor",
+                abilityName: "Steel Plating",
+                abilityDesc: "Takes 25% reduced damage from all attacks",
+                damageReduction: 0.25
              },
              {
                 name: "Shadow Panther",
@@ -941,7 +1063,11 @@
                 description: "A spectral feline that phases between dimensions. Leaves trails of freezing mist wherever it stalks. You never see it coming until it's too late.",
                 stats: { danger: 4, speed: 4, cunning: 5, power: 3 },
                 weakness: "Ice-type heroes can freeze it in one dimension",
-                signature: "Dimensional ambushes from impossible angles"
+                signature: "Dimensional ambushes from impossible angles",
+                ability: "evasion",
+                abilityName: "Phase Shift",
+                abilityDesc: "40% chance to completely dodge any attack",
+                abilityChance: 0.4
              },
              {
                 name: "Thunder Gorilla",
@@ -951,7 +1077,11 @@
                 description: "An ancient primate awakened by a lightning strike. Channels storm energy through its massive fists. Each roar summons thunder from the skies.",
                 stats: { danger: 5, speed: 3, cunning: 3, power: 5 },
                 weakness: "Impact-type heroes can match its brute strength",
-                signature: "Thunder-charged punches that shake the earth"
+                signature: "Thunder-charged punches that shake the earth",
+                ability: "stun",
+                abilityName: "Thunderclap Stun",
+                abilityDesc: "25% chance attacks stun a hero, skipping their next turn",
+                abilityChance: 0.25
              },
              {
                 name: "Omega Droid",
@@ -961,7 +1091,11 @@
                 description: "The final creation of a mad inventor. Cold, calculating, and programmed only to destroy. Its targeting systems never miss their mark.",
                 stats: { danger: 5, speed: 3, cunning: 4, power: 5 },
                 weakness: "Electric-type heroes can overload its circuits",
-                signature: "Precision plasma blasts that pierce through defenses"
+                signature: "Precision plasma blasts that pierce through defenses",
+                ability: "regenerate",
+                abilityName: "Self-Repair Protocol",
+                abilityDesc: "Regenerates 8 HP at the start of each turn",
+                healAmount: 8
              }
         ];
 
@@ -1054,6 +1188,130 @@
         // BATTLE STATE
         let currentHeroHP = 100;
         let currentVillainHP = 100;
+        let currentVillainTier = 'boss'; // miniboss, boss, elite
+        let stunnedHeroes = { hero1: false, hero2: false }; // Track stun status
+
+        /* --- VILLAIN PHASE SYSTEM --- */
+        const VillainPhaseSystem = {
+            currentPhase: 1,
+
+            reset: function() {
+                this.currentPhase = 1;
+            },
+
+            checkPhaseTransition: function(oldHP, newHP) {
+                // Check Phase 2 (50% threshold)
+                if(oldHP > 50 && newHP <= 50 && this.currentPhase === 1) {
+                    return 2;
+                }
+                // Check Phase 3 (25% threshold)
+                if(oldHP > 25 && newHP <= 25 && this.currentPhase === 2) {
+                    return 3;
+                }
+                return null; // No transition
+            },
+
+            async triggerPhaseTransition(phase, villainName) {
+                this.currentPhase = phase;
+                const stage = document.getElementById('battleStage');
+                const vImg = document.getElementById('villainImg');
+                const log = document.getElementById('battleText');
+
+                if(phase === 2) {
+                    // Phase 2 Animation
+                    log.innerText = `${villainName} howls with rage - Phase 2 begins!`;
+                    AudioEngine.playTone(200, 'sawtooth', 0.5);
+                    stage.classList.add('slow-mo');
+                    stage.classList.add('shake');
+
+                    // Orange aura
+                    vImg.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) drop-shadow(0 0 40px orange)';
+                    vImg.style.transform = 'scale(1.1)';
+
+                    await delay(1500);
+                    stage.classList.remove('slow-mo', 'shake');
+
+                } else if(phase === 3) {
+                    // Phase 3 Animation
+                    log.innerText = `${villainName} is critically wounded - FINAL PHASE!`;
+                    AudioEngine.playTone(100, 'sawtooth', 0.8);
+
+                    const flash = document.getElementById('flashOverlay');
+                    flash.classList.add('active');
+                    setTimeout(() => flash.classList.remove('active'), 100);
+
+                    stage.classList.add('slow-mo');
+                    stage.classList.add('shake-hard');
+
+                    // Red crackling energy
+                    vImg.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) drop-shadow(0 0 60px #ef4444) brightness(1.2)';
+                    vImg.style.transform = 'scale(1.15)';
+                    vImg.style.animation = 'dangerPulse 0.5s infinite';
+
+                    // Darken screen edges
+                    const overlay = document.getElementById('elementalOverlay');
+                    overlay.style.background = 'radial-gradient(circle, transparent 30%, rgba(139, 0, 0, 0.5) 100%)';
+                    overlay.style.opacity = 1;
+
+                    await delay(2000);
+                    stage.classList.remove('slow-mo', 'shake-hard');
+                }
+            },
+
+            getAbilityModifier: function() {
+                // Phase 2: +15%, Phase 3: +30%
+                if(this.currentPhase === 2) return 0.15;
+                if(this.currentPhase === 3) return 0.30;
+                return 0;
+            },
+
+            getDamageModifier: function() {
+                // Phase 3 increases damage by 25%
+                if(this.currentPhase === 3) return 1.25;
+                return 1.0;
+            }
+        };
+
+        /* --- VILLAIN TIER SYSTEM --- */
+        function selectVillainTier() {
+            const roll = Math.random();
+            if(roll < 0.3) return 'miniboss';  // 30%
+            if(roll < 0.8) return 'boss';       // 50%
+            return 'elite';                     // 20%
+        }
+
+        function getTierMultipliers(tier) {
+            const tiers = {
+                miniboss: {
+                    hp: 80,
+                    damageMultiplier: 0.8,
+                    abilityMultiplier: 0.8,
+                    xpMultiplier: 0.75,
+                    badge: 'MINIBOSS',
+                    badgeColor: '#cd7f32', // Bronze
+                    badgeGlow: 'rgba(205, 127, 50, 0.6)'
+                },
+                boss: {
+                    hp: 100,
+                    damageMultiplier: 1.0,
+                    abilityMultiplier: 1.0,
+                    xpMultiplier: 1.0,
+                    badge: 'BOSS',
+                    badgeColor: '#c0c0c0', // Silver
+                    badgeGlow: 'rgba(192, 192, 192, 0.6)'
+                },
+                elite: {
+                    hp: 130,
+                    damageMultiplier: 1.3,
+                    abilityMultiplier: 1.2,
+                    xpMultiplier: 1.5,
+                    badge: 'ELITE',
+                    badgeColor: '#ffd700', // Gold
+                    badgeGlow: 'rgba(255, 215, 0, 0.8)'
+                }
+            };
+            return tiers[tier];
+        }
 
         function toggleBattleMode() {
             AudioEngine.playTone(400, 'sine', 0.1);
@@ -1116,31 +1374,66 @@
 
         function openBattleArena() {
              AudioEngine.playTone(800, 'sine', 0.3);
-             
+
              currentVillain = villains[Math.floor(Math.random() * villains.length)];
-             
+
+             // SELECT TIER AND APPLY MODIFIERS
+             currentVillainTier = selectVillainTier();
+             const tierData = getTierMultipliers(currentVillainTier);
+
              document.getElementById('villainName').innerText = currentVillain.name;
              document.getElementById('villainImg').src = currentVillain.img;
-             
+
              const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
              const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
-             
+
              document.getElementById('hero1Img').src = hero1.image;
              document.getElementById('hero2Img').src = hero2.image;
-             
-             // RESET HEALTH
+
+             // RESET HEALTH (Use tier HP)
              currentHeroHP = 100;
-             currentVillainHP = 100;
-             updateHealthUI('villain', 100);
+             currentVillainHP = tierData.hp;
+             updateHealthUI('villain', 100); // Always show 100% visually
              updateHealthUI('heroes', 100);
-             
+
+             // RESET PHASE SYSTEM
+             VillainPhaseSystem.reset();
+
+             // RESET STUN STATUS
+             stunnedHeroes = { hero1: false, hero2: false };
+
+             // RESET VILLAIN IMAGE EFFECTS
+             const vImg = document.getElementById('villainImg');
+             vImg.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.2))';
+             vImg.style.transform = 'scale(1)';
+             vImg.style.animation = '';
+
+             // ADD TIER BADGE
+             let tierBadgeHTML = '';
+             if(currentVillainTier === 'elite') {
+                 tierBadgeHTML = `<div class="tier-badge tier-elite" style="color:${tierData.badgeColor}; box-shadow: 0 0 20px ${tierData.badgeGlow};">🔥 ${tierData.badge} 🔥</div>`;
+                 // Elite visual: glowing red eyes effect
+                 vImg.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) drop-shadow(0 0 30px rgba(255, 0, 0, 0.4)) brightness(0.9) saturate(1.3)';
+             } else {
+                 tierBadgeHTML = `<div class="tier-badge tier-${currentVillainTier}" style="color:${tierData.badgeColor}; box-shadow: 0 0 15px ${tierData.badgeGlow};">${tierData.badge}</div>`;
+             }
+
+             // Insert tier badge next to villain name
+             const villainSide = document.getElementById('villainSide');
+             const existingBadge = villainSide.querySelector('.tier-badge');
+             if(existingBadge) existingBadge.remove();
+
+             const nameEl = villainSide.querySelector('h2');
+             nameEl.insertAdjacentHTML('afterend', tierBadgeHTML);
+
              document.getElementById('battleText').innerText = "Waiting for command...";
              document.getElementById('battleStage').classList.remove('slow-mo', 'shake-hard');
-             
+
              // Reset Overlays
              const elOverlay = document.getElementById('elementalOverlay');
-             elOverlay.className = ''; 
+             elOverlay.className = '';
              elOverlay.style.opacity = 0;
+             elOverlay.style.background = '';
 
              document.getElementById('combatStartOverlay').style.display = 'flex';
              document.getElementById('battleOverlay').classList.add('active');
@@ -1184,6 +1477,127 @@
             }, 500);
         }
 
+        /* --- ABILITY VISUAL EFFECTS --- */
+        function showFloatingText(element, text, color = '#fbbf24') {
+            const rect = element.getBoundingClientRect();
+            const stage = document.getElementById('battleStage');
+            const stageRect = stage.getBoundingClientRect();
+
+            const floater = document.createElement('div');
+            floater.className = 'floating-text';
+            floater.textContent = text;
+            floater.style.color = color;
+            floater.style.left = (rect.left + rect.width/2 - stageRect.left) + 'px';
+            floater.style.top = (rect.top - stageRect.top) + 'px';
+
+            stage.appendChild(floater);
+            setTimeout(() => floater.remove(), 1500);
+        }
+
+        function showStunEffect(element) {
+            element.classList.add('stunned');
+            const stars = document.createElement('div');
+            stars.className = 'stun-stars';
+            stars.textContent = '⭐✨⭐';
+            element.parentElement.style.position = 'relative';
+            element.parentElement.appendChild(stars);
+
+            setTimeout(() => {
+                element.classList.remove('stunned');
+                stars.remove();
+            }, 2000);
+        }
+
+        function showEvasionEffect(element) {
+            element.classList.add('evading');
+            AudioEngine.playTone(800, 'sine', 0.2);
+            setTimeout(() => element.classList.remove('evading'), 500);
+        }
+
+        function showArmorEffect(element) {
+            element.classList.add('armor-flash');
+            // Create metallic spark particles
+            const colors = ['#c0c0c0', '#fff', '#a0a0a0'];
+            for(let i = 0; i < 8; i++) {
+                const spark = document.createElement('div');
+                spark.style.cssText = `
+                    position: absolute;
+                    width: 4px;
+                    height: 4px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: 50%;
+                    left: 50%;
+                    top: 50%;
+                `;
+                const angle = (Math.PI * 2 * i) / 8;
+                const distance = 30 + Math.random() * 20;
+                element.parentElement.appendChild(spark);
+
+                setTimeout(() => {
+                    spark.style.transition = 'all 0.5s ease-out';
+                    spark.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    spark.style.opacity = '0';
+                }, 10);
+
+                setTimeout(() => spark.remove(), 600);
+            }
+            setTimeout(() => element.classList.remove('armor-flash'), 300);
+        }
+
+        function showRegenerateEffect(element) {
+            element.classList.add('regenerating');
+            // Create healing particles
+            const colors = ['#4ade80', '#86efac', '#22c55e'];
+            for(let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.style.cssText = `
+                        position: absolute;
+                        width: 6px;
+                        height: 6px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: 50%;
+                        left: ${30 + Math.random() * 40}%;
+                        bottom: 0;
+                        box-shadow: 0 0 10px currentColor;
+                    `;
+                    element.parentElement.appendChild(particle);
+
+                    setTimeout(() => {
+                        particle.style.transition = 'all 1s ease-out';
+                        particle.style.transform = 'translateY(-100px)';
+                        particle.style.opacity = '0';
+                    }, 10);
+
+                    setTimeout(() => particle.remove(), 1100);
+                }, i * 50);
+            }
+            setTimeout(() => element.classList.remove('regenerating'), 800);
+        }
+
+        function showDoubleStrikeEffect(element) {
+            const afterimage = element.cloneNode(true);
+            afterimage.style.cssText = `
+                position: absolute;
+                left: ${element.offsetLeft}px;
+                top: ${element.offsetTop}px;
+                width: ${element.offsetWidth}px;
+                height: ${element.offsetHeight}px;
+                opacity: 0.5;
+                filter: hue-rotate(60deg) brightness(1.5);
+                pointer-events: none;
+            `;
+            element.parentElement.appendChild(afterimage);
+
+            setTimeout(() => {
+                afterimage.style.transition = 'all 0.4s ease-out';
+                afterimage.style.transform = 'translateX(20px)';
+                afterimage.style.opacity = '0';
+            }, 10);
+
+            setTimeout(() => afterimage.remove(), 450);
+        }
+
         /* --- ELEMENTAL FINALE LOGIC --- */
         function triggerElementalFinale(type) {
             const overlay = document.getElementById('elementalOverlay');
@@ -1218,9 +1632,13 @@
             const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
             const stage = document.getElementById('battleStage');
 
+            // Get tier multipliers
+            const tierData = getTierMultipliers(currentVillainTier);
+            const maxVillainHP = tierData.hp;
+
             // 1. Determine Winner (70% Heroes Win)
-            const heroesWin = Math.random() < 0.7; 
-            
+            const heroesWin = Math.random() < 0.7;
+
             // 2. Setup Moves Helpers
             const getStandardMove = (h) => h.moves[0] || h.moves[1];
             const getUltimateMove = (h) => h.moves.reduce((prev, current) => (prev.pwr > current.pwr) ? prev : current);
@@ -1229,38 +1647,136 @@
             await delay(2000); if(!isBattleActive) return;
 
             // 3. GENERATE BATTLE SEQUENCE (6-8 Turns)
-            const totalTurns = Math.floor(Math.random() * 3) + 6; 
-            
+            const totalTurns = Math.floor(Math.random() * 3) + 6;
+
             for(let i = 0; i < totalTurns; i++) {
                 if(!isBattleActive) return;
-                
+
+                // VILLAIN REGENERATION at start of turn
+                if(currentVillain.ability === 'regenerate') {
+                    const healAmount = currentVillain.healAmount;
+                    const oldHP = currentVillainHP;
+                    currentVillainHP = Math.min(maxVillainHP, currentVillainHP + healAmount);
+                    if(currentVillainHP > oldHP) {
+                        log.innerText = `${currentVillain.name}'s Self-Repair restores ${healAmount} HP!`;
+                        showRegenerateEffect(vImg);
+                        showFloatingText(vImg, `+${healAmount}`, '#4ade80');
+                        updateHealthUI('villain', (currentVillainHP / maxVillainHP) * 100);
+                        await delay(1200);
+                    }
+                }
+
                 const isHeroTurn = (i % 2 === 0) ? Math.random() > 0.4 : Math.random() > 0.6;
-                
+
                 if(isHeroTurn) {
                     // HERO ATTACKS
-                    const attacker = Math.random() > 0.5 ? h1 : h2;
+                    const attackerIndex = Math.random() > 0.5 ? 0 : 1;
+                    const attacker = attackerIndex === 0 ? h1 : h2;
+                    const heroKey = attackerIndex === 0 ? 'hero1' : 'hero2';
+
+                    // Check if stunned
+                    if(stunnedHeroes[heroKey]) {
+                        log.innerText = `${attacker.name} is stunned and can't attack!`;
+                        stunnedHeroes[heroKey] = false; // Clear stun
+                        await delay(1500);
+                        continue;
+                    }
+
                     const move = getStandardMove(attacker);
-                    
+
                     log.innerText = `${attacker.name} uses ${move.name}!`;
                     AudioEngine.playTone(600 + (Math.random()*200), 'sine', 0.2);
                     await delay(800);
+
+                    let damage = 15 + Math.random() * 10;
+                    const oldVillainHP = currentVillainHP;
+
+                    // Check EVASION
+                    if(currentVillain.ability === 'evasion') {
+                        const abilityChance = currentVillain.abilityChance + VillainPhaseSystem.getAbilityModifier();
+                        const abilityMod = tierData.abilityMultiplier;
+                        if(Math.random() < (abilityChance * abilityMod)) {
+                            log.innerText = `${currentVillain.name} phase shifts - attack passes through!`;
+                            showEvasionEffect(vImg);
+                            showFloatingText(vImg, 'DODGED!', '#22d3ee');
+                            await delay(1500);
+                            continue; // Skip damage
+                        }
+                    }
+
                     hitEffect(vImg);
-                    
-                    const damage = 15 + Math.random() * 10;
-                    currentVillainHP = Math.max(10, currentVillainHP - damage); 
-                    updateHealthUI('villain', currentVillainHP);
+
+                    // Apply ARMOR
+                    if(currentVillain.ability === 'armor') {
+                        const reduction = currentVillain.damageReduction;
+                        damage *= (1 - reduction);
+                        log.innerText = `${currentVillain.name}'s Steel Plating absorbs ${Math.round(damage * reduction / (1-reduction))} damage!`;
+                        showArmorEffect(vImg);
+                        showFloatingText(vImg, 'ARMORED!', '#c0c0c0');
+                        await delay(1000);
+                    }
+
+                    currentVillainHP = Math.max(0, currentVillainHP - damage);
+                    updateHealthUI('villain', (currentVillainHP / maxVillainHP) * 100);
+
+                    // Check PHASE TRANSITION
+                    const newPhase = VillainPhaseSystem.checkPhaseTransition(oldVillainHP, currentVillainHP);
+                    if(newPhase) {
+                        await delay(500);
+                        await VillainPhaseSystem.triggerPhaseTransition(newPhase, currentVillain.name);
+                    }
+
                     log.innerText = "A solid hit!";
 
                 } else {
                     // VILLAIN ATTACKS
                     log.innerText = `${currentVillain.name} strikes with ${currentVillain.move}!`;
                     await delay(800);
+
+                    let damage = (15 + Math.random() * 10) * tierData.damageMultiplier * VillainPhaseSystem.getDamageModifier();
+
                     hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                    
-                    const damage = 15 + Math.random() * 10;
-                    currentHeroHP = Math.max(10, currentHeroHP - damage); 
+                    currentHeroHP = Math.max(10, currentHeroHP - damage);
                     updateHealthUI('heroes', currentHeroHP);
                     log.innerText = "The heroes take damage!";
+
+                    // Check STUN
+                    if(currentVillain.ability === 'stun') {
+                        const abilityChance = currentVillain.abilityChance + VillainPhaseSystem.getAbilityModifier();
+                        const abilityMod = tierData.abilityMultiplier;
+                        if(Math.random() < (abilityChance * abilityMod)) {
+                            const stunTarget = Math.random() > 0.5 ? 0 : 1;
+                            const stunHero = stunTarget === 0 ? h1 : h2;
+                            const stunKey = stunTarget === 0 ? 'hero1' : 'hero2';
+                            stunnedHeroes[stunKey] = true;
+
+                            await delay(500);
+                            log.innerText = `${currentVillain.name}'s Thunderclap STUNS ${stunHero.name}!`;
+                            showStunEffect(hImgs[stunTarget]);
+                            showFloatingText(hImgs[stunTarget], 'STUNNED!', '#fbbf24');
+                            await delay(1200);
+                        }
+                    }
+
+                    // Check DOUBLE STRIKE
+                    if(currentVillain.ability === 'double_strike') {
+                        const abilityChance = currentVillain.abilityChance + VillainPhaseSystem.getAbilityModifier();
+                        const abilityMod = tierData.abilityMultiplier;
+                        if(Math.random() < (abilityChance * abilityMod)) {
+                            await delay(500);
+                            log.innerText = `${currentVillain.name}'s Lightning Reflexes activate - DOUBLE STRIKE!`;
+                            showDoubleStrikeEffect(vImg);
+                            showFloatingText(vImg, 'DOUBLE STRIKE!', '#fbbf24');
+                            await delay(800);
+
+                            hitEffect(hImgs[0]); hitEffect(hImgs[1]);
+                            const secondDamage = damage * 0.7;
+                            currentHeroHP = Math.max(10, currentHeroHP - secondDamage);
+                            updateHealthUI('heroes', currentHeroHP);
+                            log.innerText = "A devastating second strike!";
+                            await delay(1000);
+                        }
+                    }
                 }
 
                 await delay(2000);
@@ -1273,7 +1789,7 @@
                 // HEROES WIN SCENARIO
                 log.innerText = `${currentVillain.name} roars and attacks furiously!`;
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
-                currentHeroHP = 10; 
+                currentHeroHP = 10;
                 updateHealthUI('heroes', currentHeroHP);
                 log.innerText = "The heroes are down to their last spark!";
                 await delay(2500); if(!isBattleActive) return;
@@ -1281,7 +1797,7 @@
                 // Slow Mo Tension
                 AudioEngine.stopMusic();
                 stage.classList.add('slow-mo');
-                
+
                 const finisher = Math.random() > 0.5 ? h1 : h2;
                 const ult = getUltimateMove(finisher);
                 log.innerText = `But ${finisher.name} prepares ${ult.name}...`;
@@ -1291,10 +1807,11 @@
                 stage.classList.remove('slow-mo');
                 triggerElementalFinale(finisher.type);
                 hitEffect(vImg);
+                currentVillainHP = 0;
                 updateHealthUI('villain', 0);
                 log.innerText = "K.O.!!!";
                 await delay(2000); if(!isBattleActive) return;
-                
+
                 log.innerText = `The ${currentVillain.name} is defeated! The Heroes Win!`;
                 playVictoryTunes();
 
@@ -1305,19 +1822,19 @@
                 await delay(2000); if(!isBattleActive) return;
 
                 log.innerText = `${currentVillain.name} unleashes TOTAL CHAOS!`;
-                stage.classList.add('shake-hard'); // Shake for bad guy too
+                stage.classList.add('shake-hard');
                 AudioEngine.playTone(100, 'sawtooth', 0.5);
                 await delay(1000); stage.classList.remove('shake-hard');
-                
+
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
                 updateHealthUI('heroes', 0);
-                
+
                 log.innerText = "The heroes are overwhelmed!";
                 await delay(2000); if(!isBattleActive) return;
 
                 AudioEngine.stopMusic();
                 log.innerText = "Muddlewick laughs... The Heroes must retreat!";
-                AudioEngine.playTone(150, 'sine', 1.0); 
+                AudioEngine.playTone(150, 'sine', 1.0);
             }
         }
         
