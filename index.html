@@ -4264,12 +4264,23 @@
                  btn.classList.add('active');
                  btn.innerText = "Cancel Challenge";
                  instructions.style.display = 'block';
-                 document.querySelectorAll('.hero-card').forEach(c => c.classList.add('dimmed'));
+                 document.querySelectorAll('.hero-card').forEach(c => {
+                     c.classList.add('dimmed');
+                     // Add locked class to heroes that are locked in story mode
+                     if (window.storyBattleMode && StoryModeSystem.storyModeEnabled) {
+                         const heroId = c.id.replace('card-', '');
+                         if (!StoryModeSystem.isHeroUnlocked(heroId)) {
+                             c.classList.add('locked-hero');
+                         }
+                     }
+                 });
             } else {
                  btn.classList.remove('active');
                  btn.innerText = "🧙‍♂️ Muddlewick has Chosen";
                  instructions.style.display = 'none';
-                 document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('dimmed'));
+                 document.querySelectorAll('.hero-card').forEach(c => {
+                     c.classList.remove('dimmed', 'locked-hero');
+                 });
             }
         }
 
@@ -4278,9 +4289,17 @@
              // NOTE: scrollIntoView removed to fix animation glitch
              // card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
+             // Check if hero is locked in story mode
+             if (window.storyBattleMode && StoryModeSystem.storyModeEnabled && !StoryModeSystem.isHeroUnlocked(id)) {
+                 const hero = heroes.find(h => h.id === id);
+                 AudioEngine.playTone(300, 'sine', 0.15);
+                 alert(`🔒 ${hero.name} is locked!\n\nComplete regions on the World Map to unlock this hero for battle.`);
+                 return;
+             }
+
              const startBtn = document.getElementById('startFightBtn');
              const selectTxt = document.getElementById('selectText');
-             
+
              if(selectedHeroes.includes(id)) {
                   AudioEngine.playTone(200, 'sine', 0.1);
                   selectedHeroes = selectedHeroes.filter(h => h !== id);
@@ -5174,22 +5193,19 @@
                 if (isHidden) return '';
                 // New: Calculate colour for border
                 const color = hero.type === 'electric' ? '#fbbf24' : hero.type === 'ice' ? '#22d3ee' : '#ef4444';
-                // Check if hero is locked in story mode
-                const isLocked = StoryModeSystem.storyModeEnabled && !StoryModeSystem.isHeroUnlocked(hero.id);
-                const lockedClass = isLocked ? 'locked-hero' : '';
-                const onclickHandler = isLocked ? '' : `triggerMegaReveal('${hero.id}')`;
+                // All heroes are viewable - lock check happens during battle selection
                 return `
       <div class="hero-card-container">
-        <div class="hero-card ${lockedClass}" id="card-${hero.id}" data-type="${hero.type}"
+        <div class="hero-card" id="card-${hero.id}" data-type="${hero.type}"
              style="--hero-color: ${color};"
-             onclick="${onclickHandler}"
+             onclick="triggerMegaReveal('${hero.id}')"
              onmouseenter="AudioEngine.playTone(100, 'sine', 0.05)"
              onmousemove="tiltCard(event, this)"
              onmouseleave="resetTilt(this)"
              tabindex="0"
              role="button"
              aria-label="Select Hero: ${hero.name}"
-             onkeypress="if(event.key === 'Enter' && !${isLocked}) triggerMegaReveal('${hero.id}')">
+             onkeypress="if(event.key === 'Enter') triggerMegaReveal('${hero.id}')">
           <div class="class-badge">${hero.role.split(' ')[0]}</div>
           <div class="scan-line"></div>
           <div class="card-foil"></div>
