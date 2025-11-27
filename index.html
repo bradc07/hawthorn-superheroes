@@ -736,13 +736,21 @@
             backdrop-filter: blur(4px);
         }
 
-        .tier-elite {
-            animation: elitePulse 1s infinite alternate;
+        .tier-vmax {
+            animation: vmaxPulse 0.8s infinite alternate;
+            font-size: 1rem;
+            font-weight: 900;
         }
 
-        @keyframes elitePulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.05); }
+        @keyframes vmaxPulse {
+            from {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            to {
+                transform: scale(1.08);
+                filter: brightness(1.3);
+            }
         }
 
         /* ABILITY VISUAL EFFECTS */
@@ -1275,39 +1283,31 @@
         /* --- VILLAIN TIER SYSTEM --- */
         function selectVillainTier() {
             const roll = Math.random();
-            if(roll < 0.3) return 'miniboss';  // 30%
-            if(roll < 0.8) return 'boss';       // 50%
-            return 'elite';                     // 20%
+            if(roll < 0.7) return 'normal';  // 70%
+            return 'vmax';                    // 30%
         }
 
         function getTierMultipliers(tier) {
             const tiers = {
-                miniboss: {
-                    hp: 80,
-                    damageMultiplier: 0.8,
-                    abilityMultiplier: 0.8,
-                    xpMultiplier: 0.75,
-                    badge: 'MINIBOSS',
-                    badgeColor: '#cd7f32', // Bronze
-                    badgeGlow: 'rgba(205, 127, 50, 0.6)'
-                },
-                boss: {
+                normal: {
                     hp: 100,
                     damageMultiplier: 1.0,
                     abilityMultiplier: 1.0,
                     xpMultiplier: 1.0,
-                    badge: 'BOSS',
-                    badgeColor: '#c0c0c0', // Silver
-                    badgeGlow: 'rgba(192, 192, 192, 0.6)'
+                    badge: null, // No badge for normal
+                    badgeColor: null,
+                    badgeGlow: null,
+                    nameSuffix: ''
                 },
-                elite: {
-                    hp: 130,
-                    damageMultiplier: 1.3,
-                    abilityMultiplier: 1.2,
+                vmax: {
+                    hp: 140,
+                    damageMultiplier: 1.4,
+                    abilityMultiplier: 1.3,
                     xpMultiplier: 1.5,
-                    badge: 'ELITE',
-                    badgeColor: '#ffd700', // Gold
-                    badgeGlow: 'rgba(255, 215, 0, 0.8)'
+                    badge: 'VMAX',
+                    badgeColor: '#ff0080', // Hot pink/magenta
+                    badgeGlow: 'rgba(255, 0, 128, 0.9)',
+                    nameSuffix: ' VMAX'
                 }
             };
             return tiers[tier];
@@ -1381,7 +1381,7 @@
              currentVillainTier = selectVillainTier();
              const tierData = getTierMultipliers(currentVillainTier);
 
-             document.getElementById('villainName').innerText = currentVillain.name;
+             document.getElementById('villainName').innerText = currentVillain.name + tierData.nameSuffix;
              document.getElementById('villainImg').src = currentVillain.img;
 
              const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
@@ -1408,23 +1408,19 @@
              vImg.style.transform = 'scale(1)';
              vImg.style.animation = '';
 
-             // ADD TIER BADGE
-             let tierBadgeHTML = '';
-             if(currentVillainTier === 'elite') {
-                 tierBadgeHTML = `<div class="tier-badge tier-elite" style="color:${tierData.badgeColor}; box-shadow: 0 0 20px ${tierData.badgeGlow};">🔥 ${tierData.badge} 🔥</div>`;
-                 // Elite visual: glowing red eyes effect
-                 vImg.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) drop-shadow(0 0 30px rgba(255, 0, 0, 0.4)) brightness(0.9) saturate(1.3)';
-             } else {
-                 tierBadgeHTML = `<div class="tier-badge tier-${currentVillainTier}" style="color:${tierData.badgeColor}; box-shadow: 0 0 15px ${tierData.badgeGlow};">${tierData.badge}</div>`;
-             }
-
-             // Insert tier badge next to villain name
+             // ADD TIER BADGE (only for VMAX)
              const villainSide = document.getElementById('villainSide');
              const existingBadge = villainSide.querySelector('.tier-badge');
              if(existingBadge) existingBadge.remove();
 
-             const nameEl = villainSide.querySelector('h2');
-             nameEl.insertAdjacentHTML('afterend', tierBadgeHTML);
+             if(currentVillainTier === 'vmax') {
+                 const tierBadgeHTML = `<div class="tier-badge tier-vmax" style="color:${tierData.badgeColor}; box-shadow: 0 0 25px ${tierData.badgeGlow};">⚡ ${tierData.badge} ⚡</div>`;
+                 const nameEl = villainSide.querySelector('h2');
+                 nameEl.insertAdjacentHTML('afterend', tierBadgeHTML);
+
+                 // VMAX visual: intense glowing effect
+                 vImg.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.3)) drop-shadow(0 0 35px rgba(255, 0, 128, 0.6)) brightness(1.1) saturate(1.4)';
+             }
 
              document.getElementById('battleText').innerText = "Waiting for command...";
              document.getElementById('battleStage').classList.remove('slow-mo', 'shake-hard');
@@ -1643,7 +1639,7 @@
             const getStandardMove = (h) => h.moves[0] || h.moves[1];
             const getUltimateMove = (h) => h.moves.reduce((prev, current) => (prev.pwr > current.pwr) ? prev : current);
 
-            log.innerText = `Muddlewick summons a ${currentVillain.name}!`;
+            log.innerText = `Muddlewick summons a ${currentVillain.name}${tierData.nameSuffix}!`;
             await delay(2000); if(!isBattleActive) return;
 
             // 3. GENERATE BATTLE SEQUENCE (6-8 Turns)
@@ -1658,7 +1654,7 @@
                     const oldHP = currentVillainHP;
                     currentVillainHP = Math.min(maxVillainHP, currentVillainHP + healAmount);
                     if(currentVillainHP > oldHP) {
-                        log.innerText = `${currentVillain.name}'s Self-Repair restores ${healAmount} HP!`;
+                        log.innerText = `${currentVillain.name}${tierData.nameSuffix}'s Self-Repair restores ${healAmount} HP!`;
                         showRegenerateEffect(vImg);
                         showFloatingText(vImg, `+${healAmount}`, '#4ade80');
                         updateHealthUI('villain', (currentVillainHP / maxVillainHP) * 100);
@@ -1696,7 +1692,7 @@
                         const abilityChance = currentVillain.abilityChance + VillainPhaseSystem.getAbilityModifier();
                         const abilityMod = tierData.abilityMultiplier;
                         if(Math.random() < (abilityChance * abilityMod)) {
-                            log.innerText = `${currentVillain.name} phase shifts - attack passes through!`;
+                            log.innerText = `${currentVillain.name}${tierData.nameSuffix} phase shifts - attack passes through!`;
                             showEvasionEffect(vImg);
                             showFloatingText(vImg, 'DODGED!', '#22d3ee');
                             await delay(1500);
@@ -1710,7 +1706,7 @@
                     if(currentVillain.ability === 'armor') {
                         const reduction = currentVillain.damageReduction;
                         damage *= (1 - reduction);
-                        log.innerText = `${currentVillain.name}'s Steel Plating absorbs ${Math.round(damage * reduction / (1-reduction))} damage!`;
+                        log.innerText = `${currentVillain.name}${tierData.nameSuffix}'s Steel Plating absorbs ${Math.round(damage * reduction / (1-reduction))} damage!`;
                         showArmorEffect(vImg);
                         showFloatingText(vImg, 'ARMORED!', '#c0c0c0');
                         await delay(1000);
@@ -1723,14 +1719,14 @@
                     const newPhase = VillainPhaseSystem.checkPhaseTransition(oldVillainHP, currentVillainHP);
                     if(newPhase) {
                         await delay(500);
-                        await VillainPhaseSystem.triggerPhaseTransition(newPhase, currentVillain.name);
+                        await VillainPhaseSystem.triggerPhaseTransition(newPhase, currentVillain.name + tierData.nameSuffix);
                     }
 
                     log.innerText = "A solid hit!";
 
                 } else {
                     // VILLAIN ATTACKS
-                    log.innerText = `${currentVillain.name} strikes with ${currentVillain.move}!`;
+                    log.innerText = `${currentVillain.name}${tierData.nameSuffix} strikes with ${currentVillain.move}!`;
                     await delay(800);
 
                     let damage = (15 + Math.random() * 10) * tierData.damageMultiplier * VillainPhaseSystem.getDamageModifier();
@@ -1751,7 +1747,7 @@
                             stunnedHeroes[stunKey] = true;
 
                             await delay(500);
-                            log.innerText = `${currentVillain.name}'s Thunderclap STUNS ${stunHero.name}!`;
+                            log.innerText = `${currentVillain.name}${tierData.nameSuffix}'s Thunderclap STUNS ${stunHero.name}!`;
                             showStunEffect(hImgs[stunTarget]);
                             showFloatingText(hImgs[stunTarget], 'STUNNED!', '#fbbf24');
                             await delay(1200);
@@ -1764,7 +1760,7 @@
                         const abilityMod = tierData.abilityMultiplier;
                         if(Math.random() < (abilityChance * abilityMod)) {
                             await delay(500);
-                            log.innerText = `${currentVillain.name}'s Lightning Reflexes activate - DOUBLE STRIKE!`;
+                            log.innerText = `${currentVillain.name}${tierData.nameSuffix}'s Lightning Reflexes activate - DOUBLE STRIKE!`;
                             showDoubleStrikeEffect(vImg);
                             showFloatingText(vImg, 'DOUBLE STRIKE!', '#fbbf24');
                             await delay(800);
@@ -1787,7 +1783,7 @@
             // 4. THE FINALE
             if(heroesWin) {
                 // HEROES WIN SCENARIO
-                log.innerText = `${currentVillain.name} roars and attacks furiously!`;
+                log.innerText = `${currentVillain.name}${tierData.nameSuffix} roars and attacks furiously!`;
                 hitEffect(hImgs[0]); hitEffect(hImgs[1]);
                 currentHeroHP = 10;
                 updateHealthUI('heroes', currentHeroHP);
@@ -1812,7 +1808,7 @@
                 log.innerText = "K.O.!!!";
                 await delay(2000); if(!isBattleActive) return;
 
-                log.innerText = `The ${currentVillain.name} is defeated! The Heroes Win!`;
+                log.innerText = `The ${currentVillain.name}${tierData.nameSuffix} is defeated! The Heroes Win!`;
                 playVictoryTunes();
 
             } else {
@@ -1821,7 +1817,7 @@
                 log.innerText = `${trier.name} tries to end it, but misses!`;
                 await delay(2000); if(!isBattleActive) return;
 
-                log.innerText = `${currentVillain.name} unleashes TOTAL CHAOS!`;
+                log.innerText = `${currentVillain.name}${tierData.nameSuffix} unleashes TOTAL CHAOS!`;
                 stage.classList.add('shake-hard');
                 AudioEngine.playTone(100, 'sawtooth', 0.5);
                 await delay(1000); stage.classList.remove('shake-hard');
