@@ -2606,7 +2606,7 @@
             </div>
             <div class="filter-group">
                  <button class="filter-btn" id="worldMapBtn" onclick="StoryModeSystem.openWorldMap()" title="World Map" style="background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24;">🗺️ World Map</button>
-                 <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">🧙‍♂️ Muddlewick has Chosen</button>
+                 <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">⚔️ Battle</button>
                  <button class="filter-btn" id="muteBtn" onclick="AudioEngine.toggleMute()" title="Toggle Sound">🔊</button>
             </div>
         </div>
@@ -3466,6 +3466,10 @@
 
             // Show math challenge modal
             showChallenge() {
+                // Reset power-ups from previous battles
+                window.mathChallengeDamageBoost = 0;
+                window.mathChallengeDamageReduction = 0;
+
                 this.currentTier = this.getTierFromDifficulty();
                 this.currentQuestion = getRandomQuestion(this.currentTier);
 
@@ -3567,6 +3571,9 @@
 
             // Proceed to battle
             proceedToBattle() {
+                // For Muddlewick battles, open the battle overlay and start combat
+                document.getElementById('battleOverlay').classList.add('active');
+                AudioEngine.playTone(600, 'sine', 0.2);
                 beginCombatSequence();
             }
         };
@@ -5322,13 +5329,15 @@
             selectTxt.style.color = "#a855f7";
 
             if(isBattleSelecting) {
+                 // Reset story battle mode when starting a Muddlewick battle
+                 window.storyBattleMode = false;
                  btn.classList.add('active');
                  btn.innerText = "Cancel Challenge";
                  instructions.style.display = 'block';
                  document.querySelectorAll('.hero-card').forEach(c => c.classList.add('dimmed'));
             } else {
                  btn.classList.remove('active');
-                 btn.innerText = "🧙‍♂️ Muddlewick has Chosen";
+                 btn.innerText = "⚔️ Battle";
                  instructions.style.display = 'none';
                  document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('dimmed'));
             }
@@ -5466,9 +5475,15 @@
              // 2. SETUP BATTLE DATA (Select Villain, Reset HP)
              setupBattleState(hero1, hero2);
 
-             // 3. RESET ITEM SYSTEM AND SHOW ITEM SELECTION
-             ItemSystem.reset();
-             showItemSelection();
+             // 3. CHECK BATTLE MODE AND BRANCH
+             if (window.storyBattleMode) {
+                 // World Map battles: Use item selection system
+                 ItemSystem.reset();
+                 showItemSelection();
+             } else {
+                 // Muddlewick battles: Show math challenge
+                 MathChallengeSystem.showChallenge();
+             }
         }
 
         function setupBattleState(hero1, hero2) {
@@ -5537,8 +5552,8 @@
             document.getElementById('battleOverlay').classList.add('active');
             AudioEngine.playTone(600, 'sine', 0.2); // Entry sound
 
-            // Show math challenge instead of going directly to combat
-            MathChallengeSystem.showChallenge();
+            // Start combat directly (math challenge is shown earlier for Muddlewick battles)
+            beginCombatSequence();
         }
 
         function updateHealthUI(side, pct) {
