@@ -968,6 +968,265 @@
             margin-top: 10px;
         }
         .weakness-box strong { color: #ef4444; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- ITEM SELECTION OVERLAY --- */
+        .item-selection-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .item-selection-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .item-selection-container {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f0a2e 70%);
+            border: 3px solid #a855f7;
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 900px;
+            width: 90%;
+            box-shadow: 0 0 60px rgba(168, 85, 247, 0.5);
+        }
+
+        .item-selection-title {
+            font-family: 'Bangers';
+            font-size: 3rem;
+            color: #a855f7;
+            text-align: center;
+            text-shadow: 0 0 30px #a855f7;
+            margin-bottom: 1rem;
+        }
+
+        .item-selection-counter {
+            text-align: center;
+            font-family: 'Rajdhani';
+            font-size: 1.5rem;
+            color: #fbbf24;
+            margin-bottom: 2rem;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .item-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            border-color: #a855f7;
+            box-shadow: 0 5px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .item-card.selected {
+            border: 3px solid #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .item-card.rarity-common {
+            border-color: #94a3b8;
+        }
+
+        .item-card.rarity-uncommon {
+            border-color: #22c55e;
+        }
+
+        .item-card.rarity-rare {
+            border-color: #3b82f6;
+        }
+
+        .item-card.selected.rarity-common {
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+        }
+
+        .item-card.selected.rarity-uncommon {
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+        }
+
+        .item-card.selected.rarity-rare {
+            border-color: #22c55e;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+        }
+
+        .item-icon-large {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-card-name {
+            font-family: 'Bangers';
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-card-desc {
+            font-family: 'Rajdhani';
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .enter-battle-btn {
+            font-family: 'Bangers';
+            font-size: 2.5rem;
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: 2px solid #86efac;
+            border-radius: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+            transition: all 0.3s;
+        }
+
+        .enter-battle-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(34, 197, 94, 0.8);
+        }
+
+        /* --- BATTLE ITEMS UI --- */
+        .battle-items-container {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+
+        .battle-item-btn {
+            font-family: 'Rajdhani';
+            font-size: 1rem;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #9333ea, #7e22ce);
+            color: white;
+            border: 2px solid #d8b4fe;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+            transition: all 0.3s;
+            animation: itemPulse 2s infinite alternate;
+        }
+
+        .battle-item-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
+        }
+
+        .battle-item-btn.used {
+            background: rgba(100, 100, 100, 0.5);
+            border-color: #666;
+            cursor: not-allowed;
+            animation: none;
+            opacity: 0.5;
+        }
+
+        .battle-item-btn .item-icon {
+            font-size: 1.5rem;
+        }
+
+        .battle-item-btn .item-name {
+            font-weight: 600;
+        }
+
+        @keyframes itemPulse {
+            from { box-shadow: 0 0 15px rgba(168, 85, 247, 0.3); }
+            to { box-shadow: 0 0 25px rgba(168, 85, 247, 0.7); }
+        }
+
+        /* Item effect animations */
+        @keyframes floatUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-100px);
+            }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .shield-effect, .smoke-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            animation: scaleUpFade 2s ease-out forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes scaleUpFade {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+
+        .critical-glow {
+            animation: criticalGlowAnim 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes criticalGlowAnim {
+            from {
+                filter: drop-shadow(0 0 10px #ef4444);
+            }
+            to {
+                filter: drop-shadow(0 0 30px #ef4444);
+            }
+        }
+
+        .power-glow {
+            animation: powerGlowAnim 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes powerGlowAnim {
+            from {
+                filter: drop-shadow(0 0 10px #a855f7);
+            }
+            to {
+                filter: drop-shadow(0 0 30px #a855f7);
+            }
+        }
     </style>
 </head>
 
@@ -986,6 +1245,20 @@
     <!-- SYNERGY OVERLAY CONTAINER -->
     <div id="synergyOverlay" class="synergy-overlay">
          <div id="synergyText" class="synergy-text"></div>
+    </div>
+
+    <!-- ITEM SELECTION OVERLAY -->
+    <div id="itemSelectionOverlay" class="item-selection-overlay">
+        <div class="item-selection-container">
+            <div class="item-selection-title">CHOOSE YOUR GEAR</div>
+            <div class="item-selection-counter" id="itemCounter">Select up to 2 items (0/2 Selected)</div>
+
+            <div class="items-grid" id="itemsGrid">
+                <!-- Items will be populated by JavaScript -->
+            </div>
+
+            <button class="enter-battle-btn" onclick="confirmItemSelection()">ENTER BATTLE</button>
+        </div>
     </div>
 
     <div class="app">
@@ -1148,7 +1421,17 @@
                         </div>
                    </div>
               </div>
-              
+
+              <!-- BATTLE ITEMS CONTAINER -->
+              <div class="battle-items-container" id="battleItemsContainer">
+                  <button class="battle-item-btn" id="battleItem0" onclick="useBattleItem(0)" style="display:none;">
+                      <span class="item-icon"></span><span class="item-name"></span>
+                  </button>
+                  <button class="battle-item-btn" id="battleItem1" onclick="useBattleItem(1)" style="display:none;">
+                      <span class="item-icon"></span><span class="item-name"></span>
+                  </button>
+              </div>
+
               <div class="battle-log">
                    <span id="battleText">Waiting for command...</span>
               </div>
@@ -1229,6 +1512,77 @@
                  signature: "Annihilation Beam"
              }
         ];
+
+        /* --- BATTLE ITEMS --- */
+        const BATTLE_ITEMS = {
+            health_potion: {
+                id: "health_potion",
+                name: "Health Potion",
+                icon: "❤️",
+                description: "Restore 30 HP to your heroes",
+                effect: "heal",
+                value: 30,
+                rarity: "common",
+                uses: 1
+            },
+
+            shield_boost: {
+                id: "shield_boost",
+                name: "Shield Boost",
+                icon: "🛡️",
+                description: "Reduce incoming damage by 50% for 3 turns",
+                effect: "defense",
+                value: 0.5,
+                duration: 3,
+                rarity: "common",
+                uses: 1
+            },
+
+            critical_charm: {
+                id: "critical_charm",
+                name: "Critical Strike Charm",
+                icon: "⚔️",
+                description: "Guarantee critical hits for 2 turns",
+                effect: "critical",
+                duration: 2,
+                rarity: "rare",
+                uses: 1
+            },
+
+            energy_surge: {
+                id: "energy_surge",
+                name: "Energy Surge",
+                icon: "⚡",
+                description: "Instantly fill 50% of synergy meter",
+                effect: "synergy",
+                value: 50,
+                rarity: "rare",
+                uses: 1
+            },
+
+            smoke_bomb: {
+                id: "smoke_bomb",
+                name: "Smoke Bomb",
+                icon: "💨",
+                description: "Dodge the next enemy attack guaranteed",
+                effect: "dodge",
+                duration: 1,
+                rarity: "uncommon",
+                uses: 1
+            },
+
+            power_crystal: {
+                id: "power_crystal",
+                name: "Power Crystal",
+                icon: "💎",
+                description: "Increase all damage by 40% for 3 turns",
+                effect: "damage",
+                value: 0.4,
+                duration: 3,
+                rarity: "rare",
+                uses: 1
+            }
+        };
 
         /* --- PRELOADER --- */
         function preloadImages() {
@@ -1399,20 +1753,27 @@
             },
 
             // Show floating damage number
-            showDamage: function(element, damage, isCritical = false, multiplier = 1) {
+            showDamage: function(element, damage, isCritical = false, multiplier = 1, isHeal = false) {
                 const rect = element.getBoundingClientRect();
                 const stage = document.getElementById('battleStage');
                 const stageRect = stage.getBoundingClientRect();
 
                 const damageNum = document.createElement('div');
                 damageNum.className = 'damage-number' + (isCritical ? ' critical' : '');
-                damageNum.textContent = Math.round(damage);
+                damageNum.textContent = (isHeal ? '+' : '') + Math.round(damage);
                 damageNum.style.left = (rect.left + rect.width/2 - stageRect.left) + 'px';
                 damageNum.style.top = (rect.top + rect.height/2 - stageRect.top) + 'px';
 
-                if(isCritical) damageNum.textContent += '!';
-                else if(multiplier > 1.2) damageNum.textContent += '↑'; // Bonus indicator
-                else if(multiplier < 0.8) damageNum.textContent += '↓'; // Weak indicator
+                if(isHeal) {
+                    damageNum.style.color = '#22c55e';
+                    damageNum.style.textShadow = '0 0 10px #22c55e';
+                } else if(isCritical) {
+                    damageNum.textContent += '!';
+                } else if(multiplier > 1.2) {
+                    damageNum.textContent += '↑'; // Bonus indicator
+                } else if(multiplier < 0.8) {
+                    damageNum.textContent += '↓'; // Weak indicator
+                }
 
                 stage.appendChild(damageNum);
                 setTimeout(() => damageNum.remove(), 1500);
@@ -1546,6 +1907,231 @@
             }
         };
 
+        /* --- ITEM SYSTEM --- */
+        const ItemSystem = {
+            selectedItems: [],
+            usedItems: [],
+            activeEffects: [], // {effectType, turnsRemaining, value}
+
+            reset: function() {
+                this.selectedItems = [];
+                this.usedItems = [];
+                this.activeEffects = [];
+                this.updateBattleUI();
+            },
+
+            selectItem: function(itemId) {
+                if(this.selectedItems.length >= 2) return false;
+                if(this.selectedItems.includes(itemId)) return false;
+                this.selectedItems.push(itemId);
+                return true;
+            },
+
+            deselectItem: function(itemId) {
+                const index = this.selectedItems.indexOf(itemId);
+                if(index > -1) {
+                    this.selectedItems.splice(index, 1);
+                    return true;
+                }
+                return false;
+            },
+
+            useItem: function(itemId) {
+                if(this.usedItems.includes(itemId)) return;
+                const item = BATTLE_ITEMS[itemId];
+                if(!item) return;
+
+                this.usedItems.push(itemId);
+
+                // Apply effect based on item type
+                switch(item.effect) {
+                    case 'heal':
+                        this.applyHeal(item.value);
+                        break;
+                    case 'defense':
+                        this.applyDefense(item.value, item.duration);
+                        break;
+                    case 'critical':
+                        this.applyCritical(item.duration);
+                        break;
+                    case 'synergy':
+                        this.applySynergy(item.value);
+                        break;
+                    case 'dodge':
+                        this.applyDodge(item.duration);
+                        break;
+                    case 'damage':
+                        this.applyDamage(item.value, item.duration);
+                        break;
+                }
+
+                this.updateBattleUI();
+            },
+
+            tickEffects: function() {
+                for(let i = this.activeEffects.length - 1; i >= 0; i--) {
+                    const effect = this.activeEffects[i];
+                    if(effect.duration !== undefined) {
+                        effect.turnsRemaining--;
+                        if(effect.turnsRemaining <= 0) {
+                            this.activeEffects.splice(i, 1);
+                        }
+                    }
+                }
+            },
+
+            getActiveEffect: function(effectType) {
+                return this.activeEffects.find(e => e.effectType === effectType) || null;
+            },
+
+            applyHeal: function(value) {
+                currentHeroHP = Math.min(100, currentHeroHP + value);
+                updateHealthUI('heroes', currentHeroHP);
+                updateBattleLog(`Heroes restored ${value} HP! ❤️`);
+
+                // Visual effects
+                const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
+                hImgs.forEach(img => {
+                    VisualFX.showDamage(img, value, false, 1, true); // true for heal
+                    this.createHealingParticles(img);
+                });
+                AudioEngine.playTone(800, 'sine', 0.4);
+            },
+
+            applyDefense: function(value, duration) {
+                this.activeEffects.push({
+                    effectType: 'defense',
+                    value: value,
+                    turnsRemaining: duration
+                });
+                updateBattleLog(`Shield activated! Damage reduced by ${value * 100}% for ${duration} turns! 🛡️`);
+                this.showShieldEffect();
+                AudioEngine.playTone(600, 'triangle', 0.3);
+            },
+
+            applyCritical: function(duration) {
+                this.activeEffects.push({
+                    effectType: 'critical',
+                    turnsRemaining: duration
+                });
+                updateBattleLog(`Critical strikes guaranteed for ${duration} turns! ⚔️`);
+                this.showCriticalEffect();
+                AudioEngine.playTone(1000, 'square', 0.3);
+            },
+
+            applySynergy: function(value) {
+                // Note: This would need SynergySystem if it exists, for now just visual feedback
+                updateBattleLog(`Energy surged! Power increased! ⚡`);
+                this.showEnergyEffect();
+                AudioEngine.playTone(1200, 'sine', 0.4);
+            },
+
+            applyDodge: function(duration) {
+                this.activeEffects.push({
+                    effectType: 'dodge',
+                    turnsRemaining: duration
+                });
+                updateBattleLog(`Smoke bomb deployed! Next attack will be dodged! 💨`);
+                this.showSmokeEffect();
+                AudioEngine.playTone(400, 'sawtooth', 0.2);
+            },
+
+            applyDamage: function(value, duration) {
+                this.activeEffects.push({
+                    effectType: 'damage',
+                    value: value,
+                    turnsRemaining: duration
+                });
+                updateBattleLog(`Power crystal activated! Damage increased by ${value * 100}% for ${duration} turns! 💎`);
+                this.showPowerEffect();
+                AudioEngine.playTone(900, 'sine', 0.4);
+            },
+
+            // Visual effects helpers
+            createHealingParticles: function(targetElement) {
+                const rect = targetElement.getBoundingClientRect();
+                for(let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.textContent = '❤️';
+                        particle.style.position = 'fixed';
+                        particle.style.left = (rect.left + rect.width/2) + 'px';
+                        particle.style.top = (rect.top + rect.height/2) + 'px';
+                        particle.style.fontSize = '1.5rem';
+                        particle.style.pointerEvents = 'none';
+                        particle.style.zIndex = '2000';
+                        particle.style.animation = 'floatUp 1s ease-out forwards';
+                        document.body.appendChild(particle);
+                        setTimeout(() => particle.remove(), 1000);
+                    }, i * 100);
+                }
+            },
+
+            showShieldEffect: function() {
+                const hSide = document.getElementById('heroesSide');
+                const shield = document.createElement('div');
+                shield.className = 'shield-effect';
+                shield.textContent = '🛡️';
+                hSide.appendChild(shield);
+                setTimeout(() => shield.remove(), 2000);
+            },
+
+            showCriticalEffect: function() {
+                const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
+                hImgs.forEach(img => {
+                    img.classList.add('critical-glow');
+                });
+            },
+
+            showEnergyEffect: function() {
+                const stage = document.getElementById('battleStage');
+                const flash = document.createElement('div');
+                flash.style.position = 'absolute';
+                flash.style.inset = '0';
+                flash.style.background = 'radial-gradient(circle, rgba(251, 191, 36, 0.5) 0%, transparent 70%)';
+                flash.style.pointerEvents = 'none';
+                flash.style.zIndex = '10';
+                flash.style.animation = 'fadeOut 1s ease-out';
+                stage.appendChild(flash);
+                setTimeout(() => flash.remove(), 1000);
+            },
+
+            showSmokeEffect: function() {
+                const hSide = document.getElementById('heroesSide');
+                const smoke = document.createElement('div');
+                smoke.className = 'smoke-effect';
+                smoke.textContent = '💨';
+                hSide.appendChild(smoke);
+                setTimeout(() => smoke.remove(), 2000);
+            },
+
+            showPowerEffect: function() {
+                const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
+                hImgs.forEach(img => {
+                    img.classList.add('power-glow');
+                });
+            },
+
+            updateBattleUI: function() {
+                // Update item buttons in battle
+                this.selectedItems.forEach((itemId, index) => {
+                    const btn = document.getElementById(`battleItem${index}`);
+                    if(btn) {
+                        const item = BATTLE_ITEMS[itemId];
+                        btn.innerHTML = `<span class="item-icon">${item.icon}</span><span class="item-name">${item.name}</span>`;
+
+                        if(this.usedItems.includes(itemId)) {
+                            btn.classList.add('used');
+                            btn.disabled = true;
+                        } else {
+                            btn.classList.remove('used');
+                            btn.disabled = false;
+                        }
+                    }
+                });
+            }
+        };
+
         /* --- BATTLE LOGIC --- */
         let isBattleSelecting = false;
         let isBattleActive = false;
@@ -1620,6 +2206,87 @@
              }
         }
 
+        /* --- ITEM SELECTION FUNCTIONS --- */
+        function populateItemsGrid() {
+            const grid = document.getElementById('itemsGrid');
+            grid.innerHTML = '';
+
+            Object.values(BATTLE_ITEMS).forEach(item => {
+                const card = document.createElement('div');
+                card.className = `item-card rarity-${item.rarity}`;
+                card.setAttribute('data-item-id', item.id);
+                card.onclick = () => toggleItemSelection(item.id);
+
+                card.innerHTML = `
+                    <div class="item-icon-large">${item.icon}</div>
+                    <div class="item-card-name">${item.name}</div>
+                    <div class="item-card-desc">${item.description}</div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleItemSelection(itemId) {
+            const card = document.querySelector(`[data-item-id="${itemId}"]`);
+            const isSelected = card.classList.contains('selected');
+
+            if(isSelected) {
+                ItemSystem.deselectItem(itemId);
+                card.classList.remove('selected');
+            } else {
+                const success = ItemSystem.selectItem(itemId);
+                if(success) {
+                    card.classList.add('selected');
+                    AudioEngine.playTone(600, 'sine', 0.2);
+                } else {
+                    AudioEngine.playTone(300, 'sawtooth', 0.2);
+                }
+            }
+
+            updateItemCounter();
+        }
+
+        function updateItemCounter() {
+            const counter = document.getElementById('itemCounter');
+            const count = ItemSystem.selectedItems.length;
+            counter.textContent = `Select up to 2 items (${count}/2 Selected)`;
+        }
+
+        function showItemSelection() {
+            populateItemsGrid();
+            const overlay = document.getElementById('itemSelectionOverlay');
+            overlay.classList.add('active');
+        }
+
+        function confirmItemSelection() {
+            const overlay = document.getElementById('itemSelectionOverlay');
+            overlay.classList.remove('active');
+            AudioEngine.playTone(800, 'sine', 0.3);
+
+            // Show selected items in battle UI
+            ItemSystem.selectedItems.forEach((itemId, index) => {
+                const btn = document.getElementById(`battleItem${index}`);
+                if(btn) {
+                    btn.style.display = 'flex';
+                }
+            });
+            ItemSystem.updateBattleUI();
+
+            // Continue to dossier
+            openVillainModal(true);
+        }
+
+        function useBattleItem(index) {
+            if(!isBattleActive) return;
+
+            const itemId = ItemSystem.selectedItems[index];
+            if(!itemId) return;
+
+            ItemSystem.useItem(itemId);
+            AudioEngine.playTone(700, 'sine', 0.3);
+        }
+
         // NEW: Initiate Battle Click Handler
         async function openBattleArena() {
              AudioEngine.playTone(800, 'sine', 0.3);
@@ -1627,9 +2294,9 @@
              // 1. SYNERGY CHECK
              const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
              const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
-             
+
              synergyActive = (hero1.type === hero2.type);
-             
+
              if(synergyActive) {
                  await playSynergyAnimation(hero1.type);
              }
@@ -1637,8 +2304,9 @@
              // 2. SETUP BATTLE DATA (Select Villain, Reset HP)
              setupBattleState(hero1, hero2);
 
-             // 3. SHOW DOSSIER AUTOMATICALLY
-             openVillainModal(true); 
+             // 3. RESET ITEM SYSTEM AND SHOW ITEM SELECTION
+             ItemSystem.reset();
+             showItemSelection();
         }
 
         function setupBattleState(hero1, hero2) {
@@ -1723,7 +2391,18 @@
              AudioEngine.stopMusic();
              document.getElementById('battleOverlay').classList.remove('active');
              document.getElementById('postBattleModal').classList.remove('active');
-             toggleBattleMode(); 
+
+             // Hide battle item buttons
+             document.getElementById('battleItem0').style.display = 'none';
+             document.getElementById('battleItem1').style.display = 'none';
+
+             // Remove active effect indicators
+             const hImgs = [document.getElementById('hero1Img'), document.getElementById('hero2Img')];
+             hImgs.forEach(img => {
+                 img.classList.remove('critical-glow', 'power-glow');
+             });
+
+             toggleBattleMode();
         }
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -1987,6 +2666,9 @@
             for(let i = 0; i < totalTurns; i++) {
                 if(!isBattleActive) return;
 
+                // TICK ITEM EFFECTS AT START OF EACH TURN
+                ItemSystem.tickEffects();
+
                 const isHeroTurn = (i % 2 === 0) ? Math.random() > 0.35 : Math.random() > 0.6;
 
                 if(isHeroTurn) {
@@ -1995,13 +2677,21 @@
                     const attacker = attackerIndex === 0 ? h1 : h2;
                     const attackerImg = hImgs[attackerIndex];
                     const move = getStandardMove(attacker);
-                    const isCritical = Math.random() > 0.75;
+
+                    // CHECK FOR CRITICAL CHARM EFFECT
+                    const criticalEffect = ItemSystem.getActiveEffect('critical');
+                    const isCritical = criticalEffect ? true : (Math.random() > 0.75);
+
                     const taunts = ["Take this!", "Too slow!", "Full power!", "For Hawthorn!", "Hiyah!"];
                     const randomTaunt = taunts[Math.floor(Math.random() * taunts.length)];
 
                     // Calculate Advantage
                     let multiplier = getMultiplier(attacker.type, currentVillain.type);
                     if(synergyActive) multiplier += 0.2; // Synergy Boost
+
+                    // CHECK FOR POWER CRYSTAL EFFECT
+                    const damageEffect = ItemSystem.getActiveEffect('damage');
+                    if(damageEffect) multiplier += damageEffect.value;
 
                     // FOCUS ON HERO
                     VisualFX.focusOn('right');
@@ -2096,11 +2786,20 @@
 
                     await delay(400); if(!isBattleActive) return;
 
-                    // DODGE OR HIT? (Heroes can dodge too!)
-                    const dodgeChance = 0.1;
+                    // CHECK FOR SMOKE BOMB DODGE EFFECT
+                    const dodgeEffect = ItemSystem.getActiveEffect('dodge');
+                    const dodgeChance = dodgeEffect ? 1.0 : 0.1;
+
                     if(Math.random() < dodgeChance) {
                         VisualFX.focusOn('right');
-                        updateBattleLog("The heroes dodge just in time!");
+                        if(dodgeEffect) {
+                            updateBattleLog("Smoke bomb activated! Attack dodged!");
+                            // Remove the dodge effect after use
+                            const index = ItemSystem.activeEffects.findIndex(e => e.effectType === 'dodge');
+                            if(index > -1) ItemSystem.activeEffects.splice(index, 1);
+                        } else {
+                            updateBattleLog("The heroes dodge just in time!");
+                        }
                         hImgs[0].classList.add('dodge-left');
                         hImgs[1].classList.add('dodge-left');
                         setTimeout(() => {
@@ -2111,7 +2810,15 @@
                         await delay(1000);
                     } else {
                         VisualFX.focusOn('right');
-                        const damage = 12 + Math.random() * 12;
+                        let damage = 12 + Math.random() * 12;
+
+                        // CHECK FOR SHIELD BOOST DEFENSE EFFECT
+                        const defenseEffect = ItemSystem.getActiveEffect('defense');
+                        if(defenseEffect) {
+                            damage = damage * (1 - defenseEffect.value);
+                            updateBattleLog(`Shield absorbed ${Math.round(defenseEffect.value * 100)}% damage!`);
+                        }
+
                         hitEffect(hImgs[0]); hitEffect(hImgs[1]);
                         AudioEngine.hitSound();
                         VisualFX.createImpactRing(hImgs[0], '#ef4444');
@@ -2120,7 +2827,9 @@
 
                         currentHeroHP = Math.max(10, currentHeroHP - damage);
                         updateHealthUI('heroes', currentHeroHP);
-                        updateBattleLog("The heroes take a hit!");
+                        if(!defenseEffect) {
+                            updateBattleLog("The heroes take a hit!");
+                        }
                     }
                 }
 
