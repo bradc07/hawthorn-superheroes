@@ -1699,6 +1699,529 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        /* ==================== WORLD MAP STYLES ==================== */
+
+        /* World Map Overlay */
+        .world-map-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1500;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .world-map-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .world-map-container {
+            width: 90%;
+            max-width: 1400px;
+            height: 85vh;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 27, 75, 0.9) 100%);
+            border: 4px solid #fbbf24;
+            border-radius: 20px;
+            box-shadow: 0 0 60px rgba(251, 191, 36, 0.3);
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .world-map-header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 2px solid rgba(251, 191, 36, 0.3);
+            position: relative;
+        }
+
+        .world-map-title {
+            font-family: "Bangers", cursive;
+            font-size: clamp(3rem, 6vw, 5rem);
+            letter-spacing: 6px;
+            background: linear-gradient(to right, #fff 20%, #fbbf24 40%, #fbbf24 60%, #fff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        /* Map View */
+        .map-view {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+        }
+
+        .map-paths-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .map-regions {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        /* Region Nodes */
+        .region-node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 4px solid currentColor;
+            background: rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .region-node:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 0 40px currentColor;
+            z-index: 10;
+        }
+
+        .region-node.locked {
+            filter: grayscale(1) brightness(0.4);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .region-node.locked:hover {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: none;
+        }
+
+        .region-node.completed {
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        .region-icon {
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .completion-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #22c55e;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 0 15px #22c55e;
+        }
+
+        .progress-badge {
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-family: "Rajdhani";
+            font-weight: 700;
+            white-space: nowrap;
+            border: 1px solid currentColor;
+        }
+
+        .lock-badge {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Region Detail Panel */
+        .region-detail-panel {
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 2px solid rgba(251, 191, 36, 0.3);
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .region-detail-panel.active {
+            opacity: 1;
+        }
+
+        .region-detail-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .region-detail-icon {
+            font-size: 4rem;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .region-detail-name {
+            font-family: "Bangers";
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .region-detail-difficulty {
+            color: #fbbf24;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .region-detail-desc {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .region-detail-progress {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .completed-badge {
+            background: #22c55e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .region-detail-villains,
+        .region-detail-rewards {
+            margin: 0.8rem 0;
+            font-size: 1rem;
+        }
+
+        .region-detail-rewards div {
+            margin: 0.3rem 0;
+        }
+
+        .enter-region-btn {
+            margin-top: 1.5rem;
+            padding: 1rem 3rem;
+            font-family: "Bangers";
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-transform: uppercase;
+        }
+
+        .enter-region-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        .locked-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #fca5a5;
+        }
+
+        /* Stage Select Overlay */
+        .stage-select-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1600;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .stage-select-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .stage-select-container {
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            background: rgba(15, 23, 42, 0.98);
+            border: 3px solid #a855f7;
+            border-radius: 20px;
+            padding: 2rem;
+            overflow-y: auto;
+            box-shadow: 0 0 50px rgba(168, 85, 247, 0.5);
+        }
+
+        .stage-select-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stage-select-header h2 {
+            font-family: "Bangers";
+            font-size: 3rem;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stage-card {
+            background: rgba(30, 27, 75, 0.8);
+            border: 2px solid rgba(168, 85, 247, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            position: relative;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+            border-color: #a855f7;
+        }
+
+        .stage-card.completed {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+        }
+
+        .stage-card.locked {
+            filter: grayscale(1);
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .stage-card.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .stage-number {
+            font-family: "Bangers";
+            font-size: 1.5rem;
+            color: #a855f7;
+            margin-bottom: 0.5rem;
+        }
+
+        .stage-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.8rem;
+        }
+
+        .stage-type {
+            font-size: 0.9rem;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+
+        .stage-reward {
+            font-size: 0.9rem;
+            color: #22d3ee;
+        }
+
+        .stage-complete-mark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #22c55e;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px #22c55e;
+        }
+
+        .stage-lock-mark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+        }
+
+        /* Stage Intro Overlay */
+        .stage-intro-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1700;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+
+        .stage-intro-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .stage-intro-container {
+            text-align: center;
+        }
+
+        .stage-intro-content {
+            padding: 3rem;
+        }
+
+        .stage-intro-region {
+            font-family: "Bangers";
+            font-size: 2rem;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .stage-intro-name {
+            font-family: "Bangers";
+            font-size: 4rem;
+            color: white;
+            letter-spacing: 4px;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        .stage-intro-type {
+            font-size: 1.5rem;
+            color: #fbbf24;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px #fbbf24;
+        }
+
+        .stage-intro-villain {
+            font-size: 1.8rem;
+            color: #ef4444;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px #ef4444;
+        }
+
+        .stage-intro-begin-btn {
+            padding: 1.5rem 4rem;
+            font-family: "Bangers";
+            font-size: 2rem;
+            letter-spacing: 3px;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 0 40px currentColor;
+        }
+
+        .stage-intro-begin-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 60px currentColor;
+        }
+
+        /* Locked Hero Card Styles */
+        .hero-card.locked-hero {
+            filter: grayscale(1) brightness(0.4);
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .hero-card.locked-hero::before {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5rem;
+            z-index: 100;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .hero-card.locked-hero:hover {
+            transform: none;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .region-node {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+
+            .world-map-title {
+                font-size: 2.5rem;
+            }
+
+            .stage-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .region-detail-icon {
+                font-size: 3rem;
+            }
+
+            .region-detail-name {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 
@@ -1747,6 +2270,7 @@
                 <button class="filter-btn" onclick="filterGrid('impact', this)" style="--active-color:#ef4444">Impact</button>
             </div>
             <div class="filter-group">
+                 <button class="filter-btn" id="worldMapBtn" onclick="StoryModeSystem.openWorldMap()" title="World Map" style="background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24;">🗺️ World Map</button>
                  <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">🧙‍♂️ Muddlewick has Chosen</button>
                  <button class="filter-btn" id="muteBtn" onclick="AudioEngine.toggleMute()" title="Toggle Sound">🔊</button>
             </div>
@@ -1910,6 +2434,41 @@
          </div>
     </div>
 
+    <!-- WORLD MAP OVERLAY -->
+    <div class="world-map-overlay" id="worldMapOverlay">
+        <div class="world-map-container">
+            <div class="world-map-header">
+                <h1 class="world-map-title">WORLD MAP</h1>
+                <button class="close-btn" onclick="StoryModeSystem.closeWorldMap()">×</button>
+            </div>
+            <div class="map-view">
+                <svg class="map-paths-svg" id="worldMapPaths" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <!-- Paths will be rendered here -->
+                </svg>
+                <div class="map-regions" id="worldMapContainer">
+                    <!-- Region nodes will be rendered here -->
+                </div>
+            </div>
+            <div class="region-detail-panel" id="regionDetailPanel">
+                <p style="text-align:center; color:#666;">Select a region to view details</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAGE SELECT OVERLAY -->
+    <div class="stage-select-overlay" id="stageSelectOverlay">
+        <div class="stage-select-container" id="stageSelectContainer">
+            <!-- Stage selection will be rendered here -->
+        </div>
+    </div>
+
+    <!-- STAGE INTRO OVERLAY -->
+    <div class="stage-intro-overlay" id="stageIntroOverlay">
+        <div class="stage-intro-container" id="stageIntroContainer">
+            <!-- Stage intro will be rendered here -->
+        </div>
+    </div>
+
     <script>
         /* HERO DATA */
         const heroes = [
@@ -1984,6 +2543,179 @@
                  signature: "Annihilation Beam"
              }
         ];
+
+        /* --- WORLD MAP / STORY MODE DATA --- */
+
+        // World Regions Configuration
+        const WORLD_REGIONS = {
+            downtown: {
+                id: "downtown",
+                name: "Downtown City",
+                description: "The bustling heart of the city where heroes first appear",
+                theme: "urban",
+                color: "#3b82f6",
+                icon: "🏙️",
+                position: { x: 20, y: 50 }, // Position on map (%)
+                difficulty: 1,
+                totalStages: 5,
+                villains: ["Neon Tiger"],
+                unlockRequirement: null, // Always unlocked
+                rewards: {
+                    heroes: [], // No new heroes unlocked here (starting heroes)
+                    xpBonus: 100
+                }
+            },
+
+            frozen_peaks: {
+                id: "frozen_peaks",
+                name: "Frozen Peaks",
+                description: "Treacherous mountains where cold-hearted villains hide",
+                theme: "ice",
+                color: "#22d3ee",
+                icon: "⛰️",
+                position: { x: 35, y: 25 },
+                difficulty: 2,
+                totalStages: 5,
+                villains: ["Shadow Panther"],
+                unlockRequirement: { region: "downtown", completed: true },
+                rewards: {
+                    heroes: ["florrie", "maurits"], // Unlock these heroes
+                    xpBonus: 200
+                }
+            },
+
+            thunder_jungle: {
+                id: "thunder_jungle",
+                name: "Thunder Jungle",
+                description: "Ancient jungle where primal forces clash",
+                theme: "electric",
+                color: "#fbbf24",
+                icon: "🌴",
+                position: { x: 35, y: 75 },
+                difficulty: 2,
+                totalStages: 5,
+                villains: ["Thunder Gorilla"],
+                unlockRequirement: { region: "downtown", completed: true },
+                rewards: {
+                    heroes: ["zane", "art"],
+                    xpBonus: 200
+                }
+            },
+
+            iron_fortress: {
+                id: "iron_fortress",
+                name: "Iron Fortress",
+                description: "A massive industrial complex of gears and danger",
+                theme: "impact",
+                color: "#f97316",
+                icon: "⚙️",
+                position: { x: 60, y: 50 },
+                difficulty: 3,
+                totalStages: 6,
+                villains: ["Cyber Grizzly"],
+                unlockRequirement: {
+                    anyOf: ["frozen_peaks", "thunder_jungle"],
+                    completed: true
+                },
+                rewards: {
+                    heroes: ["wilbur", "manny"],
+                    xpBonus: 300
+                }
+            },
+
+            omega_tower: {
+                id: "omega_tower",
+                name: "Omega Tower",
+                description: "The final confrontation awaits at the top",
+                theme: "tech",
+                color: "#a855f7",
+                icon: "🗼",
+                position: { x: 80, y: 50 },
+                difficulty: 4,
+                totalStages: 7,
+                villains: ["Omega Droid"],
+                unlockRequirement: { region: "iron_fortress", completed: true },
+                rewards: {
+                    heroes: [],
+                    xpBonus: 500,
+                    special: "legendary_card" // Special reward
+                }
+            },
+
+            secret_dimension: {
+                id: "secret_dimension",
+                name: "Secret Dimension",
+                description: "Cosmic realm where all challenges are remixed",
+                theme: "cosmic",
+                color: "#ec4899",
+                icon: "🌌",
+                position: { x: 50, y: 10 },
+                difficulty: 5,
+                totalStages: 8,
+                villains: ["Neon Tiger", "Shadow Panther", "Thunder Gorilla", "Cyber Grizzly", "Omega Droid"],
+                unlockRequirement: {
+                    allRegionsCompleted: true,
+                    completion: 100
+                },
+                rewards: {
+                    heroes: [],
+                    xpBonus: 1000,
+                    special: "ultimate_champion"
+                }
+            }
+        };
+
+        // Stage definitions for each region
+        const REGION_STAGES = {
+            downtown: [
+                { stageNumber: 1, name: "Street Patrol", type: "battle", difficulty: "miniboss", rewards: { xp: 50 } },
+                { stageNumber: 2, name: "Rooftop Chase", type: "battle", difficulty: "boss", rewards: { xp: 75 } },
+                { stageNumber: 3, name: "Subway Showdown", type: "battle", difficulty: "boss", rewards: { xp: 75 } },
+                { stageNumber: 4, name: "Night Raid", type: "battle", difficulty: "elite", rewards: { xp: 100 } },
+                { stageNumber: 5, name: "Neon Tiger's Den", type: "boss", villain: "Neon Tiger", rewards: { xp: 150 } }
+            ],
+            frozen_peaks: [
+                { stageNumber: 1, name: "Ice Cave Entry", type: "battle", difficulty: "miniboss", rewards: { xp: 75 } },
+                { stageNumber: 2, name: "Avalanche Run", type: "battle", difficulty: "boss", rewards: { xp: 100 } },
+                { stageNumber: 3, name: "Frost Bridge", type: "battle", difficulty: "boss", rewards: { xp: 100 } },
+                { stageNumber: 4, name: "Frozen Temple", type: "battle", difficulty: "elite", rewards: { xp: 125 } },
+                { stageNumber: 5, name: "Panther's Lair", type: "boss", villain: "Shadow Panther", rewards: { xp: 200 } }
+            ],
+            thunder_jungle: [
+                { stageNumber: 1, name: "Jungle Path", type: "battle", difficulty: "miniboss", rewards: { xp: 75 } },
+                { stageNumber: 2, name: "Ancient Ruins", type: "battle", difficulty: "boss", rewards: { xp: 100 } },
+                { stageNumber: 3, name: "Storm Clearing", type: "battle", difficulty: "boss", rewards: { xp: 100 } },
+                { stageNumber: 4, name: "Thunder Falls", type: "battle", difficulty: "elite", rewards: { xp: 125 } },
+                { stageNumber: 5, name: "Gorilla King's Domain", type: "boss", villain: "Thunder Gorilla", rewards: { xp: 200 } }
+            ],
+            iron_fortress: [
+                { stageNumber: 1, name: "Factory Floor", type: "battle", difficulty: "miniboss", rewards: { xp: 100 } },
+                { stageNumber: 2, name: "Assembly Line", type: "battle", difficulty: "boss", rewards: { xp: 125 } },
+                { stageNumber: 3, name: "Furnace Room", type: "battle", difficulty: "boss", rewards: { xp: 125 } },
+                { stageNumber: 4, name: "Control Center", type: "battle", difficulty: "elite", rewards: { xp: 150 } },
+                { stageNumber: 5, name: "Robot Arena", type: "battle", difficulty: "elite", rewards: { xp: 175 } },
+                { stageNumber: 6, name: "Grizzly's Core", type: "boss", villain: "Cyber Grizzly", rewards: { xp: 250 } }
+            ],
+            omega_tower: [
+                { stageNumber: 1, name: "Tower Entrance", type: "battle", difficulty: "boss", rewards: { xp: 125 } },
+                { stageNumber: 2, name: "Security Floor", type: "battle", difficulty: "boss", rewards: { xp: 150 } },
+                { stageNumber: 3, name: "Data Core", type: "battle", difficulty: "elite", rewards: { xp: 175 } },
+                { stageNumber: 4, name: "Power Station", type: "battle", difficulty: "elite", rewards: { xp: 200 } },
+                { stageNumber: 5, name: "Elite Guards", type: "battle", difficulty: "elite", rewards: { xp: 225 } },
+                { stageNumber: 6, name: "Command Center", type: "battle", difficulty: "elite", rewards: { xp: 250 } },
+                { stageNumber: 7, name: "Omega's Chamber", type: "boss", villain: "Omega Droid", rewards: { xp: 500 } }
+            ],
+            secret_dimension: [
+                { stageNumber: 1, name: "Cosmic Gateway", type: "battle", difficulty: "elite", rewards: { xp: 200 } },
+                { stageNumber: 2, name: "Void Maze", type: "battle", difficulty: "elite", rewards: { xp: 250 } },
+                { stageNumber: 3, name: "Star Chamber", type: "boss", villain: "Neon Tiger", rewards: { xp: 300 } },
+                { stageNumber: 4, name: "Dimension Rift", type: "boss", villain: "Shadow Panther", rewards: { xp: 300 } },
+                { stageNumber: 5, name: "Thunder Plains", type: "boss", villain: "Thunder Gorilla", rewards: { xp: 300 } },
+                { stageNumber: 6, name: "Iron Citadel", type: "boss", villain: "Cyber Grizzly", rewards: { xp: 300 } },
+                { stageNumber: 7, name: "Final Trial", type: "boss", villain: "Omega Droid", rewards: { xp: 400 } },
+                { stageNumber: 8, name: "Ultimate Challenge", type: "boss", villain: "Omega Droid", rewards: { xp: 1000 } }
+            ]
+        };
 
         /* --- BATTLE ITEMS --- */
         const BATTLE_ITEMS = {
@@ -2988,6 +3720,519 @@
             }
         };
 
+        /* --- STORY MODE SYSTEM --- */
+        const StoryModeSystem = {
+            progress: {},
+            currentRegion: null,
+            currentStage: null,
+            storyModeEnabled: true, // Set to false to disable story mode
+
+            // Initialize story mode
+            init() {
+                this.load();
+                // Initialize progress for all regions if not exists
+                Object.keys(WORLD_REGIONS).forEach(regionId => {
+                    if (!this.progress[regionId]) {
+                        this.progress[regionId] = {
+                            unlocked: regionId === 'downtown', // Downtown always unlocked
+                            stages: {},
+                            completed: false,
+                            rewardClaimed: false
+                        };
+                    }
+                });
+                this.checkAndUnlockRegions();
+                this.save();
+            },
+
+            // Load progress from localStorage
+            load() {
+                try {
+                    const saved = localStorage.getItem('hawthorn_story_progress');
+                    if (saved) {
+                        this.progress = JSON.parse(saved);
+                    } else {
+                        this.progress = {};
+                    }
+                } catch (e) {
+                    console.error('Failed to load story progress:', e);
+                    this.progress = {};
+                }
+            },
+
+            // Save progress to localStorage
+            save() {
+                try {
+                    localStorage.setItem('hawthorn_story_progress', JSON.stringify(this.progress));
+                } catch (e) {
+                    console.error('Failed to save story progress:', e);
+                }
+            },
+
+            // Check and unlock regions based on completion
+            checkAndUnlockRegions() {
+                Object.keys(WORLD_REGIONS).forEach(regionId => {
+                    const region = WORLD_REGIONS[regionId];
+                    if (this.isRegionUnlocked(regionId)) {
+                        if (!this.progress[regionId]) {
+                            this.progress[regionId] = {
+                                unlocked: true,
+                                stages: {},
+                                completed: false,
+                                rewardClaimed: false
+                            };
+                        } else {
+                            this.progress[regionId].unlocked = true;
+                        }
+                    }
+                });
+            },
+
+            // Check if a region is unlocked
+            isRegionUnlocked(regionId) {
+                const region = WORLD_REGIONS[regionId];
+                if (!region.unlockRequirement) return true; // Always unlocked
+
+                const req = region.unlockRequirement;
+
+                // Check for "anyOf" requirement
+                if (req.anyOf) {
+                    return req.anyOf.some(reqRegionId => {
+                        return this.progress[reqRegionId]?.completed || false;
+                    });
+                }
+
+                // Check for single region requirement
+                if (req.region) {
+                    return this.progress[req.region]?.completed || false;
+                }
+
+                // Check for all regions completed
+                if (req.allRegionsCompleted) {
+                    const mainRegions = ['downtown', 'frozen_peaks', 'thunder_jungle', 'iron_fortress', 'omega_tower'];
+                    return mainRegions.every(r => this.progress[r]?.completed || false);
+                }
+
+                return false;
+            },
+
+            // Check if a region is completed
+            isRegionCompleted(regionId) {
+                return this.progress[regionId]?.completed || false;
+            },
+
+            // Get region progress (completed stages / total stages)
+            getRegionProgress(regionId) {
+                const region = WORLD_REGIONS[regionId];
+                const progress = this.progress[regionId];
+                if (!progress) return { completed: 0, total: region.totalStages };
+
+                const completedCount = Object.values(progress.stages).filter(s => s === true).length;
+                return { completed: completedCount, total: region.totalStages };
+            },
+
+            // Get current stage for a region (next uncompleted stage)
+            getCurrentStage(regionId) {
+                const stages = REGION_STAGES[regionId];
+                const progress = this.progress[regionId];
+                if (!stages || !progress) return null;
+
+                for (let stage of stages) {
+                    if (!progress.stages[stage.stageNumber]) {
+                        return stage;
+                    }
+                }
+                return null; // All stages completed
+            },
+
+            // Complete a stage
+            completeStage(regionId, stageNum, result) {
+                if (!this.progress[regionId]) {
+                    this.progress[regionId] = {
+                        unlocked: true,
+                        stages: {},
+                        completed: false,
+                        rewardClaimed: false
+                    };
+                }
+
+                this.progress[regionId].stages[stageNum] = true;
+
+                // Check if region is now completed
+                const region = WORLD_REGIONS[regionId];
+                const completedStages = Object.keys(this.progress[regionId].stages).filter(
+                    s => this.progress[regionId].stages[s]
+                ).length;
+
+                if (completedStages >= region.totalStages) {
+                    this.progress[regionId].completed = true;
+                    this.checkAndUnlockRegions(); // Unlock new regions
+                }
+
+                this.save();
+            },
+
+            // Claim region rewards
+            claimRegionReward(regionId) {
+                const region = WORLD_REGIONS[regionId];
+                if (!this.isRegionCompleted(regionId)) return null;
+                if (this.progress[regionId].rewardClaimed) return null;
+
+                this.progress[regionId].rewardClaimed = true;
+                this.save();
+
+                return region.rewards;
+            },
+
+            // Get unlocked heroes list
+            getUnlockedHeroes() {
+                const unlocked = new Set();
+
+                // Starting heroes (always available)
+                const startingHeroes = ['joshua', 'lulu', 'noa', 'noah', 'phaedra', 'rex', 'rory', 'viola', 'alexei'];
+                startingHeroes.forEach(h => unlocked.add(h));
+
+                // Heroes from completed regions
+                Object.keys(this.progress).forEach(regionId => {
+                    if (this.progress[regionId].rewardClaimed) {
+                        const region = WORLD_REGIONS[regionId];
+                        if (region.rewards.heroes) {
+                            region.rewards.heroes.forEach(h => unlocked.add(h));
+                        }
+                    }
+                });
+
+                return Array.from(unlocked);
+            },
+
+            // Check if a hero is unlocked
+            isHeroUnlocked(heroId) {
+                return this.getUnlockedHeroes().includes(heroId);
+            },
+
+            // Open world map
+            openWorldMap() {
+                const overlay = document.getElementById('worldMapOverlay');
+                if (overlay) {
+                    overlay.classList.add('active');
+                    this.renderWorldMap();
+                }
+            },
+
+            // Close world map
+            closeWorldMap() {
+                const overlay = document.getElementById('worldMapOverlay');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
+            },
+
+            // Render world map
+            renderWorldMap() {
+                const container = document.getElementById('worldMapContainer');
+                if (!container) return;
+
+                let html = '';
+                Object.keys(WORLD_REGIONS).forEach(regionId => {
+                    const region = WORLD_REGIONS[regionId];
+                    const unlocked = this.isRegionUnlocked(regionId);
+                    const completed = this.isRegionCompleted(regionId);
+                    const progress = this.getRegionProgress(regionId);
+
+                    const nodeClass = `region-node ${unlocked ? '' : 'locked'} ${completed ? 'completed' : ''}`;
+                    const style = `left: ${region.position.x}%; top: ${region.position.y}%; color: ${region.color}; border-color: ${region.color};`;
+
+                    html += `
+                        <div class="${nodeClass}" style="${style}"
+                             onclick="StoryModeSystem.selectRegion('${regionId}')"
+                             data-region="${regionId}">
+                            <div class="region-icon">${region.icon}</div>
+                            ${completed ? '<div class="completion-badge">✓</div>' : ''}
+                            ${unlocked && !completed ? `<div class="progress-badge">${progress.completed}/${progress.total}</div>` : ''}
+                            ${!unlocked ? '<div class="lock-badge">🔒</div>' : ''}
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                this.renderMapPaths();
+            },
+
+            // Render paths between regions
+            renderMapPaths() {
+                const pathsContainer = document.getElementById('worldMapPaths');
+                if (!pathsContainer) return;
+
+                const paths = [
+                    { from: 'downtown', to: 'frozen_peaks' },
+                    { from: 'downtown', to: 'thunder_jungle' },
+                    { from: 'frozen_peaks', to: 'iron_fortress' },
+                    { from: 'thunder_jungle', to: 'iron_fortress' },
+                    { from: 'iron_fortress', to: 'omega_tower' },
+                    { from: 'omega_tower', to: 'secret_dimension' }
+                ];
+
+                let html = '';
+                paths.forEach(path => {
+                    const fromRegion = WORLD_REGIONS[path.from];
+                    const toRegion = WORLD_REGIONS[path.to];
+                    const unlocked = this.isRegionUnlocked(path.to);
+
+                    const x1 = fromRegion.position.x;
+                    const y1 = fromRegion.position.y;
+                    const x2 = toRegion.position.x;
+                    const y2 = toRegion.position.y;
+
+                    const pathClass = unlocked ? 'map-path unlocked' : 'map-path locked';
+
+                    html += `
+                        <line x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%"
+                              class="${pathClass}"
+                              stroke="${unlocked ? fromRegion.color : '#333'}"
+                              stroke-width="3"
+                              stroke-dasharray="${unlocked ? '0' : '5,5'}" />
+                    `;
+                });
+
+                pathsContainer.innerHTML = html;
+            },
+
+            // Select a region to view details
+            selectRegion(regionId) {
+                AudioEngine.playTone(600, 'sine', 0.1);
+                const region = WORLD_REGIONS[regionId];
+                const unlocked = this.isRegionUnlocked(regionId);
+                const completed = this.isRegionCompleted(regionId);
+                const progress = this.getRegionProgress(regionId);
+
+                const panel = document.getElementById('regionDetailPanel');
+                if (!panel) return;
+
+                let detailsHTML = `
+                    <div class="region-detail-header">
+                        <div class="region-detail-icon" style="color: ${region.color};">${region.icon}</div>
+                        <div>
+                            <h2 class="region-detail-name" style="color: ${region.color};">${region.name}</h2>
+                            <p class="region-detail-difficulty">Difficulty: ${'★'.repeat(region.difficulty)}</p>
+                        </div>
+                    </div>
+                    <p class="region-detail-desc">${region.description}</p>
+                    <div class="region-detail-progress">
+                        <span>Progress: ${progress.completed}/${progress.total} Stages</span>
+                        ${completed ? '<span class="completed-badge">✓ COMPLETED</span>' : ''}
+                    </div>
+                    <div class="region-detail-villains">
+                        <strong>Villains:</strong> ${region.villains.join(', ')}
+                    </div>
+                    <div class="region-detail-rewards">
+                        <strong>Rewards:</strong>
+                        ${region.rewards.heroes?.length > 0 ? `<div>🦸 Heroes: ${region.rewards.heroes.join(', ')}</div>` : ''}
+                        <div>⭐ XP Bonus: ${region.rewards.xpBonus}</div>
+                        ${region.rewards.special ? `<div>🏆 ${region.rewards.special}</div>` : ''}
+                    </div>
+                `;
+
+                if (unlocked) {
+                    detailsHTML += `
+                        <button class="enter-region-btn" onclick="StoryModeSystem.enterRegion('${regionId}')" style="background: ${region.color};">
+                            ${completed ? 'REPLAY REGION' : 'ENTER REGION'}
+                        </button>
+                    `;
+                } else {
+                    detailsHTML += `<div class="locked-message">🔒 Complete previous regions to unlock</div>`;
+                }
+
+                panel.innerHTML = detailsHTML;
+                panel.classList.add('active');
+            },
+
+            // Enter a region (show stage select)
+            enterRegion(regionId) {
+                AudioEngine.playTone(800, 'sine', 0.15);
+                this.currentRegion = regionId;
+                this.showStageSelect(regionId);
+            },
+
+            // Show stage selection screen
+            showStageSelect(regionId) {
+                const region = WORLD_REGIONS[regionId];
+                const stages = REGION_STAGES[regionId];
+                const progress = this.progress[regionId];
+
+                const overlay = document.getElementById('stageSelectOverlay');
+                const container = document.getElementById('stageSelectContainer');
+
+                let html = `
+                    <div class="stage-select-header">
+                        <h2 style="color: ${region.color};">${region.icon} ${region.name}</h2>
+                        <button class="close-btn" onclick="StoryModeSystem.closeStageSelect()">×</button>
+                    </div>
+                    <div class="stage-grid">
+                `;
+
+                stages.forEach((stage, index) => {
+                    const completed = progress.stages[stage.stageNumber] || false;
+                    const previousCompleted = index === 0 || progress.stages[stages[index - 1].stageNumber];
+                    const locked = !previousCompleted;
+
+                    const stageClass = `stage-card ${completed ? 'completed' : ''} ${locked ? 'locked' : ''}`;
+
+                    html += `
+                        <div class="${stageClass}" onclick="${locked ? '' : `StoryModeSystem.startStage('${regionId}', ${stage.stageNumber})`}">
+                            <div class="stage-number">Stage ${stage.stageNumber}</div>
+                            <div class="stage-name">${stage.name}</div>
+                            <div class="stage-type">${stage.type === 'boss' ? '👑 BOSS' : '⚔️ BATTLE'}</div>
+                            <div class="stage-reward">+${stage.rewards.xp} XP</div>
+                            ${completed ? '<div class="stage-complete-mark">✓</div>' : ''}
+                            ${locked ? '<div class="stage-lock-mark">🔒</div>' : ''}
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                container.innerHTML = html;
+                overlay.classList.add('active');
+
+                // Close world map
+                this.closeWorldMap();
+            },
+
+            // Close stage select
+            closeStageSelect() {
+                const overlay = document.getElementById('stageSelectOverlay');
+                overlay.classList.remove('active');
+                this.openWorldMap();
+            },
+
+            // Start a stage
+            startStage(regionId, stageNumber) {
+                AudioEngine.playTone(1000, 'sine', 0.2);
+                this.currentRegion = regionId;
+                this.currentStage = stageNumber;
+
+                const stage = REGION_STAGES[regionId].find(s => s.stageNumber === stageNumber);
+                if (!stage) return;
+
+                // Close stage select
+                document.getElementById('stageSelectOverlay').classList.remove('active');
+
+                // Show stage intro
+                this.showStageIntro(regionId, stage);
+            },
+
+            // Show stage intro screen
+            showStageIntro(regionId, stage) {
+                const region = WORLD_REGIONS[regionId];
+                const overlay = document.getElementById('stageIntroOverlay');
+                const container = document.getElementById('stageIntroContainer');
+
+                const html = `
+                    <div class="stage-intro-content">
+                        <div class="stage-intro-region" style="color: ${region.color};">
+                            ${region.icon} ${region.name}
+                        </div>
+                        <div class="stage-intro-name">${stage.name}</div>
+                        <div class="stage-intro-type">${stage.type === 'boss' ? '👑 BOSS BATTLE' : '⚔️ BATTLE'}</div>
+                        ${stage.villain ? `<div class="stage-intro-villain">Face: ${stage.villain}</div>` : ''}
+                        <button class="stage-intro-begin-btn" onclick="StoryModeSystem.beginStoryBattle()" style="background: ${region.color};">
+                            BEGIN BATTLE
+                        </button>
+                    </div>
+                `;
+
+                container.innerHTML = html;
+                overlay.classList.add('active');
+            },
+
+            // Begin story battle (transition to hero selection)
+            beginStoryBattle() {
+                const overlay = document.getElementById('stageIntroOverlay');
+                overlay.classList.remove('active');
+
+                // Trigger battle mode with story context
+                window.storyBattleMode = true;
+                window.storyBattleRegion = this.currentRegion;
+                window.storyBattleStage = this.currentStage;
+
+                // Start battle selection
+                document.getElementById('muddlewickBtn').click();
+            },
+
+            // Handle story battle victory
+            onStoryBattleVictory() {
+                if (!window.storyBattleMode) return;
+
+                const regionId = window.storyBattleRegion;
+                const stageNum = window.storyBattleStage;
+                const stage = REGION_STAGES[regionId].find(s => s.stageNumber === stageNum);
+
+                // Complete the stage
+                this.completeStage(regionId, stageNum, { victory: true });
+
+                // Check if region is now completed
+                const region = WORLD_REGIONS[regionId];
+                const completed = this.isRegionCompleted(regionId);
+
+                // Show completion message
+                setTimeout(() => {
+                    if (completed && !this.progress[regionId].rewardClaimed) {
+                        this.showRegionCompletionScreen(regionId);
+                    } else {
+                        this.showStageCompletionScreen(regionId, stage);
+                    }
+                }, 1000);
+
+                // Reset story battle mode
+                window.storyBattleMode = false;
+            },
+
+            // Show stage completion screen
+            showStageCompletionScreen(regionId, stage) {
+                const region = WORLD_REGIONS[regionId];
+                alert(`Stage Complete!\n\n${region.name} - ${stage.name}\n+${stage.rewards.xp} XP\n\nContinue to next stage!`);
+
+                // Return to stage select
+                setTimeout(() => {
+                    this.showStageSelect(regionId);
+                }, 500);
+            },
+
+            // Show region completion screen
+            showRegionCompletionScreen(regionId) {
+                const region = WORLD_REGIONS[regionId];
+                const rewards = this.claimRegionReward(regionId);
+
+                if (!rewards) return;
+
+                let rewardMessage = `REGION COMPLETE!\n\n${region.icon} ${region.name}\n\n`;
+                rewardMessage += `⭐ +${rewards.xpBonus} XP Bonus\n`;
+
+                if (rewards.heroes && rewards.heroes.length > 0) {
+                    rewardMessage += `\n🦸 NEW HEROES UNLOCKED:\n`;
+                    rewards.heroes.forEach(heroId => {
+                        const hero = heroes.find(h => h.id === heroId);
+                        if (hero) {
+                            rewardMessage += `  • ${hero.name} (${hero.alias})\n`;
+                        }
+                    });
+                }
+
+                if (rewards.special) {
+                    rewardMessage += `\n🏆 Special Reward: ${rewards.special}\n`;
+                }
+
+                alert(rewardMessage);
+
+                // Re-render grid to show unlocked heroes
+                renderGrid();
+
+                // Return to world map
+                setTimeout(() => {
+                    this.openWorldMap();
+                }, 500);
+            }
+        };
+
         /* --- BATTLE LOGIC --- */
         let isBattleSelecting = false;
         let isBattleActive = false;
@@ -3166,7 +4411,30 @@
         }
 
         function setupBattleState(hero1, hero2) {
-             currentVillain = villains[Math.floor(Math.random() * villains.length)];
+             // Check if this is a story battle and select the appropriate villain
+             if (window.storyBattleMode && window.storyBattleRegion && window.storyBattleStage) {
+                 const regionId = window.storyBattleRegion;
+                 const stageNum = window.storyBattleStage;
+                 const stage = REGION_STAGES[regionId].find(s => s.stageNumber === stageNum);
+
+                 if (stage && stage.villain) {
+                     // Select the specific villain for this stage
+                     currentVillain = villains.find(v => v.name === stage.villain);
+                 } else {
+                     // Select a random villain from the region's villain pool
+                     const region = WORLD_REGIONS[regionId];
+                     const regionVillains = villains.filter(v => region.villains.includes(v.name));
+                     currentVillain = regionVillains[Math.floor(Math.random() * regionVillains.length)];
+                 }
+
+                 // Fallback to random if no match found
+                 if (!currentVillain) {
+                     currentVillain = villains[Math.floor(Math.random() * villains.length)];
+                 }
+             } else {
+                 // Random battle mode - select any villain
+                 currentVillain = villains[Math.floor(Math.random() * villains.length)];
+             }
 
              // Populate Battle Arena Elements (Hidden for now)
              document.getElementById('villainName').innerText = currentVillain.name;
@@ -3453,8 +4721,13 @@
                     }, 500 + (i * 400));
                 }
             }
-            
+
             modal.classList.add('active');
+
+            // Handle story mode completion
+            if (victory && window.storyBattleMode) {
+                StoryModeSystem.onStoryBattleVictory();
+            }
         }
 
         /* --- ELEMENTAL FINALE LOGIC --- */
@@ -3901,18 +5174,22 @@
                 if (isHidden) return '';
                 // New: Calculate colour for border
                 const color = hero.type === 'electric' ? '#fbbf24' : hero.type === 'ice' ? '#22d3ee' : '#ef4444';
+                // Check if hero is locked in story mode
+                const isLocked = StoryModeSystem.storyModeEnabled && !StoryModeSystem.isHeroUnlocked(hero.id);
+                const lockedClass = isLocked ? 'locked-hero' : '';
+                const onclickHandler = isLocked ? '' : `triggerMegaReveal('${hero.id}')`;
                 return `
       <div class="hero-card-container">
-        <div class="hero-card" id="card-${hero.id}" data-type="${hero.type}" 
+        <div class="hero-card ${lockedClass}" id="card-${hero.id}" data-type="${hero.type}"
              style="--hero-color: ${color};"
-             onclick="triggerMegaReveal('${hero.id}')" 
+             onclick="${onclickHandler}"
              onmouseenter="AudioEngine.playTone(100, 'sine', 0.05)"
-             onmousemove="tiltCard(event, this)" 
+             onmousemove="tiltCard(event, this)"
              onmouseleave="resetTilt(this)"
-             tabindex="0" 
+             tabindex="0"
              role="button"
              aria-label="Select Hero: ${hero.name}"
-             onkeypress="if(event.key === 'Enter') triggerMegaReveal('${hero.id}')">
+             onkeypress="if(event.key === 'Enter' && !${isLocked}) triggerMegaReveal('${hero.id}')">
           <div class="class-badge">${hero.role.split(' ')[0]}</div>
           <div class="scan-line"></div>
           <div class="card-foil"></div>
@@ -3933,6 +5210,10 @@
                 });
             }, 50);
         }
+
+        // Initialize Story Mode System
+        StoryModeSystem.init();
+
         renderGrid();
 
         /* --- DRAMATIC CARD FLIGHT ANIMATION --- */
