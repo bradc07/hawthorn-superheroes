@@ -5777,8 +5777,8 @@
                 if (isHidden) return '';
                 // New: Calculate colour for border
                 const color = hero.type === 'electric' ? '#fbbf24' : hero.type === 'ice' ? '#22d3ee' : '#ef4444';
-                // Check if hero is locked in story mode
-                const isLocked = StoryModeSystem.storyModeEnabled && !StoryModeSystem.isHeroUnlocked(hero.id);
+                // All characters unlocked on main screen (world map has separate locking)
+                const isLocked = false;
                 const lockedClass = isLocked ? 'locked-hero' : '';
                 const onclickHandler = isLocked ? '' : `triggerMegaReveal('${hero.id}')`;
                 return `
