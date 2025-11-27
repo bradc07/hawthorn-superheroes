@@ -433,6 +433,61 @@
             text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
         }
 
+        /* Tier Progress Dots */
+        .tier-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.3);
+            border: 2px solid rgba(148, 163, 184, 0.5);
+            transition: all 0.3s;
+        }
+        .tier-dot.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-color: #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+            transform: scale(1.2);
+        }
+        .tier-dot.completed {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Power-Up Selection Cards */
+        .powerup-card {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(56, 189, 248, 0.15));
+            border: 2px solid rgba(34, 211, 238, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .powerup-card:hover {
+            transform: translateY(-5px);
+            border-color: #22d3ee;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(56, 189, 248, 0.25));
+        }
+        .powerup-card-name {
+            font-family: 'Bangers';
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
+        .powerup-card-desc {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
         /* --- NEW ANIMATION CLASSES --- */
         .flying-card {
             position: fixed; z-index: 2000; pointer-events: none; border-radius: 20px; overflow: hidden;
@@ -2701,12 +2756,29 @@
 
     <!-- MATH CHALLENGE MODAL -->
     <div id="mathChallengeModal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 500px; text-align: center;" onclick="event.stopPropagation()">
-            <h2 style="font-family: 'Bangers'; font-size: 2.5rem; color: #fbbf24; margin-bottom: 20px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);">
+        <div class="modal-card" style="max-width: 600px; text-align: center;" onclick="event.stopPropagation()">
+            <h2 style="font-family: 'Bangers'; font-size: 2.5rem; color: #fbbf24; margin-bottom: 15px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);">
                 ⚡ MATH CHALLENGE ⚡
             </h2>
-            <p style="font-size: 1.1rem; color: #cbd5e1; margin-bottom: 30px;">
-                Solve this problem to earn a powerful bonus!
+
+            <!-- Tier Progress Indicator -->
+            <div id="tierProgress" style="margin-bottom: 20px;">
+                <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                    Difficulty Level
+                </div>
+                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 5px;">
+                    <div class="tier-dot" data-tier="1"></div>
+                    <div class="tier-dot" data-tier="2"></div>
+                    <div class="tier-dot" data-tier="3"></div>
+                    <div class="tier-dot" data-tier="4"></div>
+                    <div class="tier-dot" data-tier="5"></div>
+                </div>
+                <div id="tierLabel" style="font-family: 'Bangers'; font-size: 1.2rem; color: #fbbf24;">LEVEL 1</div>
+            </div>
+
+            <p id="challengeInstructions" style="font-size: 1.1rem; color: #cbd5e1; margin-bottom: 25px; line-height: 1.5;">
+                Answer correctly to advance!<br>
+                <span style="font-size: 0.9rem; color: #94a3b8;">Higher levels = Better rewards</span>
             </p>
 
             <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(251, 191, 36, 0.3);">
@@ -2717,7 +2789,7 @@
                     type="number"
                     id="mathAnswer"
                     placeholder="Your answer"
-                    style="width: 200px; padding: 15px; font-size: 1.5rem; text-align: center; border: 2px solid #fbbf24; border-radius: 10px; background: rgba(15, 23, 42, 0.8); color: #fff; outline: none;"
+                    style="width: 220px; padding: 15px; font-size: 1.5rem; text-align: center; border: 2px solid #fbbf24; border-radius: 10px; background: rgba(15, 23, 42, 0.8); color: #fff; outline: none;"
                     onkeypress="if(event.key === 'Enter') MathChallengeSystem.submitAnswer()"
                 />
             </div>
@@ -2725,6 +2797,7 @@
             <div id="mathFeedback" class="math-feedback"></div>
 
             <button
+                id="submitAnswerBtn"
                 onclick="MathChallengeSystem.submitAnswer()"
                 style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; font-family: 'Bangers'; font-size: 1.5rem; padding: 15px 40px; border: none; border-radius: 10px; cursor: pointer; letter-spacing: 1px; box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); transition: all 0.3s;"
                 onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(251, 191, 36, 0.6)'"
@@ -2735,30 +2808,23 @@
         </div>
     </div>
 
-    <!-- POWER-UP REWARD MODAL -->
-    <div id="powerUpRewardModal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 500px; text-align: center;" onclick="event.stopPropagation()">
-            <h2 style="font-family: 'Bangers'; font-size: 2.5rem; color: #22d3ee; margin-bottom: 20px; text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);">
-                💎 POWER-UP EARNED! 💎
+    <!-- POWER-UP SELECTION MODAL -->
+    <div id="powerUpSelectionModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 700px; text-align: center;" onclick="event.stopPropagation()">
+            <h2 style="font-family: 'Bangers'; font-size: 2.5rem; color: #22d3ee; margin-bottom: 10px; text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);">
+                💎 CHOOSE YOUR POWER-UP! 💎
             </h2>
+            <p id="powerUpTierLabel" style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 25px;">
+                Select 1 reward from Tier 1
+            </p>
 
-            <div style="background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(56, 189, 248, 0.2)); padding: 40px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(34, 211, 238, 0.5); box-shadow: 0 0 40px rgba(34, 211, 238, 0.3);">
-                <div id="powerUpName" style="font-family: 'Bangers'; font-size: 2.5rem; color: #fff; margin-bottom: 15px; text-shadow: 0 0 15px rgba(34, 211, 238, 0.8);">
-                    Tough Skin
-                </div>
-                <div id="powerUpDesc" style="font-size: 1.2rem; color: #cbd5e1; line-height: 1.6;">
-                    Gain +10 HP
-                </div>
+            <div id="powerUpChoices" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                <!-- Power-up cards will be inserted here -->
             </div>
 
-            <button
-                onclick="MathChallengeSystem.acceptPowerUp()"
-                style="background: linear-gradient(135deg, #22d3ee, #0ea5e9); color: #000; font-family: 'Bangers'; font-size: 1.5rem; padding: 15px 40px; border: none; border-radius: 10px; cursor: pointer; letter-spacing: 1px; box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); transition: all 0.3s;"
-                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(34, 211, 238, 0.6)'"
-                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(34, 211, 238, 0.4)'"
-            >
-                START BATTLE
-            </button>
+            <p style="font-size: 0.9rem; color: #64748b; font-style: italic;">
+                Click on a power-up to select it and begin the battle
+            </p>
         </div>
     </div>
 
@@ -3448,21 +3514,8 @@
         // Math Challenge State
         const MathChallengeSystem = {
             currentQuestion: null,
-            currentTier: 'tier1',
+            currentTier: 1, // Track tier as number 1-5
             earnedPowerUp: null,
-
-            // Determine tier based on story mode region difficulty
-            getTierFromDifficulty() {
-                if (window.storyBattleMode && window.storyBattleRegion) {
-                    const region = WORLD_REGIONS[window.storyBattleRegion];
-                    if (region) {
-                        const diff = region.difficulty;
-                        return `tier${Math.min(5, diff)}`;
-                    }
-                }
-                // Default to tier1 for free battles
-                return 'tier1';
-            },
 
             // Show math challenge modal
             showChallenge() {
@@ -3470,17 +3523,44 @@
                 window.mathChallengeDamageBoost = 0;
                 window.mathChallengeDamageReduction = 0;
 
-                this.currentTier = this.getTierFromDifficulty();
-                this.currentQuestion = getRandomQuestion(this.currentTier);
+                // Start at tier 1
+                this.currentTier = 1;
+                this.loadQuestion();
+                this.updateTierUI();
 
                 const modal = document.getElementById('mathChallengeModal');
+                modal.classList.add('active');
+                document.getElementById('mathAnswer').focus();
+            },
+
+            // Load a question for the current tier
+            loadQuestion() {
+                const tierKey = `tier${this.currentTier}`;
+                this.currentQuestion = getRandomQuestion(tierKey);
+
                 document.getElementById('mathQuestion').innerText = this.currentQuestion.question;
                 document.getElementById('mathAnswer').value = '';
                 document.getElementById('mathFeedback').innerText = '';
                 document.getElementById('mathFeedback').className = 'math-feedback';
+            },
 
-                modal.classList.add('active');
-                document.getElementById('mathAnswer').focus();
+            // Update tier UI indicators
+            updateTierUI() {
+                const tierLabel = document.getElementById('tierLabel');
+                const tierNames = ['LEVEL 1', 'LEVEL 2', 'LEVEL 3', 'LEVEL 4', 'LEVEL 5'];
+                tierLabel.innerText = tierNames[this.currentTier - 1];
+
+                // Update tier dots
+                document.querySelectorAll('.tier-dot').forEach(dot => {
+                    const dotTier = parseInt(dot.dataset.tier);
+                    dot.classList.remove('active', 'completed');
+
+                    if (dotTier < this.currentTier) {
+                        dot.classList.add('completed');
+                    } else if (dotTier === this.currentTier) {
+                        dot.classList.add('active');
+                    }
+                });
             },
 
             // Submit answer
@@ -3501,13 +3581,27 @@
                     feedbackEl.className = 'math-feedback correct';
                     AudioEngine.playTone(800, 'sine', 0.3);
 
-                    // Award random power-up from tier
-                    const powerUps = POWER_UPS[this.currentTier];
-                    this.earnedPowerUp = powerUps[Math.floor(Math.random() * powerUps.length)];
-
                     setTimeout(() => {
-                        this.showPowerUpReward();
-                    }, 800);
+                        if (this.currentTier < 5) {
+                            // Advance to next tier
+                            this.currentTier++;
+                            this.loadQuestion();
+                            this.updateTierUI();
+                            feedbackEl.innerText = '';
+
+                            // Update instructions for higher tiers
+                            if (this.currentTier === 5) {
+                                document.getElementById('challengeInstructions').innerHTML =
+                                    '<span style="color: #fbbf24; font-weight: bold;">FINAL CHALLENGE!</span><br>' +
+                                    '<span style="font-size: 0.9rem; color: #94a3b8;">Answer correctly for the best rewards!</span>';
+                            }
+                        } else {
+                            // Tier 5 completed - show power-up selection
+                            setTimeout(() => {
+                                this.showPowerUpSelection(this.currentTier);
+                            }, 800);
+                        }
+                    }, 1000);
                 } else {
                     // INCORRECT
                     feedbackEl.innerText = `✗ Incorrect. The answer is ${this.currentQuestion.answer}`;
@@ -3515,33 +3609,66 @@
                     AudioEngine.playTone(200, 'square', 0.3);
 
                     setTimeout(() => {
-                        this.closeChallenge();
-                        this.proceedToBattle();
-                    }, 2000);
+                        if (this.currentTier === 1) {
+                            // Failed on tier 1 - no power-up
+                            this.closeChallenge();
+                            this.proceedToBattle();
+                        } else {
+                            // Failed on tier 2+ - show power-up selection from current tier
+                            this.showPowerUpSelection(this.currentTier);
+                        }
+                    }, 1500);
                 }
             },
 
-            // Show power-up reward
-            showPowerUpReward() {
+            // Show power-up selection modal with 3 choices
+            showPowerUpSelection(tier) {
                 document.getElementById('mathChallengeModal').classList.remove('active');
 
-                const modal = document.getElementById('powerUpRewardModal');
-                document.getElementById('powerUpName').innerText = this.earnedPowerUp.name;
-                document.getElementById('powerUpDesc').innerText = this.earnedPowerUp.description;
+                const tierKey = `tier${tier}`;
+                const allPowerUps = POWER_UPS[tierKey];
 
-                modal.classList.add('active');
+                // Get 3 random power-ups (or all if less than 3)
+                const shuffled = shuffleArray(allPowerUps);
+                const selectedPowerUps = shuffled.slice(0, Math.min(3, shuffled.length));
+
+                // Update tier label
+                document.getElementById('powerUpTierLabel').innerText = `Select 1 reward from Level ${tier}`;
+
+                // Populate choices
+                const choicesContainer = document.getElementById('powerUpChoices');
+                choicesContainer.innerHTML = '';
+
+                selectedPowerUps.forEach(powerUp => {
+                    const card = document.createElement('div');
+                    card.className = 'powerup-card';
+                    card.onclick = () => this.selectPowerUp(powerUp);
+
+                    card.innerHTML = `
+                        <div class="powerup-card-name">${powerUp.name}</div>
+                        <div class="powerup-card-desc">${powerUp.description}</div>
+                    `;
+
+                    choicesContainer.appendChild(card);
+                });
+
+                document.getElementById('powerUpSelectionModal').classList.add('active');
                 AudioEngine.playTone(600, 'sine', 0.2);
                 setTimeout(() => AudioEngine.playTone(800, 'sine', 0.2), 150);
             },
 
-            // Accept power-up and start battle
-            acceptPowerUp() {
-                document.getElementById('powerUpRewardModal').classList.remove('active');
+            // Handle power-up selection
+            selectPowerUp(powerUp) {
+                document.getElementById('powerUpSelectionModal').classList.remove('active');
+                AudioEngine.playTone(900, 'sine', 0.3);
 
                 // Apply power-up effect
-                this.applyPowerUp(this.earnedPowerUp);
+                this.applyPowerUp(powerUp);
 
-                this.proceedToBattle();
+                // Proceed to battle
+                setTimeout(() => {
+                    this.proceedToBattle();
+                }, 300);
             },
 
             // Apply power-up to battle
