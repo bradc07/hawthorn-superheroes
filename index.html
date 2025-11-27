@@ -2540,6 +2540,416 @@
                 animation: none !important;
             }
         }
+
+        /* ===== HERO ENTRANCE ANIMATIONS ===== */
+
+        /* Base entrance styles */
+        .entrance-speed-trail {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            filter: blur(10px);
+            opacity: 0.5;
+            animation: trailFade 0.5s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            0% { opacity: 0.5; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(100px); }
+        }
+
+        .entrance-speed-blur {
+            animation: speedBlurIn 0.8s ease-out forwards;
+        }
+
+        @keyframes speedBlurIn {
+            0% { transform: translateX(-300px); opacity: 0; filter: blur(20px); }
+            60% { filter: blur(5px); }
+            100% { transform: translateX(0); opacity: 1; filter: blur(0); }
+        }
+
+        .entrance-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.8; }
+        }
+
+        .entrance-surge-reveal {
+            animation: surgeReveal 0.5s ease-out forwards;
+        }
+
+        @keyframes surgeReveal {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .entrance-electric-surge {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.4), transparent);
+            animation: surgePulse 1.5s ease-out;
+        }
+
+        .entrance-electric-surge.burst {
+            animation: surgeBurst 0.5s ease-out forwards;
+        }
+
+        @keyframes surgePulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes surgeBurst {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .entrance-ice-form {
+            clip-path: polygon(50% 100%, 50% 100%, 50% 100%);
+            animation: iceFormReveal 1.5s ease-out forwards;
+        }
+
+        @keyframes iceFormReveal {
+            0% { clip-path: polygon(50% 100%, 50% 100%, 50% 100%); opacity: 0.5; }
+            100% { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); opacity: 1; }
+        }
+
+        .entrance-crystal-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .entrance-crystal-container.converge .entrance-ice-shard {
+            animation: shardConverge 0.4s ease-in forwards !important;
+        }
+
+        @keyframes shardConverge {
+            to { transform: rotate(var(--angle)) translateY(0) scale(0); opacity: 0; }
+        }
+
+        .entrance-ice-shard {
+            position: absolute;
+            width: 10px;
+            height: 30px;
+            background: linear-gradient(to bottom, #22d3ee, transparent);
+            top: 50%;
+            left: 50%;
+            transform-origin: center 100px;
+            transform: rotate(var(--angle)) translateY(-100px);
+            animation: shardOrbit 1.5s ease-in-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes shardOrbit {
+            0% { transform: rotate(var(--angle)) translateY(-150px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: rotate(calc(var(--angle) + 360deg)) translateY(0); opacity: 0; }
+        }
+
+        .frost-burst-shard {
+            position: absolute;
+            width: 8px;
+            height: 25px;
+            background: linear-gradient(to bottom, #22d3ee, #0ea5e9);
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+            animation: frostShardBurst 0.6s ease-out forwards;
+            transform: rotate(var(--angle)) translateY(0);
+        }
+
+        @keyframes frostShardBurst {
+            0% { transform: rotate(var(--angle)) translateY(0); opacity: 1; }
+            100% { transform: rotate(var(--angle)) translateY(-80px); opacity: 0; }
+        }
+
+        .entrance-spin-down {
+            animation: spinDown 1.5s ease-in forwards;
+        }
+
+        @keyframes spinDown {
+            0% { transform: translateY(-200px) rotate(0deg) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(0) rotate(720deg) scale(1); opacity: 1; }
+        }
+
+        .entrance-land {
+            animation: landBounce 0.3s ease-out;
+        }
+
+        @keyframes landBounce {
+            0% { transform: scaleY(1.1) scaleX(0.9); }
+            50% { transform: scaleY(0.9) scaleX(1.1); }
+            100% { transform: scaleY(1) scaleX(1); }
+        }
+
+        .entrance-tornado {
+            position: absolute;
+            width: 150px;
+            height: 200px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.3), transparent);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: tornadoSpin 0.5s linear infinite;
+        }
+
+        .entrance-tornado.dissipate {
+            animation: tornadoDissipate 0.5s ease-out forwards;
+        }
+
+        @keyframes tornadoSpin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes tornadoDissipate {
+            to { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        .wind-particle {
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: windSwirl 1s linear infinite;
+            top: calc(50% + var(--offset-y, 0px));
+            left: 0;
+        }
+
+        @keyframes windSwirl {
+            0% { left: -30px; transform: translateY(0); }
+            100% { left: 100%; transform: translateY(-50px); }
+        }
+
+        .entrance-shockwave {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 4px solid;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: shockwaveExpand 0.8s ease-out forwards;
+        }
+
+        @keyframes shockwaveExpand {
+            0% { width: 50px; height: 50px; opacity: 1; }
+            100% { width: 300px; height: 300px; opacity: 0; }
+        }
+
+        .entrance-drop-shadow {
+            position: absolute;
+            width: 80px;
+            height: 30px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.6), transparent);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: shadowGrow 0.8s ease-out forwards;
+        }
+
+        @keyframes shadowGrow {
+            0% { width: 20px; height: 10px; opacity: 0; }
+            100% { width: 80px; height: 30px; opacity: 1; }
+        }
+
+        .entrance-falling {
+            animation: fallingIn 0.8s ease-in forwards;
+        }
+
+        @keyframes fallingIn {
+            0% { transform: translateY(-500px) scale(0.5); }
+            80% { transform: translateY(20px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+
+        .entrance-impact-land {
+            animation: impactSquash 0.3s ease-out;
+        }
+
+        @keyframes impactSquash {
+            0% { transform: scaleY(0.7) scaleX(1.3); }
+            100% { transform: scaleY(1) scaleX(1); }
+        }
+
+        .entrance-crater {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: radial-gradient(ellipse, rgba(239, 68, 68, 0.3), transparent);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+            border-radius: 50%;
+            animation: craterForm 0.4s ease-out forwards;
+        }
+
+        @keyframes craterForm {
+            0% { transform: translateX(-50%) scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(-50%) scale(1); opacity: 0.7; }
+        }
+
+        .entrance-shield-charge {
+            position: absolute;
+            width: 100px;
+            height: 120px;
+            left: -150px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 197, 253, 0.3));
+            border: 3px solid #3b82f6;
+            border-radius: 10px;
+            animation: shieldCharge 0.8s ease-out;
+        }
+
+        .entrance-shield-charge.entrance-shield-fly {
+            animation: shieldFlyIn 0.4s ease-in forwards;
+        }
+
+        .entrance-shield-charge.slam {
+            animation: shieldSlam 0.5s ease-out forwards;
+        }
+
+        @keyframes shieldCharge {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+
+        @keyframes shieldFlyIn {
+            to { left: 50%; transform: translate(-50%, -50%); }
+        }
+
+        @keyframes shieldSlam {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+        }
+
+        .entrance-behind-shield {
+            animation: behindShieldReveal 0.5s ease-out forwards;
+        }
+
+        @keyframes behindShieldReveal {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .entrance-spark {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: sparkFly 0.5s ease-out forwards;
+        }
+
+        @keyframes sparkFly {
+            0% { transform: scale(1); opacity: 1; }
+            100% {
+                transform: scale(0) translate(
+                    calc(var(--tx, 1) * 50px),
+                    calc(var(--ty, 1) * -50px)
+                );
+                opacity: 0;
+            }
+        }
+
+        /* Additional entrance animations for remaining heroes */
+        .entrance-magnetic-parts {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #71717a, #a1a1aa);
+            border-radius: 2px;
+            animation: magneticConverge 1s ease-in forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes magneticConverge {
+            0% {
+                transform: translate(var(--start-x), var(--start-y)) rotate(0deg);
+                opacity: 0;
+            }
+            50% { opacity: 1; }
+            100% {
+                transform: translate(0, 0) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .entrance-comet-trail {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(239, 68, 68, 0.4));
+            animation: cometStreak 0.8s ease-out forwards;
+        }
+
+        @keyframes cometStreak {
+            0% { transform: translateY(-300px) translateX(-150px); opacity: 1; }
+            100% { transform: translateY(0) translateX(0); opacity: 0; }
+        }
+
+        .entrance-afterimage {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            opacity: 0.4;
+            filter: hue-rotate(var(--hue, 0deg));
+            animation: afterimageFade 0.6s ease-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes afterimageFade {
+            0% { transform: translateX(var(--offset-x, 0)); opacity: 0.4; }
+            100% { transform: translateX(0); opacity: 0; }
+        }
+
+        .entrance-arrow-zipline {
+            position: absolute;
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(to bottom, #22c55e, #16a34a);
+            animation: arrowZipline 0.8s ease-out forwards;
+            top: -100px;
+            left: 50%;
+            transform-origin: top center;
+        }
+
+        @keyframes arrowZipline {
+            0% { top: -100px; height: 100px; }
+            100% { top: 50%; height: 0px; }
+        }
+
+        .entrance-blade-slash {
+            position: absolute;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+            animation: bladeSlash 0.2s ease-out forwards;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes bladeSlash {
+            0% { transform: translate(-50%, -50%) rotate(var(--angle, 0deg)) scaleX(0); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotate(var(--angle, 0deg)) scaleX(1); opacity: 0; }
+        }
     </style>
 </head>
 
@@ -4316,6 +4726,860 @@
             return dominant || villain.type;
         }
 
+        /* --- HERO ENTRANCE ANIMATIONS SYSTEM --- */
+
+        // Define entrance animations for each hero
+        const HERO_ENTRANCES = {
+            // ELECTRIC HEROES
+            art: {
+                name: "Speed Blur",
+                type: "electric",
+                animation: "entranceSpeedBlur",
+                duration: 2000,
+                description: "Zooms in as a golden blur, leaving lightning trails"
+            },
+            alexei: {
+                name: "Magnetic Assembly",
+                type: "electric",
+                animation: "entranceMagnetic",
+                duration: 2200,
+                description: "Metal pieces fly in and assemble around him"
+            },
+            lulu: {
+                name: "Red Comet",
+                type: "electric",
+                animation: "entranceComet",
+                duration: 1800,
+                description: "Crashes in like a red streak from above"
+            },
+            rex: {
+                name: "Triple Split",
+                type: "electric",
+                animation: "entranceTriple",
+                duration: 2000,
+                description: "Three afterimages merge into one"
+            },
+            zane: {
+                name: "Power Surge",
+                type: "electric",
+                animation: "entranceSurge",
+                duration: 2000,
+                description: "Materializes from a burst of electricity"
+            },
+
+            // ICE HEROES
+            florrie: {
+                name: "Ice Crystallization",
+                type: "ice",
+                animation: "entranceIceCrystal",
+                duration: 2200,
+                description: "Forms from swirling ice crystals"
+            },
+            maurits: {
+                name: "Storm Descent",
+                type: "ice",
+                animation: "entranceStorm",
+                duration: 2000,
+                description: "Descends from a thundercloud"
+            },
+            noah: {
+                name: "Sound Wave",
+                type: "ice",
+                animation: "entranceSoundwave",
+                duration: 1800,
+                description: "Appears with expanding sonic rings"
+            },
+            phaedra: {
+                name: "Whirlwind Entry",
+                type: "ice",
+                animation: "entranceWhirlwind",
+                duration: 2000,
+                description: "Spirals down inside a mini tornado"
+            },
+
+            // IMPACT HEROES
+            joshua: {
+                name: "Shield Slam",
+                type: "impact",
+                animation: "entranceShield",
+                duration: 2000,
+                description: "Lands with shield creating shockwave"
+            },
+            manny: {
+                name: "Earthquake Entry",
+                type: "impact",
+                animation: "entranceEarthquake",
+                duration: 2200,
+                description: "Bursts up from the ground"
+            },
+            noa: {
+                name: "Arrow Strike",
+                type: "impact",
+                animation: "entranceArrow",
+                duration: 1800,
+                description: "Ziplines in on an energy arrow"
+            },
+            rory: {
+                name: "Blade Flash",
+                type: "impact",
+                animation: "entranceBladeFlash",
+                duration: 1600,
+                description: "Appears in a flash of blade slashes"
+            },
+            viola: {
+                name: "Saber Dance",
+                type: "impact",
+                animation: "entranceSaberDance",
+                duration: 2000,
+                description: "Gracefully spins in with twin sabers"
+            },
+            wilbur: {
+                name: "Titan Drop",
+                type: "impact",
+                animation: "entranceTitanDrop",
+                duration: 2200,
+                description: "Drops from sky, creates crater on landing"
+            }
+        };
+
+        const HeroEntranceSystem = {
+            isPlaying: false,
+            skipped: false,
+
+            async playEntrance(heroId, imageElement, position) {
+                const entrance = HERO_ENTRANCES[heroId];
+                if (!entrance) {
+                    // Fallback generic entrance
+                    return this.playGenericEntrance(imageElement);
+                }
+
+                this.isPlaying = true;
+                this.skipped = false;
+
+                // Hide image initially
+                imageElement.style.opacity = '0';
+
+                // Play entrance based on type
+                await this[entrance.animation](imageElement, position, entrance);
+
+                // Ensure image is visible at end
+                if (!this.skipped) {
+                    imageElement.style.opacity = '1';
+                }
+
+                this.isPlaying = false;
+            },
+
+            async playGenericEntrance(imageElement) {
+                imageElement.style.opacity = '0';
+                imageElement.style.transform = 'scale(0.5)';
+
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        if (this.skipped) {
+                            imageElement.style.opacity = '1';
+                            imageElement.style.transform = 'scale(1)';
+                            resolve();
+                            return;
+                        }
+                        imageElement.style.transition = 'all 0.5s ease-out';
+                        imageElement.style.opacity = '1';
+                        imageElement.style.transform = 'scale(1)';
+                        setTimeout(resolve, 500);
+                    }, 100);
+                });
+                imageElement.style.transition = '';
+            },
+
+            // Helper methods
+            wait(ms) {
+                return new Promise(resolve => {
+                    const checkSkip = () => {
+                        if (this.skipped) {
+                            resolve();
+                        } else if (ms <= 0) {
+                            resolve();
+                        } else {
+                            ms -= 50;
+                            setTimeout(checkSkip, 50);
+                        }
+                    };
+                    checkSkip();
+                });
+            },
+
+            createEntranceSparks(container, color, count) {
+                for (let i = 0; i < count; i++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'entrance-spark';
+                    spark.style.background = color;
+                    spark.style.left = (Math.random() * 100) + '%';
+                    spark.style.top = (Math.random() * 100) + '%';
+                    spark.style.setProperty('--tx', (Math.random() - 0.5) * 2);
+                    spark.style.setProperty('--ty', (Math.random() - 0.5) * 2);
+                    spark.style.animationDelay = (Math.random() * 0.5) + 's';
+                    container.appendChild(spark);
+                    setTimeout(() => spark.remove(), 1000);
+                }
+            },
+
+            createShockwave(container, color) {
+                const wave = document.createElement('div');
+                wave.className = 'entrance-shockwave';
+                wave.style.borderColor = color;
+                container.appendChild(wave);
+                setTimeout(() => wave.remove(), 800);
+            },
+
+            createFrostBurst(container) {
+                for (let i = 0; i < 12; i++) {
+                    const shard = document.createElement('div');
+                    shard.className = 'frost-burst-shard';
+                    shard.style.setProperty('--angle', (i * 30) + 'deg');
+                    container.appendChild(shard);
+                    setTimeout(() => shard.remove(), 600);
+                }
+            },
+
+            createWindParticles(container, count) {
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'wind-particle';
+                    particle.style.setProperty('--offset-y', ((Math.random() - 0.5) * 100) + 'px');
+                    particle.style.animationDelay = (Math.random() * 1) + 's';
+                    container.appendChild(particle);
+                    setTimeout(() => particle.remove(), 2000);
+                }
+            },
+
+            createWindBurst(container) {
+                for (let i = 0; i < 8; i++) {
+                    const burst = document.createElement('div');
+                    burst.className = 'entrance-shockwave';
+                    burst.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                    burst.style.animationDelay = (i * 0.1) + 's';
+                    container.appendChild(burst);
+                    setTimeout(() => burst.remove(), 1000);
+                }
+            },
+
+            createConvergingBolt(container, index) {
+                const bolt = document.createElement('div');
+                bolt.style.position = 'absolute';
+                bolt.style.width = '3px';
+                bolt.style.height = '60px';
+                bolt.style.background = 'linear-gradient(to bottom, #fbbf24, transparent)';
+                bolt.style.left = (Math.random() * 100) + '%';
+                bolt.style.top = '-60px';
+                bolt.style.animation = 'boltConverge 0.3s ease-in forwards';
+                container.appendChild(bolt);
+                setTimeout(() => bolt.remove(), 300);
+            },
+
+            // ELECTRIC HERO ENTRANCE ANIMATIONS
+
+            // ART - Speed Blur
+            async entranceSpeedBlur(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Create blur trail
+                for (let i = 0; i < 5; i++) {
+                    const trail = document.createElement('div');
+                    trail.className = 'entrance-speed-trail';
+                    trail.style.backgroundImage = `url(${img.src})`;
+                    trail.style.left = (-200 + i * 30) + 'px';
+                    trail.style.animationDelay = (i * 0.05) + 's';
+                    container.appendChild(trail);
+                    setTimeout(() => trail.remove(), 1000);
+                }
+
+                // Main entrance
+                img.classList.add('entrance-speed-blur');
+
+                // Lightning sparks
+                this.createEntranceSparks(container, '#fbbf24', 10);
+
+                // Sound
+                AudioEngine.playTone(800, 'sawtooth', 0.2);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(400, 'sine', 0.3);
+                }, 200);
+
+                await this.wait(entrance.duration);
+
+                // Cleanup
+                container.querySelectorAll('.entrance-speed-trail').forEach(t => t.remove());
+                img.classList.remove('entrance-speed-blur');
+            },
+
+            // ALEXEI - Magnetic Assembly
+            async entranceMagnetic(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Create metal parts flying in
+                for (let i = 0; i < 8; i++) {
+                    const part = document.createElement('div');
+                    part.className = 'entrance-magnetic-parts';
+                    const angle = (i / 8) * Math.PI * 2;
+                    const distance = 150;
+                    part.style.setProperty('--start-x', (Math.cos(angle) * distance) + 'px');
+                    part.style.setProperty('--start-y', (Math.sin(angle) * distance) + 'px');
+                    part.style.setProperty('--delay', (i * 0.1) + 's');
+                    part.style.left = '50%';
+                    part.style.top = '50%';
+                    container.appendChild(part);
+                    setTimeout(() => part.remove(), 1500);
+                }
+
+                img.classList.add('entrance-surge-reveal');
+
+                // Metallic sound
+                AudioEngine.playTone(300, 'square', 0.2);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(200, 'square', 0.2);
+                }, 400);
+
+                await this.wait(entrance.duration);
+
+                img.classList.remove('entrance-surge-reveal');
+            },
+
+            // LULU - Red Comet
+            async entranceComet(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Comet trail
+                const trail = document.createElement('div');
+                trail.className = 'entrance-comet-trail';
+                container.appendChild(trail);
+
+                // Hero crashes in
+                img.style.transform = 'translateY(-300px) translateX(-150px)';
+                img.classList.add('entrance-falling');
+
+                // Sound
+                AudioEngine.playTone(1200, 'sawtooth', 0.3);
+
+                await this.wait(800);
+
+                if (!this.skipped) {
+                    img.style.transform = 'translateY(0) translateX(0)';
+                    this.createShockwave(container, '#ef4444');
+                    AudioEngine.playTone(150, 'triangle', 0.4);
+                }
+
+                await this.wait(1000);
+
+                // Cleanup
+                trail.remove();
+                img.classList.remove('entrance-falling');
+                img.style.transform = '';
+            },
+
+            // REX - Triple Split
+            async entranceTriple(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Create three afterimages
+                for (let i = 0; i < 3; i++) {
+                    const afterimage = document.createElement('div');
+                    afterimage.className = 'entrance-afterimage';
+                    afterimage.style.backgroundImage = `url(${img.src})`;
+                    afterimage.style.width = '100%';
+                    afterimage.style.height = '100%';
+                    afterimage.style.position = 'absolute';
+                    afterimage.style.top = '0';
+                    afterimage.style.left = '0';
+                    afterimage.style.setProperty('--offset-x', ((i - 1) * 50) + 'px');
+                    afterimage.style.setProperty('--hue', (i * 60) + 'deg');
+                    afterimage.style.setProperty('--delay', (i * 0.2) + 's');
+                    container.appendChild(afterimage);
+                    setTimeout(() => afterimage.remove(), 1200);
+                }
+
+                img.classList.add('entrance-surge-reveal');
+
+                // Time-split sound
+                AudioEngine.playTone(600, 'sine', 0.2);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(700, 'sine', 0.2);
+                }, 300);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(800, 'sine', 0.2);
+                }, 600);
+
+                await this.wait(entrance.duration);
+
+                img.classList.remove('entrance-surge-reveal');
+            },
+
+            // ZANE - Power Surge
+            async entranceSurge(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Electric buildup
+                const surge = document.createElement('div');
+                surge.className = 'entrance-electric-surge';
+                container.appendChild(surge);
+
+                // Flickering appearance
+                img.classList.add('entrance-flicker');
+
+                // Lightning bolts converging
+                for (let i = 0; i < 6; i++) {
+                    setTimeout(() => {
+                        if (!this.skipped) this.createConvergingBolt(container, i);
+                    }, i * 150);
+                }
+
+                AudioEngine.playTone(100, 'sawtooth', 0.3);
+
+                await this.wait(1500);
+
+                if (!this.skipped) {
+                    // Final reveal
+                    img.classList.remove('entrance-flicker');
+                    img.classList.add('entrance-surge-reveal');
+                    surge.classList.add('burst');
+                }
+
+                await this.wait(500);
+
+                // Cleanup
+                surge.remove();
+                img.classList.remove('entrance-surge-reveal');
+            },
+
+            // ICE HERO ENTRANCE ANIMATIONS
+
+            // FLORRIE - Ice Crystallization
+            async entranceIceCrystal(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Ice crystal formation effect
+                const crystalContainer = document.createElement('div');
+                crystalContainer.className = 'entrance-crystal-container';
+                container.appendChild(crystalContainer);
+
+                // Create swirling ice shards
+                for (let i = 0; i < 20; i++) {
+                    const shard = document.createElement('div');
+                    shard.className = 'entrance-ice-shard';
+                    shard.style.setProperty('--angle', (i * 18) + 'deg');
+                    shard.style.setProperty('--delay', (i * 0.05) + 's');
+                    crystalContainer.appendChild(shard);
+                }
+
+                // Image builds up from crystals
+                img.classList.add('entrance-ice-form');
+
+                // Crystalline sound
+                AudioEngine.playTone(1200, 'sine', 0.15);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(1500, 'sine', 0.1);
+                }, 200);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(1800, 'sine', 0.1);
+                }, 400);
+
+                await this.wait(1800);
+
+                if (!this.skipped) {
+                    // Shards merge into hero
+                    crystalContainer.classList.add('converge');
+                }
+
+                await this.wait(400);
+
+                if (!this.skipped) {
+                    // Final reveal with frost burst
+                    img.classList.remove('entrance-ice-form');
+                    this.createFrostBurst(container);
+                }
+
+                // Cleanup
+                setTimeout(() => crystalContainer.remove(), 500);
+            },
+
+            // MAURITS - Storm Descent
+            async entranceStorm(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Dark cloud effect
+                const cloud = document.createElement('div');
+                cloud.style.position = 'absolute';
+                cloud.style.width = '150px';
+                cloud.style.height = '80px';
+                cloud.style.top = '0';
+                cloud.style.left = '50%';
+                cloud.style.transform = 'translateX(-50%)';
+                cloud.style.background = 'radial-gradient(ellipse, rgba(100, 100, 100, 0.6), transparent)';
+                cloud.style.borderRadius = '50%';
+                container.appendChild(cloud);
+
+                // Lightning flash
+                setTimeout(() => {
+                    if (this.skipped) return;
+                    cloud.style.background = 'radial-gradient(ellipse, rgba(251, 191, 36, 0.8), transparent)';
+                    AudioEngine.playTone(1500, 'sawtooth', 0.3);
+                    setTimeout(() => {
+                        cloud.style.background = 'radial-gradient(ellipse, rgba(100, 100, 100, 0.6), transparent)';
+                    }, 100);
+                }, 500);
+
+                // Descend from cloud
+                img.style.transform = 'translateY(-200px)';
+                img.style.opacity = '0.3';
+
+                await this.wait(800);
+
+                if (!this.skipped) {
+                    img.style.transition = 'all 0.8s ease-out';
+                    img.style.transform = 'translateY(0)';
+                    img.style.opacity = '1';
+                }
+
+                await this.wait(1200);
+
+                // Cleanup
+                cloud.remove();
+                img.style.transition = '';
+                img.style.transform = '';
+            },
+
+            // NOAH - Sound Wave
+            async entranceSoundwave(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Create expanding sound rings
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        if (this.skipped) return;
+                        const ring = document.createElement('div');
+                        ring.className = 'entrance-shockwave';
+                        ring.style.borderColor = '#22d3ee';
+                        ring.style.borderWidth = '2px';
+                        container.appendChild(ring);
+                        setTimeout(() => ring.remove(), 800);
+                    }, i * 200);
+                }
+
+                img.classList.add('entrance-surge-reveal');
+
+                // Sound wave tone
+                AudioEngine.playTone(440, 'sine', 0.2);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(550, 'sine', 0.15);
+                }, 300);
+                setTimeout(() => {
+                    if (!this.skipped) AudioEngine.playTone(660, 'sine', 0.1);
+                }, 600);
+
+                await this.wait(entrance.duration);
+
+                img.classList.remove('entrance-surge-reveal');
+            },
+
+            // PHAEDRA - Whirlwind Entry
+            async entranceWhirlwind(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Create tornado effect
+                const tornado = document.createElement('div');
+                tornado.className = 'entrance-tornado';
+                container.appendChild(tornado);
+
+                // Hero spins down inside
+                img.classList.add('entrance-spin-down');
+                img.style.top = '-200px';
+
+                // Wind particles
+                this.createWindParticles(container, 15);
+
+                // Whooshing sound
+                AudioEngine.playTone(200, 'sine', 0.2);
+
+                await this.wait(1500);
+
+                if (!this.skipped) {
+                    // Landing
+                    img.style.top = '0';
+                    tornado.classList.add('dissipate');
+                    img.classList.remove('entrance-spin-down');
+                    img.classList.add('entrance-land');
+
+                    // Wind burst on land
+                    this.createWindBurst(container);
+                }
+
+                await this.wait(500);
+
+                // Cleanup
+                tornado.remove();
+                img.classList.remove('entrance-land');
+                img.style.top = '';
+            },
+
+            // IMPACT HERO ENTRANCE ANIMATIONS
+
+            // WILBUR - Titan Drop
+            async entranceTitanDrop(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Shadow growing on ground
+                const shadow = document.createElement('div');
+                shadow.className = 'entrance-drop-shadow';
+                container.appendChild(shadow);
+
+                await this.wait(500);
+
+                if (this.skipped) {
+                    shadow.remove();
+                    return;
+                }
+
+                // Falling from above
+                img.style.transform = 'translateY(-500px) scale(0.5)';
+                img.style.opacity = '1';
+                img.classList.add('entrance-falling');
+
+                await this.wait(800);
+
+                if (!this.skipped) {
+                    // IMPACT!
+                    img.style.transform = 'translateY(0) scale(1)';
+                    img.classList.remove('entrance-falling');
+                    img.classList.add('entrance-impact-land');
+
+                    // Shockwave
+                    this.createShockwave(container, '#ef4444');
+
+                    // Ground crack
+                    const crack = document.createElement('div');
+                    crack.className = 'entrance-crater';
+                    container.appendChild(crack);
+                    setTimeout(() => crack.remove(), 2000);
+
+                    // Screen shake
+                    VisualFX.shake('hard');
+
+                    // Heavy impact sound
+                    AudioEngine.playTone(60, 'triangle', 0.5);
+                    AudioEngine.playTone(40, 'sine', 0.4);
+                }
+
+                await this.wait(600);
+
+                // Cleanup
+                shadow.remove();
+                img.classList.remove('entrance-impact-land');
+                img.style.transform = '';
+            },
+
+            // JOSHUA - Shield Slam
+            async entranceShield(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Shield energy charging
+                const shield = document.createElement('div');
+                shield.className = 'entrance-shield-charge';
+                container.appendChild(shield);
+
+                img.style.opacity = '0';
+
+                await this.wait(800);
+
+                if (this.skipped) {
+                    shield.remove();
+                    img.style.opacity = '1';
+                    return;
+                }
+
+                // Shield flies in from side
+                shield.classList.add('entrance-shield-fly');
+
+                await this.wait(400);
+
+                if (!this.skipped) {
+                    // Hero appears behind shield
+                    img.style.opacity = '1';
+                    img.classList.add('entrance-behind-shield');
+
+                    // Shield slam down
+                    shield.classList.add('slam');
+
+                    // Protective wave
+                    this.createShockwave(container, '#3b82f6');
+
+                    AudioEngine.playTone(200, 'triangle', 0.3);
+                }
+
+                await this.wait(500);
+
+                // Cleanup
+                shield.remove();
+                img.classList.remove('entrance-behind-shield');
+            },
+
+            // MANNY - Earthquake Entry
+            async entranceEarthquake(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Ground rumble effect
+                img.style.transform = 'translateY(100px)';
+                img.style.opacity = '0';
+
+                // Rumble sound
+                AudioEngine.playTone(80, 'triangle', 0.3);
+
+                await this.wait(600);
+
+                if (!this.skipped) {
+                    // Burst up from ground
+                    img.style.transition = 'all 0.6s ease-out';
+                    img.style.transform = 'translateY(0)';
+                    img.style.opacity = '1';
+
+                    // Shockwave and shake
+                    this.createShockwave(container, '#8b4513');
+                    VisualFX.shake('normal');
+
+                    AudioEngine.playTone(100, 'triangle', 0.4);
+                }
+
+                await this.wait(1600);
+
+                // Cleanup
+                img.style.transition = '';
+                img.style.transform = '';
+            },
+
+            // NOA - Arrow Strike
+            async entranceArrow(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Energy arrow zipline
+                const arrow = document.createElement('div');
+                arrow.className = 'entrance-arrow-zipline';
+                container.appendChild(arrow);
+
+                img.style.transform = 'translateY(-100px) scale(0.8)';
+                img.style.opacity = '0';
+
+                // Arrow sound
+                AudioEngine.playTone(900, 'sine', 0.2);
+
+                await this.wait(600);
+
+                if (!this.skipped) {
+                    // Slide down the arrow
+                    img.style.transition = 'all 0.5s ease-out';
+                    img.style.transform = 'translateY(0) scale(1)';
+                    img.style.opacity = '1';
+
+                    AudioEngine.playTone(500, 'sine', 0.2);
+                }
+
+                await this.wait(1200);
+
+                // Cleanup
+                arrow.remove();
+                img.style.transition = '';
+                img.style.transform = '';
+            },
+
+            // RORY - Blade Flash
+            async entranceBladeFlash(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Create blade slash effects
+                const slashAngles = [45, -45, 90, 0, 135, -135];
+                for (let i = 0; i < slashAngles.length; i++) {
+                    setTimeout(() => {
+                        if (this.skipped) return;
+                        const slash = document.createElement('div');
+                        slash.className = 'entrance-blade-slash';
+                        slash.style.setProperty('--angle', slashAngles[i] + 'deg');
+                        slash.style.setProperty('--delay', '0s');
+                        container.appendChild(slash);
+                        setTimeout(() => slash.remove(), 400);
+
+                        // Slash sound
+                        AudioEngine.playTone(1000 + i * 100, 'sawtooth', 0.15);
+                    }, i * 150);
+                }
+
+                img.classList.add('entrance-flicker');
+
+                await this.wait(1200);
+
+                if (!this.skipped) {
+                    // Final reveal
+                    img.classList.remove('entrance-flicker');
+                    img.classList.add('entrance-surge-reveal');
+                }
+
+                await this.wait(400);
+
+                img.classList.remove('entrance-surge-reveal');
+            },
+
+            // VIOLA - Saber Dance
+            async entranceSaberDance(img, pos, entrance) {
+                if (this.skipped) return;
+                const container = img.parentElement;
+
+                // Graceful spinning entrance
+                img.style.transform = 'rotate(-360deg) scale(0.5)';
+                img.style.opacity = '0';
+
+                // Create purple energy trails
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => {
+                        if (this.skipped) return;
+                        const trail = document.createElement('div');
+                        trail.className = 'entrance-blade-slash';
+                        trail.style.background = 'linear-gradient(90deg, transparent, #a855f7, transparent)';
+                        trail.style.setProperty('--angle', (i * 45) + 'deg');
+                        trail.style.setProperty('--delay', '0s');
+                        container.appendChild(trail);
+                        setTimeout(() => trail.remove(), 400);
+                    }, i * 100);
+                }
+
+                // Graceful sound
+                AudioEngine.playTone(800, 'sine', 0.2);
+
+                await this.wait(800);
+
+                if (!this.skipped) {
+                    img.style.transition = 'all 0.8s ease-out';
+                    img.style.transform = 'rotate(0) scale(1)';
+                    img.style.opacity = '1';
+                }
+
+                await this.wait(1200);
+
+                // Cleanup
+                img.style.transition = '';
+                img.style.transform = '';
+            }
+        };
+
         /* --- STORY MODE SYSTEM --- */
         const StoryModeSystem = {
             progress: {},
@@ -5098,15 +6362,32 @@
             }
         }
 
-        function beginCombatSequence() {
+        async function beginCombatSequence() {
              document.getElementById('combatStartOverlay').style.display = 'none';
              isBattleActive = true;
              BattleStats.reset();
-             AudioEngine.startMusic(false);
-             
+
              const hero1 = heroes.find(h => h.id === selectedHeroes[0]);
              const hero2 = heroes.find(h => h.id === selectedHeroes[1]);
-             
+
+             // Check if entrance animations should be skipped
+             const skipEntrances = localStorage.getItem('hawthorn_skip_entrances') === 'true';
+
+             if (!skipEntrances) {
+                 // Play hero entrance animations
+                 const hero1Img = document.getElementById('hero1Img');
+                 const hero2Img = document.getElementById('hero2Img');
+
+                 // Play entrances simultaneously
+                 await Promise.all([
+                     HeroEntranceSystem.playEntrance(hero1.id, hero1Img, 'left'),
+                     HeroEntranceSystem.playEntrance(hero2.id, hero2Img, 'right')
+                 ]);
+             }
+
+             // Start battle music after entrances
+             AudioEngine.startMusic(false);
+
              runDynamicBattle(hero1, hero2);
         }
         
@@ -6029,6 +7310,19 @@
             document.querySelectorAll('.hero-card-container').forEach(c => c.classList.add('hidden'));
             setTimeout(() => renderGrid(type), 300);
         }
+
+        // ===== ENTRANCE SKIP FUNCTIONALITY =====
+        // Setup click-to-skip for entrance animations
+        (function setupEntranceSkip() {
+            const battleStage = document.getElementById('battleStage');
+            if (battleStage) {
+                battleStage.addEventListener('click', function() {
+                    if (HeroEntranceSystem.isPlaying) {
+                        HeroEntranceSystem.skipped = true;
+                    }
+                });
+            }
+        })();
     </script>
 
 </body>
