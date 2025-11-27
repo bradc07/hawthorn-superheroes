@@ -416,6 +416,78 @@
         }
         .close-btn:hover { color: #fff; transform: rotate(90deg); }
 
+        /* --- MATH CHALLENGE STYLES --- */
+        .math-feedback {
+            min-height: 30px;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .math-feedback.correct {
+            color: #22c55e;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+        }
+        .math-feedback.incorrect {
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        /* Tier Progress Dots */
+        .tier-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.3);
+            border: 2px solid rgba(148, 163, 184, 0.5);
+            transition: all 0.3s;
+        }
+        .tier-dot.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            border-color: #fbbf24;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+            transform: scale(1.2);
+        }
+        .tier-dot.completed {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-color: #22c55e;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+        }
+
+        /* Power-Up Selection Cards */
+        .powerup-card {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(56, 189, 248, 0.15));
+            border: 2px solid rgba(34, 211, 238, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .powerup-card:hover {
+            transform: translateY(-5px);
+            border-color: #22d3ee;
+            box-shadow: 0 0 30px rgba(34, 211, 238, 0.4);
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(56, 189, 248, 0.25));
+        }
+        .powerup-card-name {
+            font-family: 'Bangers';
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
+        .powerup-card-desc {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
         /* --- NEW ANIMATION CLASSES --- */
         .flying-card {
             position: fixed; z-index: 2000; pointer-events: none; border-radius: 20px; overflow: hidden;
@@ -2589,7 +2661,7 @@
             </div>
             <div class="filter-group">
                  <button class="filter-btn" id="worldMapBtn" onclick="StoryModeSystem.openWorldMap()" title="World Map" style="background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24;">🗺️ World Map</button>
-                 <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">🧙‍♂️ Muddlewick has Chosen</button>
+                 <button class="filter-btn battle-btn" id="muddlewickBtn" onclick="toggleBattleMode()">⚔️ Battle</button>
                  <button class="filter-btn" id="muteBtn" onclick="AudioEngine.toggleMute()" title="Toggle Sound">🔊</button>
             </div>
         </div>
@@ -2681,7 +2753,81 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- MATH CHALLENGE MODAL -->
+    <div id="mathChallengeModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px; text-align: center;" onclick="event.stopPropagation()">
+            <h2 style="font-family: 'Bangers'; font-size: 2.5rem; color: #fbbf24; margin-bottom: 15px; text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);">
+                ⚡ MATH CHALLENGE ⚡
+            </h2>
+
+            <!-- Tier Progress Indicator -->
+            <div id="tierProgress" style="margin-bottom: 20px;">
+                <div style="font-size: 0.9rem; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
+                    Difficulty Level
+                </div>
+                <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 5px;">
+                    <div class="tier-dot" data-tier="1"></div>
+                    <div class="tier-dot" data-tier="2"></div>
+                    <div class="tier-dot" data-tier="3"></div>
+                    <div class="tier-dot" data-tier="4"></div>
+                    <div class="tier-dot" data-tier="5"></div>
+                </div>
+                <div id="tierLabel" style="font-family: 'Bangers'; font-size: 1.2rem; color: #fbbf24;">LEVEL 1</div>
+            </div>
+
+            <p id="challengeInstructions" style="font-size: 1.1rem; color: #cbd5e1; margin-bottom: 25px; line-height: 1.5;">
+                Answer correctly to advance!<br>
+                <span style="font-size: 0.9rem; color: #94a3b8;">Higher levels = Better rewards</span>
+            </p>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 15px; margin-bottom: 25px; border: 2px solid rgba(251, 191, 36, 0.3);">
+                <div id="mathQuestion" style="font-family: 'Rajdhani'; font-size: 3rem; font-weight: 700; color: #fff; margin-bottom: 20px;">
+                    4 + 8 = ?
+                </div>
+                <input
+                    type="number"
+                    id="mathAnswer"
+                    placeholder="Your answer"
+                    style="width: 220px; padding: 15px; font-size: 1.5rem; text-align: center; border: 2px solid #fbbf24; border-radius: 10px; background: rgba(15, 23, 42, 0.8); color: #fff; outline: none;"
+                    onkeypress="if(event.key === 'Enter') MathChallengeSystem.submitAnswer()"
+                />
+            </div>
+
+            <div id="mathFeedback" class="math-feedback"></div>
+
+            <button
+                id="submitAnswerBtn"
+                onclick="MathChallengeSystem.submitAnswer()"
+                style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; font-family: 'Bangers'; font-size: 1.5rem; padding: 15px 40px; border: none; border-radius: 10px; cursor: pointer; letter-spacing: 1px; box-shadow: 0 0 20px rgba(251, 191, 36, 0.4); transition: all 0.3s;"
+                onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(251, 191, 36, 0.6)'"
+                onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(251, 191, 36, 0.4)'"
+            >
+                SUBMIT ANSWER
+            </button>
+        </div>
+    </div>
+
+    <!-- POWER-UP SELECTION MODAL -->
+    <div id="powerUpSelectionModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 700px; text-align: center;" onclick="event.stopPropagation()">
+            <h2 style="font-family: 'Bangers'; font-size: 2.5rem; color: #22d3ee; margin-bottom: 10px; text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);">
+                💎 CHOOSE YOUR POWER-UP! 💎
+            </h2>
+            <p id="powerUpTierLabel" style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 25px;">
+                Select 1 reward from Tier 1
+            </p>
+
+            <div id="powerUpChoices" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px;">
+                <!-- Power-up cards will be inserted here -->
+            </div>
+
+            <p style="font-size: 0.9rem; color: #64748b; font-style: italic;">
+                Click on a power-up to select it and begin the battle
+            </p>
+        </div>
+    </div>
+
     <div id="battleOverlay" class="battle-overlay">
          <div class="battle-stage" id="battleStage">
               <div class="close-btn" onclick="closeBattle()">×</div>
@@ -3103,6 +3249,459 @@
                 duration: 3,
                 rarity: "rare",
                 uses: 1
+            }
+        };
+
+        /* --- MATH CHALLENGE SYSTEM --- */
+        // Question Bank - 5 Difficulty Tiers
+        const QUESTION_BANK = {
+          tier1: [
+            { question: "4 + 8 = ?", answer: 12 },
+            { question: "12 - 5 = ?", answer: 7 },
+            { question: "3 × 2 = ?", answer: 6 },
+            { question: "10 ÷ 2 = ?", answer: 5 },
+            { question: "7 + 6 = ?", answer: 13 },
+            { question: "9 - 4 = ?", answer: 5 },
+            { question: "5 × 3 = ?", answer: 15 },
+            { question: "8 ÷ 4 = ?", answer: 2 },
+            { question: "6 + 9 = ?", answer: 15 },
+            { question: "11 - 7 = ?", answer: 4 },
+            { question: "4 × 4 = ?", answer: 16 },
+            { question: "18 ÷ 3 = ?", answer: 6 },
+            { question: "8 + 5 = ?", answer: 13 },
+            { question: "14 - 6 = ?", answer: 8 },
+            { question: "2 × 7 = ?", answer: 14 },
+            { question: "20 ÷ 5 = ?", answer: 4 }
+          ],
+          tier2: [
+            { question: "15 + 7 = ?", answer: 22 },
+            { question: "23 - 9 = ?", answer: 14 },
+            { question: "4 × 5 = ?", answer: 20 },
+            { question: "20 ÷ 4 = ?", answer: 5 },
+            { question: "18 + 13 = ?", answer: 31 },
+            { question: "27 - 12 = ?", answer: 15 },
+            { question: "6 × 6 = ?", answer: 36 },
+            { question: "24 ÷ 6 = ?", answer: 4 },
+            { question: "19 + 16 = ?", answer: 35 },
+            { question: "31 - 14 = ?", answer: 17 },
+            { question: "7 × 5 = ?", answer: 35 },
+            { question: "30 ÷ 5 = ?", answer: 6 },
+            { question: "17 + 18 = ?", answer: 35 },
+            { question: "28 - 15 = ?", answer: 13 },
+            { question: "8 × 4 = ?", answer: 32 },
+            { question: "35 ÷ 7 = ?", answer: 5 }
+          ],
+          tier3: [
+            { question: "34 + 25 = ?", answer: 59 },
+            { question: "67 - 32 = ?", answer: 35 },
+            { question: "6 × 7 = ?", answer: 42 },
+            { question: "36 ÷ 6 = ?", answer: 6 },
+            { question: "42 + 37 = ?", answer: 79 },
+            { question: "78 - 43 = ?", answer: 35 },
+            { question: "8 × 8 = ?", answer: 64 },
+            { question: "48 ÷ 8 = ?", answer: 6 },
+            { question: "53 + 26 = ?", answer: 79 },
+            { question: "89 - 54 = ?", answer: 35 },
+            { question: "7 × 9 = ?", answer: 63 },
+            { question: "42 ÷ 7 = ?", answer: 6 },
+            { question: "45 + 34 = ?", answer: 79 },
+            { question: "76 - 41 = ?", answer: 35 },
+            { question: "9 × 6 = ?", answer: 54 },
+            { question: "54 ÷ 9 = ?", answer: 6 }
+          ],
+          tier4: [
+            { question: "58 + 37 = ?", answer: 95 },
+            { question: "82 - 46 = ?", answer: 36 },
+            { question: "8 × 9 = ?", answer: 72 },
+            { question: "56 ÷ 8 = ?", answer: 7 },
+            { question: "67 + 48 = ?", answer: 115 },
+            { question: "93 - 57 = ?", answer: 36 },
+            { question: "7 × 12 = ?", answer: 84 },
+            { question: "63 ÷ 9 = ?", answer: 7 },
+            { question: "76 + 59 = ?", answer: 135 },
+            { question: "84 - 48 = ?", answer: 36 },
+            { question: "9 × 11 = ?", answer: 99 },
+            { question: "72 ÷ 8 = ?", answer: 9 },
+            { question: "85 + 67 = ?", answer: 152 },
+            { question: "91 - 55 = ?", answer: 36 },
+            { question: "6 × 13 = ?", answer: 78 },
+            { question: "81 ÷ 9 = ?", answer: 9 }
+          ],
+          tier5: [
+            { question: "348 + 249 = ?", answer: 597 },
+            { question: "514 - 267 = ?", answer: 247 },
+            { question: "12 × 11 = ?", answer: 132 },
+            { question: "144 ÷ 12 = ?", answer: 12 },
+            { question: "456 + 378 = ?", answer: 834 },
+            { question: "623 - 387 = ?", answer: 236 },
+            { question: "13 × 12 = ?", answer: 156 },
+            { question: "156 ÷ 13 = ?", answer: 12 },
+            { question: "567 + 284 = ?", answer: 851 },
+            { question: "734 - 468 = ?", answer: 266 },
+            { question: "14 × 11 = ?", answer: 154 },
+            { question: "132 ÷ 11 = ?", answer: 12 },
+            { question: "689 + 456 = ?", answer: 1145 },
+            { question: "812 - 547 = ?", answer: 265 },
+            { question: "15 × 12 = ?", answer: 180 },
+            { question: "168 ÷ 14 = ?", answer: 12 }
+          ]
+        };
+
+        // Power-Up Definitions
+        const POWER_UPS = {
+          tier1: [
+            {
+              name: "First Strike",
+              description: "Start the battle with +2 energy",
+              effect: { type: 'startEnergy', value: 2 }
+            },
+            {
+              name: "Tough Skin",
+              description: "Gain +10 HP",
+              effect: { type: 'bonusHP', value: 10 }
+            },
+            {
+              name: "Sharp Claws",
+              description: "Your first attack deals +5 damage",
+              effect: { type: 'firstAttackBonus', value: 5 }
+            }
+          ],
+          tier2: [
+            {
+              name: "Battle Hardened",
+              description: "Gain +20 HP",
+              effect: { type: 'bonusHP', value: 20 }
+            },
+            {
+              name: "Power Surge",
+              description: "Start with +3 energy",
+              effect: { type: 'startEnergy', value: 3 }
+            },
+            {
+              name: "Berserker Rage",
+              description: "All your attacks deal +3 damage",
+              effect: { type: 'damageBoost', value: 3 }
+            },
+            {
+              name: "Iron Defense",
+              description: "Reduce all incoming damage by 2",
+              effect: { type: 'damageReduction', value: 2 }
+            }
+          ],
+          tier3: [
+            {
+              name: "Titan's Strength",
+              description: "Gain +30 HP",
+              effect: { type: 'bonusHP', value: 30 }
+            },
+            {
+              name: "Energy Overflow",
+              description: "Start with +4 energy",
+              effect: { type: 'startEnergy', value: 4 }
+            },
+            {
+              name: "Critical Training",
+              description: "Your first attack deals double damage",
+              effect: { type: 'firstAttackMultiplier', value: 2 }
+            },
+            {
+              name: "Elemental Shield",
+              description: "Reduce all incoming damage by 3",
+              effect: { type: 'damageReduction', value: 3 }
+            },
+            {
+              name: "Quick Draw",
+              description: "Draw an extra card at the start",
+              effect: { type: 'extraCards', value: 1 }
+            }
+          ],
+          tier4: [
+            {
+              name: "Superhero Endurance",
+              description: "Gain +40 HP",
+              effect: { type: 'bonusHP', value: 40 }
+            },
+            {
+              name: "Unstoppable Force",
+              description: "All attacks deal +6 damage",
+              effect: { type: 'damageBoost', value: 6 }
+            },
+            {
+              name: "Defensive Mastery",
+              description: "Reduce all incoming damage by 4",
+              effect: { type: 'damageReduction', value: 4 }
+            },
+            {
+              name: "Power Reservoir",
+              description: "Start with +5 energy",
+              effect: { type: 'startEnergy', value: 5 }
+            },
+            {
+              name: "Lucky Hand",
+              description: "Draw 2 extra cards at the start",
+              effect: { type: 'extraCards', value: 2 }
+            },
+            {
+              name: "Elemental Boost",
+              description: "All your heroes of the same element get +3 to their primary stat",
+              effect: { type: 'elementalStatBoost', value: 3 }
+            }
+          ],
+          tier5: [
+            {
+              name: "Phoenix Heart",
+              description: "If defeated, revive once with 25 HP",
+              effect: { type: 'revive', value: 25 }
+            },
+            {
+              name: "Legendary Power",
+              description: "All attacks deal +10 damage",
+              effect: { type: 'damageBoost', value: 10 }
+            },
+            {
+              name: "Ultimate Defense",
+              description: "Reduce all incoming damage by 6",
+              effect: { type: 'damageReduction', value: 6 }
+            },
+            {
+              name: "Infinite Energy",
+              description: "Start with +7 energy",
+              effect: { type: 'startEnergy', value: 7 }
+            },
+            {
+              name: "Perfect Strategy",
+              description: "Draw 3 extra cards and gain +20 HP",
+              effect: { type: 'combo', effects: [
+                { type: 'extraCards', value: 3 },
+                { type: 'bonusHP', value: 20 }
+              ]}
+            },
+            {
+              name: "Elemental Mastery",
+              description: "All your heroes gain +5 to their primary stat AND +2 energy cost reduction",
+              effect: { type: 'combo', effects: [
+                { type: 'elementalStatBoost', value: 5 },
+                { type: 'energyCostReduction', value: 2 }
+              ]}
+            },
+            {
+              name: "Champion's Might",
+              description: "Gain +50 HP and all attacks deal +5 damage",
+              effect: { type: 'combo', effects: [
+                { type: 'bonusHP', value: 50 },
+                { type: 'damageBoost', value: 5 }
+              ]}
+            }
+          ]
+        };
+
+        // Helper function to get random question from tier
+        function getRandomQuestion(tier) {
+          const questions = QUESTION_BANK[tier];
+          return questions[Math.floor(Math.random() * questions.length)];
+        }
+
+        // Helper function to shuffle array
+        function shuffleArray(array) {
+          const newArray = [...array];
+          for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+          }
+          return newArray;
+        }
+
+        // Math Challenge State
+        const MathChallengeSystem = {
+            currentQuestion: null,
+            currentTier: 1, // Track tier as number 1-5
+            earnedPowerUp: null,
+
+            // Show math challenge modal
+            showChallenge() {
+                // Reset power-ups from previous battles
+                window.mathChallengeDamageBoost = 0;
+                window.mathChallengeDamageReduction = 0;
+
+                // Start at tier 1
+                this.currentTier = 1;
+                this.loadQuestion();
+                this.updateTierUI();
+
+                const modal = document.getElementById('mathChallengeModal');
+                modal.classList.add('active');
+                document.getElementById('mathAnswer').focus();
+            },
+
+            // Load a question for the current tier
+            loadQuestion() {
+                const tierKey = `tier${this.currentTier}`;
+                this.currentQuestion = getRandomQuestion(tierKey);
+
+                document.getElementById('mathQuestion').innerText = this.currentQuestion.question;
+                document.getElementById('mathAnswer').value = '';
+                document.getElementById('mathFeedback').innerText = '';
+                document.getElementById('mathFeedback').className = 'math-feedback';
+            },
+
+            // Update tier UI indicators
+            updateTierUI() {
+                const tierLabel = document.getElementById('tierLabel');
+                const tierNames = ['LEVEL 1', 'LEVEL 2', 'LEVEL 3', 'LEVEL 4', 'LEVEL 5'];
+                tierLabel.innerText = tierNames[this.currentTier - 1];
+
+                // Update tier dots
+                document.querySelectorAll('.tier-dot').forEach(dot => {
+                    const dotTier = parseInt(dot.dataset.tier);
+                    dot.classList.remove('active', 'completed');
+
+                    if (dotTier < this.currentTier) {
+                        dot.classList.add('completed');
+                    } else if (dotTier === this.currentTier) {
+                        dot.classList.add('active');
+                    }
+                });
+            },
+
+            // Submit answer
+            submitAnswer() {
+                const userAnswer = parseInt(document.getElementById('mathAnswer').value);
+                const feedbackEl = document.getElementById('mathFeedback');
+
+                if (isNaN(userAnswer)) {
+                    feedbackEl.innerText = 'Please enter a valid number';
+                    feedbackEl.className = 'math-feedback incorrect';
+                    AudioEngine.playTone(200, 'square', 0.2);
+                    return;
+                }
+
+                if (userAnswer === this.currentQuestion.answer) {
+                    // CORRECT!
+                    feedbackEl.innerText = '✓ Correct!';
+                    feedbackEl.className = 'math-feedback correct';
+                    AudioEngine.playTone(800, 'sine', 0.3);
+
+                    setTimeout(() => {
+                        if (this.currentTier < 5) {
+                            // Advance to next tier
+                            this.currentTier++;
+                            this.loadQuestion();
+                            this.updateTierUI();
+                            feedbackEl.innerText = '';
+
+                            // Update instructions for higher tiers
+                            if (this.currentTier === 5) {
+                                document.getElementById('challengeInstructions').innerHTML =
+                                    '<span style="color: #fbbf24; font-weight: bold;">FINAL CHALLENGE!</span><br>' +
+                                    '<span style="font-size: 0.9rem; color: #94a3b8;">Answer correctly for the best rewards!</span>';
+                            }
+                        } else {
+                            // Tier 5 completed - show power-up selection
+                            setTimeout(() => {
+                                this.showPowerUpSelection(this.currentTier);
+                            }, 800);
+                        }
+                    }, 1000);
+                } else {
+                    // INCORRECT
+                    feedbackEl.innerText = `✗ Incorrect. The answer is ${this.currentQuestion.answer}`;
+                    feedbackEl.className = 'math-feedback incorrect';
+                    AudioEngine.playTone(200, 'square', 0.3);
+
+                    setTimeout(() => {
+                        if (this.currentTier === 1) {
+                            // Failed on tier 1 - no power-up
+                            this.closeChallenge();
+                            this.proceedToBattle();
+                        } else {
+                            // Failed on tier 2+ - show power-up selection from current tier
+                            this.showPowerUpSelection(this.currentTier);
+                        }
+                    }, 1500);
+                }
+            },
+
+            // Show power-up selection modal with 3 choices
+            showPowerUpSelection(tier) {
+                document.getElementById('mathChallengeModal').classList.remove('active');
+
+                const tierKey = `tier${tier}`;
+                const allPowerUps = POWER_UPS[tierKey];
+
+                // Get 3 random power-ups (or all if less than 3)
+                const shuffled = shuffleArray(allPowerUps);
+                const selectedPowerUps = shuffled.slice(0, Math.min(3, shuffled.length));
+
+                // Update tier label
+                document.getElementById('powerUpTierLabel').innerText = `Select 1 reward from Level ${tier}`;
+
+                // Populate choices
+                const choicesContainer = document.getElementById('powerUpChoices');
+                choicesContainer.innerHTML = '';
+
+                selectedPowerUps.forEach(powerUp => {
+                    const card = document.createElement('div');
+                    card.className = 'powerup-card';
+                    card.onclick = () => this.selectPowerUp(powerUp);
+
+                    card.innerHTML = `
+                        <div class="powerup-card-name">${powerUp.name}</div>
+                        <div class="powerup-card-desc">${powerUp.description}</div>
+                    `;
+
+                    choicesContainer.appendChild(card);
+                });
+
+                document.getElementById('powerUpSelectionModal').classList.add('active');
+                AudioEngine.playTone(600, 'sine', 0.2);
+                setTimeout(() => AudioEngine.playTone(800, 'sine', 0.2), 150);
+            },
+
+            // Handle power-up selection
+            selectPowerUp(powerUp) {
+                document.getElementById('powerUpSelectionModal').classList.remove('active');
+                AudioEngine.playTone(900, 'sine', 0.3);
+
+                // Apply power-up effect
+                this.applyPowerUp(powerUp);
+
+                // Proceed to battle
+                setTimeout(() => {
+                    this.proceedToBattle();
+                }, 300);
+            },
+
+            // Apply power-up to battle
+            applyPowerUp(powerUp) {
+                const effect = powerUp.effect;
+
+                if (effect.type === 'bonusHP') {
+                    currentHeroHP = Math.min(100, currentHeroHP + effect.value);
+                    updateHealthUI('heroes', currentHeroHP);
+                } else if (effect.type === 'damageBoost') {
+                    window.mathChallengeDamageBoost = effect.value;
+                } else if (effect.type === 'damageReduction') {
+                    window.mathChallengeDamageReduction = effect.value;
+                } else if (effect.type === 'combo') {
+                    // Apply multiple effects
+                    effect.effects.forEach(e => {
+                        this.applyPowerUp({ effect: e });
+                    });
+                }
+                // Other effects can be implemented as needed
+            },
+
+            // Close challenge
+            closeChallenge() {
+                document.getElementById('mathChallengeModal').classList.remove('active');
+            },
+
+            // Proceed to battle
+            proceedToBattle() {
+                // For Muddlewick battles, open the battle overlay and start combat
+                document.getElementById('battleOverlay').classList.add('active');
+                AudioEngine.playTone(600, 'sine', 0.2);
+                beginCombatSequence();
             }
         };
 
@@ -4857,14 +5456,19 @@
             selectTxt.style.color = "#a855f7";
 
             if(isBattleSelecting) {
+                 // Don't reset storyBattleMode here - it's set by world map battles
+                 // Re-render grid to show locked heroes in story mode
+                 renderGrid();
                  btn.classList.add('active');
                  btn.innerText = "Cancel Challenge";
                  instructions.style.display = 'block';
                  document.querySelectorAll('.hero-card').forEach(c => c.classList.add('dimmed'));
             } else {
                  btn.classList.remove('active');
-                 btn.innerText = "🧙‍♂️ Muddlewick has Chosen";
+                 btn.innerText = "⚔️ Battle";
                  instructions.style.display = 'none';
+                 // Re-render grid to remove locked status when exiting battle mode
+                 renderGrid();
                  document.querySelectorAll('.hero-card').forEach(c => c.classList.remove('dimmed'));
             }
         }
@@ -4873,6 +5477,12 @@
              const card = document.getElementById(`card-${id}`);
              // NOTE: scrollIntoView removed to fix animation glitch
              // card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+             // Prevent selecting locked heroes in story mode
+             if (window.storyBattleMode && !StoryModeSystem.isHeroUnlocked(id)) {
+                 AudioEngine.playTone(200, 'sawtooth', 0.2);
+                 return;
+             }
 
              const startBtn = document.getElementById('startFightBtn');
              const selectTxt = document.getElementById('selectText');
@@ -5001,9 +5611,15 @@
              // 2. SETUP BATTLE DATA (Select Villain, Reset HP)
              setupBattleState(hero1, hero2);
 
-             // 3. RESET ITEM SYSTEM AND SHOW ITEM SELECTION
-             ItemSystem.reset();
-             showItemSelection();
+             // 3. CHECK BATTLE MODE AND BRANCH
+             if (window.storyBattleMode) {
+                 // World Map battles: Use item selection system
+                 ItemSystem.reset();
+                 showItemSelection();
+             } else {
+                 // Muddlewick battles: Show math challenge
+                 MathChallengeSystem.showChallenge();
+             }
         }
 
         function setupBattleState(hero1, hero2) {
@@ -5069,9 +5685,11 @@
         // NEW: Button handler inside Dossier
         function enterArena() {
             closeVillainModal();
-            document.getElementById('combatStartOverlay').style.display = 'flex';
             document.getElementById('battleOverlay').classList.add('active');
             AudioEngine.playTone(600, 'sine', 0.2); // Entry sound
+
+            // Start combat directly (math challenge is shown earlier for Muddlewick battles)
+            beginCombatSequence();
         }
 
         function updateHealthUI(side, pct) {
@@ -5138,6 +5756,10 @@
 
              // Cleanup arena effects
              ArenaEffects.clearEffects();
+
+             // Reset math challenge power-ups
+             window.mathChallengeDamageBoost = 0;
+             window.mathChallengeDamageReduction = 0;
 
              toggleBattleMode();
         }
@@ -5471,7 +6093,12 @@
                         // Apply multiplier logic
                         let baseDamage = isCritical ? (20 + Math.random() * 15) : (12 + Math.random() * 10);
                         let finalDamage = baseDamage * multiplier;
-                        
+
+                        // Apply math challenge damage boost
+                        if (window.mathChallengeDamageBoost) {
+                            finalDamage += window.mathChallengeDamageBoost;
+                        }
+
                         hitEffect(vImg);
                         AudioEngine.hitSound();
 
@@ -5559,6 +6186,11 @@
                         if(defenseEffect) {
                             damage = damage * (1 - defenseEffect.value);
                             updateBattleLog(`Shield absorbed ${Math.round(defenseEffect.value * 100)}% damage!`);
+                        }
+
+                        // Apply math challenge damage reduction
+                        if (window.mathChallengeDamageReduction) {
+                            damage = Math.max(1, damage - window.mathChallengeDamageReduction);
                         }
 
                         hitEffect(hImgs[0]); hitEffect(hImgs[1]);
@@ -5777,8 +6409,8 @@
                 if (isHidden) return '';
                 // New: Calculate colour for border
                 const color = hero.type === 'electric' ? '#fbbf24' : hero.type === 'ice' ? '#22d3ee' : '#ef4444';
-                // All characters unlocked on main screen (world map has separate locking)
-                const isLocked = false;
+                // Check if hero is locked (only when in story battle mode)
+                const isLocked = (isBattleSelecting && window.storyBattleMode) ? !StoryModeSystem.isHeroUnlocked(hero.id) : false;
                 const lockedClass = isLocked ? 'locked-hero' : '';
                 const onclickHandler = isLocked ? '' : `triggerMegaReveal('${hero.id}')`;
                 return `
