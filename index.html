@@ -2222,6 +2222,324 @@
                 font-size: 2rem;
             }
         }
+
+        /* ==================== ARENA EFFECTS SYSTEM ==================== */
+
+        .arena-effects-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* ELECTRIC THEME */
+        .theme-electric {
+            background: radial-gradient(circle at center, #1a1a3e 0%, #0a0a1a 100%);
+        }
+
+        .theme-electric::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(transparent 95%, rgba(251, 191, 36, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .lightning-flash {
+            position: absolute;
+            inset: 0;
+            background: rgba(251, 191, 36, 0.3);
+            animation: quickFlash 0.15s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes quickFlash {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .background-lightning-bolt {
+            position: absolute;
+            top: 0;
+            width: 4px;
+            height: 60%;
+            background: linear-gradient(to bottom, #fbbf24, transparent);
+            filter: blur(2px);
+            opacity: 0.8;
+            animation: boltStrike 0.2s ease-out;
+        }
+
+        @keyframes boltStrike {
+            0% { opacity: 0; height: 0; }
+            30% { opacity: 1; height: 60%; }
+            100% { opacity: 0; height: 60%; }
+        }
+
+        .electric-floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background:
+                linear-gradient(to top, rgba(251, 191, 36, 0.2) 0%, transparent 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 50px,
+                    rgba(251, 191, 36, 0.1) 50px,
+                    rgba(251, 191, 36, 0.1) 51px
+                );
+            animation: floorPulse 2s infinite;
+        }
+
+        @keyframes floorPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .electric-arc {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background: #fbbf24;
+            box-shadow: 0 0 10px #fbbf24, 0 0 20px #fbbf24;
+            animation: arcZap 0.5s ease-out;
+            transform-origin: left center;
+        }
+
+        @keyframes arcZap {
+            0% { transform: scaleX(0); opacity: 1; }
+            50% { transform: scaleX(1); opacity: 1; }
+            100% { transform: scaleX(1); opacity: 0; }
+        }
+
+        .electric-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fbbf24;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #fbbf24;
+            animation: floatParticle 5s infinite ease-in-out;
+            opacity: 0.6;
+        }
+
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(100%) translateX(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            50% { transform: translateY(-20%) translateX(20px); }
+        }
+
+        /* ICE THEME */
+        .theme-ice {
+            background: radial-gradient(circle at center, #0c2340 0%, #051525 100%);
+        }
+
+        .frost-overlay {
+            position: absolute;
+            inset: 0;
+            border: 30px solid transparent;
+            border-image: linear-gradient(
+                to center,
+                rgba(34, 211, 238, 0.4) 0%,
+                transparent 100%
+            ) 1;
+            pointer-events: none;
+            animation: frostGrow 3s ease-out forwards;
+        }
+
+        @keyframes frostGrow {
+            0% { opacity: 0; border-width: 0; }
+            100% { opacity: 1; border-width: 40px; }
+        }
+
+        .frost-overlay::before {
+            content: '';
+            position: absolute;
+            inset: -40px;
+            background: radial-gradient(ellipse at top, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(34, 211, 238, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .snow-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .snowflake-bg {
+            position: absolute;
+            top: -20px;
+            color: rgba(255, 255, 255, 0.6);
+            animation: snowfall linear infinite;
+            text-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
+        }
+
+        @keyframes snowfall {
+            0% { transform: translateY(-20px) rotate(0deg); }
+            100% { transform: translateY(calc(100vh + 20px)) rotate(360deg); }
+        }
+
+        .ice-crystals {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(34, 211, 238, 0.2) 0%, transparent 100%);
+        }
+
+        .cold-mist {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to top, rgba(200, 220, 255, 0.3) 0%, transparent 100%);
+            animation: mistDrift 8s ease-in-out infinite;
+            filter: blur(10px);
+        }
+
+        @keyframes mistDrift {
+            0%, 100% { transform: translateX(-5%); opacity: 0.3; }
+            50% { transform: translateX(5%); opacity: 0.5; }
+        }
+
+        /* Breath effect for characters in ice theme */
+        .theme-ice .side-img::after {
+            content: '';
+            position: absolute;
+            bottom: 80%;
+            left: 50%;
+            width: 30px;
+            height: 20px;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+            animation: breathCloud 3s infinite;
+            filter: blur(3px);
+        }
+
+        @keyframes breathCloud {
+            0%, 100% { opacity: 0; transform: translate(-50%, 0) scale(0.5); }
+            30% { opacity: 0.6; transform: translate(-50%, -10px) scale(1); }
+            60% { opacity: 0; transform: translate(-50%, -20px) scale(1.2); }
+        }
+
+        /* IMPACT THEME */
+        .theme-impact {
+            background: radial-gradient(circle at center, #2d1f1f 0%, #1a0f0f 100%);
+        }
+
+        .ground-cracks {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(to top, rgba(239, 68, 68, 0.3) 0%, transparent 100%);
+            opacity: 0.6;
+            animation: cracksGlow 3s infinite;
+        }
+
+        @keyframes cracksGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5)); }
+            50% { filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.8)); }
+        }
+
+        .dust-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .dust-particle {
+            position: absolute;
+            bottom: 0;
+            background: rgba(200, 180, 160, 0.5);
+            border-radius: 50%;
+            animation: dustFloat linear infinite;
+        }
+
+        @keyframes dustFloat {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) translateX(30px); opacity: 0; }
+        }
+
+        .falling-debris {
+            position: absolute;
+            top: -20px;
+            background: #4a4a4a;
+            animation: debrisFall 3s ease-in forwards;
+            transform: rotate(45deg);
+        }
+
+        @keyframes debrisFall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(calc(100vh + 50px)) rotate(720deg); }
+        }
+
+        .impact-glow {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at bottom, rgba(239, 68, 68, 0.15) 0%, transparent 60%);
+            pointer-events: none;
+            animation: glowPulse 4s infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .arena-rumble {
+            animation: rumbleShake 0.5s ease-out;
+        }
+
+        @keyframes rumbleShake {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-3px, 2px); }
+            40% { transform: translate(3px, -2px); }
+            60% { transform: translate(-2px, 3px); }
+            80% { transform: translate(2px, -3px); }
+        }
+
+        /* NEUTRAL THEME */
+        .theme-neutral {
+            /* Uses existing purple/cosmic default */
+        }
+
+        /* Performance: Simplified effects for reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .lightning-flash,
+            .electric-arc,
+            .electric-particle,
+            .snowflake-bg,
+            .dust-particle,
+            .falling-debris,
+            .cold-mist {
+                animation: none !important;
+                display: none;
+            }
+
+            .frost-overlay,
+            .ground-cracks,
+            .electric-floor,
+            .impact-glow {
+                animation: none !important;
+            }
+
+            .arena-rumble {
+                animation: none !important;
+            }
+        }
     </style>
 </head>
 
@@ -3720,6 +4038,284 @@
             }
         };
 
+        /* --- ARENA EFFECTS SYSTEM --- */
+        const ArenaEffects = {
+            currentTheme: null,
+            activeEffects: [],
+            container: null,
+
+            init() {
+                // Create effects container inside battle stage
+                this.container = document.createElement('div');
+                this.container.id = 'arenaEffectsContainer';
+                this.container.className = 'arena-effects-container';
+                const battleStage = document.getElementById('battleStage');
+                if (battleStage) {
+                    battleStage.prepend(this.container);
+                }
+            },
+
+            setTheme(elementType) {
+                // Clear existing effects
+                this.clearEffects();
+                this.currentTheme = elementType;
+
+                // Apply new theme
+                switch(elementType) {
+                    case 'electric':
+                        this.applyElectricTheme();
+                        break;
+                    case 'ice':
+                        this.applyIceTheme();
+                        break;
+                    case 'impact':
+                        this.applyImpactTheme();
+                        break;
+                    default:
+                        this.applyNeutralTheme();
+                }
+            },
+
+            clearEffects() {
+                if (this.container) {
+                    this.container.innerHTML = '';
+                }
+
+                this.activeEffects.forEach(effect => {
+                    if (effect.interval) clearInterval(effect.interval);
+                    if (effect.timeout) clearTimeout(effect.timeout);
+                });
+                this.activeEffects = [];
+
+                // Remove theme classes from stage
+                const stage = document.getElementById('battleStage');
+                if (stage) {
+                    stage.classList.remove('theme-electric', 'theme-ice', 'theme-impact', 'theme-neutral');
+                }
+            },
+
+            applyElectricTheme() {
+                const stage = document.getElementById('battleStage');
+                stage.classList.add('theme-electric');
+
+                // 1. Background lightning flashes
+                const flashInterval = setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        this.triggerLightningFlash();
+                    }
+                }, 2000);
+                this.activeEffects.push({ interval: flashInterval });
+
+                // 2. Sparking floor effect
+                const sparkContainer = document.createElement('div');
+                sparkContainer.className = 'electric-floor';
+                this.container.appendChild(sparkContainer);
+
+                // 3. Ambient electric arcs (periodic)
+                const arcInterval = setInterval(() => {
+                    this.createElectricArc();
+                }, 3000);
+                this.activeEffects.push({ interval: arcInterval });
+
+                // 4. Floating energy particles
+                this.startElectricParticles();
+            },
+
+            triggerLightningFlash() {
+                const flash = document.createElement('div');
+                flash.className = 'lightning-flash';
+                this.container.appendChild(flash);
+
+                // Random lightning bolt SVG or CSS shape
+                const bolt = document.createElement('div');
+                bolt.className = 'background-lightning-bolt';
+                bolt.style.left = (Math.random() * 80 + 10) + '%';
+                this.container.appendChild(bolt);
+
+                setTimeout(() => {
+                    flash.remove();
+                    bolt.remove();
+                }, 200);
+            },
+
+            createElectricArc() {
+                const arc = document.createElement('div');
+                arc.className = 'electric-arc';
+                arc.style.left = (Math.random() * 60 + 20) + '%';
+                arc.style.top = (Math.random() * 40 + 30) + '%';
+                this.container.appendChild(arc);
+
+                setTimeout(() => arc.remove(), 500);
+            },
+
+            startElectricParticles() {
+                // Check for reduced motion
+                const isLowPerformance = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const particleCount = isLowPerformance ? 5 : 15;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'electric-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 5 + 's';
+                    particle.style.animationDuration = (3 + Math.random() * 4) + 's';
+                    this.container.appendChild(particle);
+                }
+            },
+
+            applyIceTheme() {
+                const stage = document.getElementById('battleStage');
+                stage.classList.add('theme-ice');
+
+                // 1. Frost creeping on edges
+                const frostOverlay = document.createElement('div');
+                frostOverlay.className = 'frost-overlay';
+                this.container.appendChild(frostOverlay);
+
+                // 2. Falling snowflakes
+                this.startSnowfall();
+
+                // 3. Ice crystal formations on floor
+                const crystals = document.createElement('div');
+                crystals.className = 'ice-crystals';
+                this.container.appendChild(crystals);
+
+                // 4. Ambient cold mist
+                const mist = document.createElement('div');
+                mist.className = 'cold-mist';
+                this.container.appendChild(mist);
+            },
+
+            startSnowfall() {
+                // Check for reduced motion
+                const isLowPerformance = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (isLowPerformance) return;
+
+                const snowContainer = document.createElement('div');
+                snowContainer.className = 'snow-container';
+                this.container.appendChild(snowContainer);
+
+                const flakeCount = isLowPerformance ? 15 : 40;
+                for (let i = 0; i < flakeCount; i++) {
+                    const flake = document.createElement('div');
+                    flake.className = 'snowflake-bg';
+                    flake.innerHTML = ['❄', '❅', '❆', '•'][Math.floor(Math.random() * 4)];
+                    flake.style.left = Math.random() * 100 + '%';
+                    flake.style.animationDuration = (5 + Math.random() * 10) + 's';
+                    flake.style.animationDelay = Math.random() * 5 + 's';
+                    flake.style.fontSize = (0.5 + Math.random() * 1) + 'rem';
+                    snowContainer.appendChild(flake);
+                }
+            },
+
+            applyImpactTheme() {
+                const stage = document.getElementById('battleStage');
+                stage.classList.add('theme-impact');
+
+                // 1. Cracked ground
+                const cracks = document.createElement('div');
+                cracks.className = 'ground-cracks';
+                this.container.appendChild(cracks);
+
+                // 2. Dust particles
+                this.startDustParticles();
+
+                // 3. Periodic rumbles (screen shake)
+                const rumbleInterval = setInterval(() => {
+                    if (Math.random() > 0.8) {
+                        this.triggerRumble();
+                    }
+                }, 4000);
+                this.activeEffects.push({ interval: rumbleInterval });
+
+                // 4. Falling debris (subtle)
+                this.startDebris();
+
+                // 5. Red/orange ambient glow
+                const glow = document.createElement('div');
+                glow.className = 'impact-glow';
+                this.container.appendChild(glow);
+            },
+
+            startDustParticles() {
+                // Check for reduced motion
+                const isLowPerformance = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (isLowPerformance) return;
+
+                const dustContainer = document.createElement('div');
+                dustContainer.className = 'dust-container';
+                this.container.appendChild(dustContainer);
+
+                const particleCount = isLowPerformance ? 10 : 25;
+                for (let i = 0; i < particleCount; i++) {
+                    const dust = document.createElement('div');
+                    dust.className = 'dust-particle';
+                    dust.style.left = Math.random() * 100 + '%';
+                    dust.style.animationDuration = (8 + Math.random() * 8) + 's';
+                    dust.style.animationDelay = Math.random() * 5 + 's';
+                    dust.style.width = dust.style.height = (2 + Math.random() * 4) + 'px';
+                    dustContainer.appendChild(dust);
+                }
+            },
+
+            startDebris() {
+                // Check for reduced motion
+                const isLowPerformance = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (isLowPerformance) return;
+
+                const debrisInterval = setInterval(() => {
+                    const debris = document.createElement('div');
+                    debris.className = 'falling-debris';
+                    debris.style.left = Math.random() * 100 + '%';
+                    debris.style.width = debris.style.height = (5 + Math.random() * 10) + 'px';
+                    this.container.appendChild(debris);
+                    setTimeout(() => debris.remove(), 3000);
+                }, 2000);
+                this.activeEffects.push({ interval: debrisInterval });
+            },
+
+            triggerRumble() {
+                const stage = document.getElementById('battleStage');
+                if (stage) {
+                    stage.classList.add('arena-rumble');
+                    setTimeout(() => stage.classList.remove('arena-rumble'), 500);
+                }
+            },
+
+            applyNeutralTheme() {
+                const stage = document.getElementById('battleStage');
+                stage.classList.add('theme-neutral');
+
+                // Keep existing purple/cosmic default
+            }
+        };
+
+        // Helper function to determine dominant element in battle
+        function getDominantElement(hero1, hero2, villain, synergyActive) {
+            // If synergy active, use synergy element (both heroes same type)
+            if (synergyActive) {
+                return hero1.type;
+            }
+
+            // Otherwise, determine by majority or villain
+            const types = [hero1.type, hero2.type, villain.type];
+            const counts = {};
+            types.forEach(t => counts[t] = (counts[t] || 0) + 1);
+
+            // Find most common
+            let dominant = null;
+            let maxCount = 0;
+            for (const [type, count] of Object.entries(counts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    dominant = type;
+                }
+            }
+
+            // If tie, use villain's type
+            return dominant || villain.type;
+        }
+
         /* --- STORY MODE SYSTEM --- */
         const StoryModeSystem = {
             progress: {},
@@ -4464,6 +5060,10 @@
              document.querySelectorAll('.side-img').forEach(img => {
                  img.classList.remove('victory-pose', 'charging');
              });
+
+             // APPLY ARENA EFFECTS BASED ON DOMINANT ELEMENT
+             const dominant = getDominantElement(hero1, hero2, currentVillain, synergyActive);
+             ArenaEffects.setTheme(dominant);
         }
 
         // NEW: Button handler inside Dossier
@@ -4535,6 +5135,9 @@
 
              // Cleanup cinematic system
              CinematicSystem.cleanup();
+
+             // Cleanup arena effects
+             ArenaEffects.clearEffects();
 
              toggleBattleMode();
         }
@@ -5213,6 +5816,9 @@
 
         // Initialize Story Mode System
         StoryModeSystem.init();
+
+        // Initialize Arena Effects System
+        ArenaEffects.init();
 
         renderGrid();
 
