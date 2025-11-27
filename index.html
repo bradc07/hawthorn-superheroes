@@ -365,6 +365,217 @@
         }
         .close-btn:hover { color: #fff; transform: rotate(90deg); }
 
+        /* --- VILLAIN MODAL --- */
+        .villain-modal-overlay {
+            position: fixed; inset: 0; z-index: 1700; display: flex; align-items: center; justify-content: center;
+            background: rgba(139, 0, 0, 0); backdrop-filter: blur(0px); transition: 0.4s; pointer-events: none; opacity: 0;
+        }
+        .villain-modal-overlay.active {
+            background: rgba(20, 0, 0, 0.95); backdrop-filter: blur(20px); pointer-events: all; opacity: 1;
+        }
+
+        .villain-modal-card {
+            width: min(1100px, 95%); max-height: 90vh;
+            background: linear-gradient(135deg, rgba(40, 0, 0, 0.95) 0%, rgba(20, 0, 20, 0.95) 100%);
+            border-radius: 16px;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.5), 0 0 60px rgba(220, 38, 38, 0.4), 0 50px 100px -20px rgba(0, 0, 0, 0.9);
+            transform: scale(0.8) rotateX(-15deg); opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease-out;
+            transform-style: preserve-3d;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid;
+            border-image: repeating-linear-gradient(45deg, #dc2626 0px, #dc2626 10px, #000 10px, #000 20px) 1;
+        }
+        .villain-modal-overlay.active .villain-modal-card {
+            transform: scale(1) rotateX(0deg); opacity: 1;
+        }
+
+        .villain-modal-header {
+            background: linear-gradient(90deg, rgba(220, 38, 38, 0.3) 0%, rgba(168, 85, 247, 0.3) 100%);
+            border-bottom: 2px solid rgba(220, 38, 38, 0.5);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .threat-label {
+            font-family: "Rajdhani";
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            color: #fca5a5;
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.8), 0 0 40px rgba(220, 38, 38, 0.5);
+            animation: dangerPulse 2s infinite;
+        }
+
+        .villain-modal-content {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            overflow-y: auto;
+            max-height: calc(90vh - 80px);
+        }
+
+        .villain-col-img {
+            position: relative;
+            height: 100%;
+            min-height: 500px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(220, 38, 38, 0.2), transparent 70%);
+        }
+
+        .villain-modal-image-full {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            filter: brightness(0.9) contrast(1.3) saturate(1.2);
+            mask-image: linear-gradient(to right, black 60%, transparent 100%);
+        }
+
+        .villain-type-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            transform: scale(0) rotate(-180deg);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+        }
+        .villain-modal-overlay.active .villain-type-badge {
+            transform: scale(1) rotate(0deg);
+        }
+
+        .villain-col-data {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: opacity 0.5s ease-out 0.2s, transform 0.5s ease-out 0.2s;
+        }
+        .villain-modal-overlay.active .villain-col-data {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .villain-name-group {
+            margin-bottom: 1rem;
+        }
+
+        .villain-name-display {
+            font-family: "Bangers";
+            font-size: 4rem;
+            line-height: 0.9;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(180deg, #fca5a5, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.5));
+        }
+
+        .villain-type-display {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .dossier-section {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid rgba(220, 38, 38, 0.5);
+            padding: 1.2rem;
+            border-radius: 4px;
+        }
+
+        .dossier-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #fca5a5;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .villain-desc {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            font-weight: 300;
+        }
+
+        .villain-stats-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .villain-stat-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .villain-stat-label {
+            width: 90px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .villain-stat-track {
+            flex-grow: 1;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .villain-stat-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #dc2626, #ef4444);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.8);
+            transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .villain-signature {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fbbf24;
+            font-style: italic;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+
+        .weakness-section {
+            border-left-color: #fbbf24;
+            background: rgba(251, 191, 36, 0.05);
+        }
+
+        .villain-weakness {
+            font-size: 0.95rem;
+            color: #fde68a;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
         /* --- BATTLE ARENA MODAL --- */
         .battle-overlay {
             position: fixed; inset: 0; z-index: 1800; background: #000; display: flex; align-items: center; justify-content: center;
@@ -460,6 +671,30 @@
              transition: 0.3s; z-index: 20; animation: pulseGreen 1s infinite alternate;
         }
         .battle-btn-commence:hover { transform: scale(1.05); background: #4ade80; }
+
+        .dossier-btn {
+            font-family: 'Rajdhani';
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.8), rgba(153, 27, 27, 0.8));
+            color: #fca5a5;
+            border: 2px solid rgba(220, 38, 38, 0.5);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+            backdrop-filter: blur(4px);
+        }
+        .dossier-btn:hover {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.8);
+            color: #fff;
+        }
 
         @keyframes pulseBtn { from { box-shadow: 0 0 20px #9333ea; } to { box-shadow: 0 0 50px #d8b4fe; } }
         @keyframes pulseGreen { from { box-shadow: 0 0 20px #22c55e; } to { box-shadow: 0 0 60px #86efac; } }
@@ -566,7 +801,52 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- VILLAIN DOSSIER MODAL -->
+    <div id="villainModalOverlay" class="villain-modal-overlay" onclick="closeVillainModal()">
+        <div id="villainModalCard" class="villain-modal-card" onclick="event.stopPropagation()">
+            <div class="close-btn" onclick="closeVillainModal()">×</div>
+
+            <div class="villain-modal-header">
+                <div class="threat-label">⚠️ THREAT ASSESSMENT ⚠️</div>
+            </div>
+
+            <div class="villain-modal-content">
+                <div class="villain-col-img">
+                    <img id="villainModalImage" class="villain-modal-image-full">
+                    <div id="villainModalTypeBadge" class="villain-type-badge"></div>
+                </div>
+
+                <div class="villain-col-data">
+                    <div class="villain-name-group">
+                        <div id="villainModalName" class="villain-name-display"></div>
+                        <div id="villainModalType" class="villain-type-display"></div>
+                    </div>
+
+                    <div class="dossier-section">
+                        <div class="dossier-label">THREAT PROFILE</div>
+                        <p id="villainModalDescription" class="villain-desc"></p>
+                    </div>
+
+                    <div class="dossier-section">
+                        <div class="dossier-label">COMBAT ANALYSIS</div>
+                        <div id="villainModalStats" class="villain-stats-grid"></div>
+                    </div>
+
+                    <div class="dossier-section">
+                        <div class="dossier-label">SIGNATURE TECHNIQUE</div>
+                        <div id="villainModalSignature" class="villain-signature"></div>
+                    </div>
+
+                    <div class="dossier-section weakness-section">
+                        <div class="dossier-label">⚠️ TACTICAL WEAKNESS</div>
+                        <div id="villainModalWeakness" class="villain-weakness"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="battleOverlay" class="battle-overlay">
          <div class="battle-stage" id="battleStage">
               <div class="close-btn" onclick="closeBattle()">×</div>
@@ -582,6 +862,9 @@
               <div class="battle-area">
                    <div class="side" id="villainSide">
                         <h2 style="color:#a855f7; font-family:'Bangers'; letter-spacing:2px; margin-bottom:10px;" id="villainName">Baddie</h2>
+                        <button id="viewDossierBtn" class="dossier-btn" onclick="openVillainModal(currentVillain)">
+                            📋 VIEW DOSSIER
+                        </button>
                         <img id="villainImg" class="side-img" src="">
                         <div class="hp-bar-container">
                              <div id="villainHP" class="hp-fill hp-villain"></div>
@@ -630,10 +913,56 @@
         heroes.sort((a, b) => a.name.localeCompare(b.name));
 
         const villains = [
-             { name: "Wooden Scorpion", img: "https://placehold.co/400x400/5d4037/d7ccc8?text=Wooden+Scorpion\n(STING!)", move: "Tail Sting" },
-             { name: "Giant Robot", img: "https://placehold.co/400x400/37474f/cfd8dc?text=Giant+Robot\n(LASER!)", move: "Laser Eye" },
-             { name: "Wooden Tiger", img: "https://placehold.co/400x400/e65100/ffe0b2?text=Wooden+Tiger\n(CLAW!)", move: "Claw Swipe" },
-             { name: "Wooden Bats", img: "https://placehold.co/400x400/263238/eceff1?text=Wooden+Bats\n(SCREECH!)", move: "Sonic Screech" }
+             {
+                name: "Neon Tiger",
+                type: "electric",
+                img: "images/tiger.png",
+                move: "Razor Slash",
+                description: "A genetically enhanced predator escaped from a secret lab. Covered in bioluminescent stripes that crackle with stolen electricity. Hunts with terrifying speed and precision.",
+                stats: { danger: 4, speed: 5, cunning: 4, power: 4 },
+                weakness: "Impact-type heroes can overpower its agility with raw force",
+                signature: "Lightning-fast slashes that leave electrical burns"
+             },
+             {
+                name: "Cyber Grizzly",
+                type: "impact",
+                img: "images/bear.png",
+                move: "Crushing Maul",
+                description: "A robotic beast built from scrapped military hardware. Its crushing strength can flatten cars like tin cans. Nearly unstoppable once it begins its rampage.",
+                stats: { danger: 5, speed: 2, cunning: 2, power: 5 },
+                weakness: "Electric-type heroes can short-circuit its systems",
+                signature: "Devastating ground pounds that create shockwaves"
+             },
+             {
+                name: "Shadow Panther",
+                type: "ice",
+                img: "images/panthers.png",
+                move: "Silent Strike",
+                description: "A spectral feline that phases between dimensions. Leaves trails of freezing mist wherever it stalks. You never see it coming until it's too late.",
+                stats: { danger: 4, speed: 4, cunning: 5, power: 3 },
+                weakness: "Ice-type heroes can freeze it in one dimension",
+                signature: "Dimensional ambushes from impossible angles"
+             },
+             {
+                name: "Thunder Gorilla",
+                type: "electric",
+                img: "images/gorilla.png",
+                move: "Seismic Smash",
+                description: "An ancient primate awakened by a lightning strike. Channels storm energy through its massive fists. Each roar summons thunder from the skies.",
+                stats: { danger: 5, speed: 3, cunning: 3, power: 5 },
+                weakness: "Impact-type heroes can match its brute strength",
+                signature: "Thunder-charged punches that shake the earth"
+             },
+             {
+                name: "Omega Droid",
+                type: "impact",
+                img: "images/robot.png",
+                move: "Plasma Beam",
+                description: "The final creation of a mad inventor. Cold, calculating, and programmed only to destroy. Its targeting systems never miss their mark.",
+                stats: { danger: 5, speed: 3, cunning: 4, power: 5 },
+                weakness: "Electric-type heroes can overload its circuits",
+                signature: "Precision plasma blasts that pierce through defenses"
+             }
         ];
 
         /* --- AUDIO ENGINE & MUSIC SYNTH --- */
@@ -1113,6 +1442,79 @@
             AudioEngine.playTone(300, 'sine', 0.1);
             overlay.classList.remove("active");
             document.querySelectorAll('.stat-fill').forEach(bar => bar.style.width = '0%');
+        }
+
+        /* --- VILLAIN MODAL FUNCTIONS --- */
+        function openVillainModal(villain) {
+            const villainOverlay = document.getElementById('villainModalOverlay');
+            const villainImage = document.getElementById('villainModalImage');
+            const villainTypeBadge = document.getElementById('villainModalTypeBadge');
+            const villainName = document.getElementById('villainModalName');
+            const villainType = document.getElementById('villainModalType');
+            const villainDescription = document.getElementById('villainModalDescription');
+            const villainStats = document.getElementById('villainModalStats');
+            const villainSignature = document.getElementById('villainModalSignature');
+            const villainWeakness = document.getElementById('villainModalWeakness');
+
+            // Set image
+            villainImage.src = villain.img;
+            villainImage.onerror = function () { this.src = `https://placehold.co/400x500/1e293b/FFF?text=${villain.name.charAt(0)}` };
+
+            // Set theme color based on type
+            const themeColor = villain.type === 'electric' ? '#fbbf24' : villain.type === 'ice' ? '#22d3ee' : '#ef4444';
+            const icon = villain.type === 'electric' ? '⚡' : villain.type === 'ice' ? '❄️' : '💥';
+
+            // Set badge
+            villainTypeBadge.style.borderColor = themeColor;
+            villainTypeBadge.style.color = themeColor;
+            villainTypeBadge.innerHTML = icon;
+            villainTypeBadge.style.boxShadow = `0 0 30px ${themeColor}`;
+
+            // Set content
+            villainName.textContent = villain.name;
+            villainType.textContent = `${villain.type.toUpperCase()} TYPE • ${villain.move.toUpperCase()}`;
+            villainDescription.textContent = villain.description;
+            villainSignature.textContent = villain.signature;
+            villainWeakness.textContent = villain.weakness;
+
+            // Set stats
+            const statLabels = ['Danger', 'Speed', 'Cunning', 'Power'];
+            const statValues = [villain.stats.danger, villain.stats.speed, villain.stats.cunning, villain.stats.power];
+
+            villainStats.innerHTML = statLabels.map((label, i) => {
+                const pct = (statValues[i] / 5) * 100;
+                return `
+                    <div class="villain-stat-row">
+                        <div class="villain-stat-label">${label}</div>
+                        <div class="villain-stat-track">
+                            <div class="villain-stat-fill" data-pct="${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Show modal
+            villainOverlay.classList.add("active");
+
+            // Animate stat bars
+            setTimeout(() => {
+                document.querySelectorAll('.villain-stat-fill').forEach((bar, i) => {
+                    setTimeout(() => bar.style.width = bar.getAttribute('data-pct'), i * 100);
+                });
+            }, 300);
+
+            // Play menacing sound
+            AudioEngine.playTone(60, 'sawtooth', 0.3);
+            setTimeout(() => AudioEngine.playTone(40, 'sawtooth', 0.2), 150);
+        }
+
+        function closeVillainModal() {
+            const villainOverlay = document.getElementById('villainModalOverlay');
+            AudioEngine.playTone(200, 'sine', 0.1);
+            villainOverlay.classList.remove("active");
+
+            // Reset stat bars
+            document.querySelectorAll('.villain-stat-fill').forEach(bar => bar.style.width = '0%');
         }
 
         /* --- TILT --- */
