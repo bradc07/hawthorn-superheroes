@@ -6650,8 +6650,8 @@
                 // World Map battles: Use item selection system
                 // Check if items already selected (coming from dossier after item selection)
                 if (ItemSystem.selectedItems.length > 0) {
-                    // Items already selected, proceed to math challenge
-                    MathChallengeSystem.showChallenge();
+                    // Items already selected, proceed directly to battle (no math challenge in world map mode)
+                    MathChallengeSystem.proceedToBattle();
                 } else {
                     // No items selected yet, show item selection first
                     ItemSystem.reset();
