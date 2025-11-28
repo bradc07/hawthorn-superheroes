@@ -2304,9 +2304,8 @@
              // 2. SETUP BATTLE DATA (Select Villain, Reset HP)
              setupBattleState(hero1, hero2);
 
-             // 3. RESET ITEM SYSTEM AND SHOW ITEM SELECTION
-             ItemSystem.reset();
-             showItemSelection();
+             // 3. ALWAYS SHOW VILLAIN DOSSIER BEFORE BATTLE
+             openVillainModal(true);
         }
 
         function setupBattleState(hero1, hero2) {
@@ -2345,9 +2344,11 @@
         // NEW: Button handler inside Dossier
         function enterArena() {
             closeVillainModal();
-            document.getElementById('combatStartOverlay').style.display = 'flex';
-            document.getElementById('battleOverlay').classList.add('active');
             AudioEngine.playTone(600, 'sine', 0.2); // Entry sound
+
+            // RESET ITEM SYSTEM AND SHOW ITEM SELECTION
+            ItemSystem.reset();
+            showItemSelection();
         }
 
         function updateHealthUI(side, pct) {

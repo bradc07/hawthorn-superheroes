@@ -6576,15 +6576,8 @@
              // 2. SETUP BATTLE DATA (Select Villain, Reset HP)
              setupBattleState(hero1, hero2);
 
-             // 3. CHECK BATTLE MODE AND BRANCH
-             if (window.storyBattleMode) {
-                 // World Map battles: Use item selection system
-                 ItemSystem.reset();
-                 showItemSelection();
-             } else {
-                 // Muddlewick battles: Show math challenge
-                 MathChallengeSystem.showChallenge();
-             }
+             // 3. ALWAYS SHOW VILLAIN DOSSIER BEFORE BATTLE
+             openVillainModal(true);
         }
 
         function setupBattleState(hero1, hero2) {
@@ -6650,11 +6643,17 @@
         // NEW: Button handler inside Dossier
         function enterArena() {
             closeVillainModal();
-            document.getElementById('battleOverlay').classList.add('active');
             AudioEngine.playTone(600, 'sine', 0.2); // Entry sound
 
-            // Start combat directly (math challenge is shown earlier for Muddlewick battles)
-            beginCombatSequence();
+            // CHECK BATTLE MODE AND BRANCH
+            if (window.storyBattleMode) {
+                // World Map battles: Use item selection system
+                ItemSystem.reset();
+                showItemSelection();
+            } else {
+                // Muddlewick battles: Show math challenge
+                MathChallengeSystem.showChallenge();
+            }
         }
 
         function updateHealthUI(side, pct) {
