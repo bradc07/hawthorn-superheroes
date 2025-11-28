@@ -6648,8 +6648,15 @@
             // CHECK BATTLE MODE AND BRANCH
             if (window.storyBattleMode) {
                 // World Map battles: Use item selection system
-                ItemSystem.reset();
-                showItemSelection();
+                // Check if items already selected (coming from dossier after item selection)
+                if (ItemSystem.selectedItems.length > 0) {
+                    // Items already selected, proceed to math challenge
+                    MathChallengeSystem.showChallenge();
+                } else {
+                    // No items selected yet, show item selection first
+                    ItemSystem.reset();
+                    showItemSelection();
+                }
             } else {
                 // Muddlewick battles: Show math challenge
                 MathChallengeSystem.showChallenge();
