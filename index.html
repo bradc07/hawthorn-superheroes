@@ -6949,16 +6949,144 @@
         /* --- STRATEGIC BATTLE ENGINE --- */
         // IMPROVEMENT: Elemental Advantage Calculation
         function getMultiplier(atkType, defType) {
-            // Rock Paper Scissors: Electric > Ice > Impact > Electric
+            // Rock Paper Scissors: Electric > Ice > Impact > Electronic
             if (atkType === 'electric' && defType === 'ice') return 1.5;
             if (atkType === 'ice' && defType === 'impact') return 1.5;
             if (atkType === 'impact' && defType === 'electric') return 1.5;
-            
+
             if (atkType === 'electric' && defType === 'impact') return 0.7; // Weak
             if (atkType === 'ice' && defType === 'electric') return 0.7;
             if (atkType === 'impact' && defType === 'ice') return 0.7;
-            
+
             return 1.0; // Neutral
+        }
+
+        // VILLAIN DIALOGUE ARRAYS - Age-appropriate for Year 2 children
+        const VillainDialogue = {
+            // When villain dodges hero attacks
+            dodge: [
+                "Missed me!",
+                "Too slow!",
+                "You'll have to do better!",
+                "Nice try!",
+                "That was terrible!",
+                "Is that all you've got?",
+                "You can't catch me!",
+                "Not even close!",
+                "Ha! You missed!",
+                "Try again!",
+                "Whoosh! Missed!",
+                "You'll never hit me!",
+                "So easy to dodge!",
+                "That was your best shot?",
+                "How disappointing!"
+            ],
+
+            // When villain charges an attack
+            charging: [
+                "GRAAAH!",
+                "Here it comes!",
+                "Prepare yourselves!",
+                "Time to end this!",
+                "Feel my power!",
+                "You're in trouble now!",
+                "This will hurt!",
+                "Watch out!",
+                "My turn!",
+                "Let's see you dodge THIS!",
+                "RAWWWR!",
+                "You can't stop me!",
+                "Maximum power!",
+                "Brace yourselves!",
+                "You're finished!"
+            ],
+
+            // When villain is enraged (low health)
+            enraged: [
+                "ROAAAR!!!",
+                "Now I'm ANGRY!",
+                "You'll pay for that!",
+                "This isn't over!",
+                "I'm just getting started!",
+                "Feel my FURY!",
+                "You've made me MAD!",
+                "ENOUGH!",
+                "Time to get serious!",
+                "You'll regret that!",
+                "No more games!",
+                "I'll show you real power!",
+                "GRRRR!!!",
+                "You're in BIG trouble!",
+                "That's IT!"
+            ],
+
+            // When villain is hit
+            hit: [
+                "Ow!",
+                "You got lucky!",
+                "That barely hurt!",
+                "Is that your best?",
+                "You'll have to try harder!",
+                "Grr!",
+                "Not bad... for beginners!",
+                "That tickles!",
+                "Ouch! But I'm still standing!",
+                "Nice hit... but it won't save you!",
+                "Argh!",
+                "You can't defeat me!",
+                "I've felt worse!",
+                "That won't stop me!",
+                "So what?"
+            ],
+
+            // General battle taunts
+            taunt: [
+                "You're terrible at this!",
+                "Give up now!",
+                "You can't defeat me!",
+                "I'm too powerful!",
+                "This is hopeless for you!",
+                "You're no match for me!",
+                "Pathetic heroes!",
+                "You should run away!",
+                "I've already won!",
+                "You're making this too easy!",
+                "What a joke!",
+                "Muddlewick will be pleased!",
+                "You're wasting your time!",
+                "Surrender now!",
+                "You don't stand a chance!",
+                "This is embarrassing for you!",
+                "You're too weak!",
+                "I could do this all day!",
+                "You call yourselves heroes?",
+                "Disappointing!"
+            ],
+
+            // When villain wins/defeats heroes
+            victory: [
+                "Ha! Weak!",
+                "I told you so!",
+                "Too easy!",
+                "Victory is mine!",
+                "You never had a chance!",
+                "Better luck next time!",
+                "Muddlewick was right about you!",
+                "Pathetic!",
+                "You lose!",
+                "I WIN!",
+                "That was simple!",
+                "You're no heroes!",
+                "Defeated already?",
+                "Is that all?",
+                "So disappointing!"
+            ]
+        };
+
+        // Helper function to get random dialogue
+        function getVillainDialogue(type) {
+            const dialogues = VillainDialogue[type];
+            return dialogues[Math.floor(Math.random() * dialogues.length)];
         }
 
         async function runDynamicBattle(h1, h2) {
@@ -7044,7 +7172,7 @@
                     if (Math.random() < dodgeChance) {
                         // DODGE!
                         updateBattleLog(`${currentVillain.name} dodges the attack!`);
-                        VisualFX.showSpeech(vImg, "Missed me!");
+                        VisualFX.showSpeech(vImg, getVillainDialogue('dodge'));
                         vImg.classList.add('dodge-right'); 
                         setTimeout(() => vImg.classList.remove('dodge-right'), 500);
                         AudioEngine.playTone(150, 'sawtooth', 0.1); // Whiff
@@ -7086,7 +7214,10 @@
                         } else {
                             updateBattleLog(`${currentVillain.name} staggers!`);
                         }
-                        
+
+                        // Villain reacts to being hit
+                        VisualFX.showSpeech(vImg, getVillainDialogue('hit'));
+
                         // if(isCritical || multiplier > 1) await delay(500);
 
                         currentVillainHP = Math.max(10, currentVillainHP - finalDamage);
@@ -7103,7 +7234,7 @@
                     VisualFX.focusOn('left');
 
                     updateBattleLog(`${currentVillain.name} charges ${currentVillain.move}!`);
-                    VisualFX.showSpeech(vImg, "GRAAAH!", "#ef4444");
+                    VisualFX.showSpeech(vImg, getVillainDialogue('charging'), "#ef4444");
                     const stopCharge = VisualFX.chargeUp(vImg, 'impact');
                     AudioEngine.playTone(200, 'sawtooth', 0.4);
                     await delay(1000); if(!isBattleActive) return;
@@ -7168,6 +7299,11 @@
                         if(!defenseEffect) {
                             updateBattleLog("The heroes take a hit!");
                         }
+
+                        // Villain taunts after successful hit (50% chance)
+                        if(Math.random() > 0.5) {
+                            VisualFX.showSpeech(vImg, getVillainDialogue('taunt'));
+                        }
                     }
                 }
 
@@ -7178,9 +7314,9 @@
                     isBattleActive = false; // Pause momentarily
                     AudioEngine.stopMusic();
                     VisualFX.focusOn('left');
-                    
+
                     updateBattleLog(`${currentVillain.name} is ENRAGED!`);
-                    VisualFX.showSpeech(vImg, "ROAAAR!!!", "#ef4444");
+                    VisualFX.showSpeech(vImg, getVillainDialogue('enraged'), "#ef4444");
                     vImg.classList.add('enraged-boss');
                     AudioEngine.playTone(100, 'sawtooth', 1.0); // Big roar sound
                     VisualFX.shake('hard');
@@ -7308,7 +7444,7 @@
                 await delay(600);
 
                 updateBattleLog(`But ${currentVillain.name} dodges!`);
-                VisualFX.showSpeech(vImg, "Ha! Weak!");
+                VisualFX.showSpeech(vImg, getVillainDialogue('victory'));
                 vImg.classList.add('dodge-right');
                 setTimeout(() => vImg.classList.remove('dodge-right'), 500);
                 await delay(1500); if(!isBattleActive) return;
