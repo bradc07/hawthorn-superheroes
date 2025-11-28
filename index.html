@@ -2612,6 +2612,971 @@
                 animation: none !important;
             }
         }
+
+        /* ==================== MOBILE RESPONSIVENESS ==================== */
+
+        /* TOUCH DEVICE IMPROVEMENTS - Applied to all touch devices */
+        @media (hover: none) and (pointer: coarse) {
+            /* Remove hover effects on touch devices */
+            .hero-card:hover {
+                box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+                transform: none;
+            }
+
+            .hero-card:hover img {
+                transform: none;
+                filter: grayscale(0.2) contrast(1.1);
+            }
+
+            .hero-card:hover .hero-name {
+                transform: none;
+            }
+
+            .hero-card:hover .card-foil {
+                opacity: 0;
+            }
+
+            .hero-card:hover .scan-line {
+                opacity: 0;
+            }
+
+            /* Add touch feedback with active states instead */
+            .hero-card:active {
+                transform: scale(0.98);
+            }
+
+            .filter-btn:active {
+                transform: scale(0.95);
+            }
+
+            /* Disable text selection on UI elements */
+            .hero-card,
+            .filter-btn,
+            .battle-btn,
+            button {
+                -webkit-user-select: none;
+                user-select: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            /* Prevent double-tap zoom on buttons */
+            button {
+                touch-action: manipulation;
+            }
+        }
+
+        /* TABLET (1024px and below) */
+        @media (max-width: 1024px) {
+            /* Header adjustments */
+            header {
+                margin: 2rem 0;
+            }
+
+            header h1 {
+                font-size: clamp(3rem, 10vw, 6rem);
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                letter-spacing: 4px;
+                padding: 0.4rem 1.5rem;
+            }
+
+            /* App container */
+            .app {
+                padding: 1.5rem;
+                padding-bottom: 4rem;
+            }
+
+            /* Hero grid */
+            .hero-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 2rem;
+            }
+
+            .hero-card {
+                height: 450px;
+            }
+
+            .hero-name {
+                font-size: 2.5rem;
+            }
+
+            /* Controls bar */
+            .controls-bar {
+                gap: 1.5rem;
+            }
+
+            .filter-btn {
+                padding: 0.9rem 1.8rem;
+                min-height: 44px;
+            }
+
+            /* Modal adjustments */
+            .modal-card {
+                width: min(900px, 95%);
+                height: min(650px, 90vh);
+            }
+
+            .modal-name-display {
+                font-size: 4rem;
+            }
+
+            /* Battle arena */
+            .battle-stage {
+                max-width: 900px;
+                padding: 1.5rem;
+            }
+
+            .battle-title {
+                font-size: 2.5rem;
+            }
+
+            .side-img {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        /* LARGE PHONE / SMALL TABLET (768px and below) */
+        @media (max-width: 768px) {
+            /* Header */
+            header {
+                margin: 1.5rem 0;
+            }
+
+            header h1 {
+                font-size: clamp(2.5rem, 12vw, 5rem);
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 3px;
+                padding: 0.4rem 1rem;
+            }
+
+            /* App container */
+            .app {
+                padding: 1rem;
+                padding-bottom: 3rem;
+            }
+
+            /* Controls bar - stack vertically */
+            .controls-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .filter-group {
+                width: 100%;
+                padding: 0.6rem;
+            }
+
+            .filter-btn {
+                flex: 1;
+                padding: 1rem 1.5rem;
+                min-height: 48px;
+                font-size: 0.95rem;
+            }
+
+            /* Hero grid - 2 columns */
+            .hero-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+
+            .hero-card {
+                height: 400px;
+            }
+
+            .hero-name {
+                font-size: 2.2rem;
+            }
+
+            .hero-alias {
+                font-size: 0.8rem;
+            }
+
+            .class-badge {
+                font-size: 0.7rem;
+                padding: 3px 6px;
+            }
+
+            /* Modal - convert to single column */
+            .modal-card {
+                grid-template-columns: 1fr;
+                grid-template-rows: 40% auto;
+                width: 95%;
+                height: 95vh;
+                max-height: none;
+            }
+
+            .modal-col-img {
+                height: 100%;
+            }
+
+            .modal-image-full {
+                mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            }
+
+            .modal-col-data {
+                padding: 2rem 1.5rem;
+                max-height: 60vh;
+            }
+
+            .modal-name-display {
+                font-size: 3rem;
+            }
+
+            .modal-desc {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .close-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 2.5rem;
+                background: rgba(0, 0, 0, 0.7);
+                border-radius: 50%;
+            }
+
+            /* Battle arena - stack vertically */
+            .battle-stage {
+                max-width: 100%;
+                height: 90vh;
+                padding: 1rem;
+            }
+
+            .battle-header {
+                margin-bottom: 1rem;
+            }
+
+            .battle-title {
+                font-size: 2rem;
+            }
+
+            .battle-area {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .side {
+                width: 100%;
+            }
+
+            .side-img {
+                width: 150px;
+                height: 150px;
+            }
+
+            .battle-area > div:nth-child(2) {
+                font-size: 2.5rem;
+                margin: 0.5rem 0;
+            }
+
+            .hp-bar-container {
+                height: 20px;
+                margin-top: 0.8rem;
+            }
+
+            .battle-log {
+                margin-top: 1rem;
+                height: 80px;
+                font-size: 1rem;
+                padding: 0.8rem;
+            }
+
+            .battle-btn-initiate {
+                font-size: 2rem;
+                padding: 15px 40px;
+            }
+
+            .battle-btn-commence {
+                font-size: 2.5rem;
+                padding: 20px 50px;
+            }
+
+            /* Battle items */
+            .battle-items-container {
+                bottom: 90px;
+                gap: 0.5rem;
+            }
+
+            .battle-item-btn {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+                min-height: 44px;
+            }
+
+            /* Damage numbers */
+            .damage-number {
+                font-size: 3rem;
+            }
+
+            .damage-number.critical {
+                font-size: 4rem;
+            }
+
+            /* Combo counter */
+            .combo-counter {
+                font-size: 2.5rem;
+            }
+
+            .combo-counter.high {
+                font-size: 3rem;
+            }
+
+            /* World map - Override existing 768px styles */
+            .region-node {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+
+            .world-map-title {
+                font-size: 2.5rem;
+            }
+
+            .stage-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .region-detail-icon {
+                font-size: 3rem;
+            }
+
+            .region-detail-name {
+                font-size: 2rem;
+            }
+
+            /* Item selection */
+            .items-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .item-selection-title {
+                font-size: 2.5rem;
+            }
+
+            .enter-battle-btn {
+                font-size: 2rem;
+                padding: 15px 40px;
+            }
+
+            /* Post battle modal */
+            .victory-header {
+                font-size: 4rem;
+            }
+
+            .star {
+                font-size: 3rem;
+            }
+
+            .score-details {
+                font-size: 1.2rem;
+            }
+
+            /* Victory/defeat cinematics */
+            .victory-title-slam,
+            .defeat-title-drop {
+                font-size: 5rem;
+            }
+
+            .skip-cinematic-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            /* Reduce particle effects on mobile for better performance */
+            .particle {
+                display: none;
+            }
+
+            /* Simplify background effects */
+            .stars {
+                opacity: 0.3;
+            }
+
+            .nebula-layer {
+                filter: blur(40px);
+            }
+
+            /* Reduce complex animations */
+            .electric-particle,
+            .snowflake-bg,
+            .dust-particle {
+                animation-duration: 8s; /* Slower = fewer calculations */
+            }
+
+            /* Simplify battle effects */
+            .confetti-piece {
+                width: 8px;
+                height: 8px;
+            }
+        }
+
+        /* PHONE (480px and below) */
+        @media (max-width: 480px) {
+            /* Header */
+            header h1 {
+                font-size: clamp(2rem, 12vw, 3.5rem);
+                letter-spacing: 1px;
+            }
+
+            .subtitle {
+                font-size: 0.7rem;
+                letter-spacing: 2px;
+                padding: 0.3rem 0.8rem;
+            }
+
+            /* App container */
+            .app {
+                padding: 0.8rem;
+                padding-bottom: 2rem;
+            }
+
+            /* Controls */
+            .filter-btn {
+                padding: 0.9rem 1rem;
+                font-size: 0.85rem;
+                letter-spacing: 0.5px;
+            }
+
+            /* Hero grid - single column */
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .hero-card {
+                height: 450px;
+            }
+
+            .hero-name {
+                font-size: 2.5rem;
+            }
+
+            .card-content {
+                padding: 1.2rem;
+            }
+
+            /* Modal - bottom sheet style */
+            .modal-card {
+                grid-template-rows: 35% auto;
+                border-radius: 20px 20px 0 0;
+                position: fixed;
+                bottom: 0;
+                top: 10vh;
+                width: 100%;
+                height: 90vh;
+            }
+
+            .modal-col-data {
+                padding: 1.5rem 1rem;
+            }
+
+            .modal-name-display {
+                font-size: 2.5rem;
+            }
+
+            .modal-role-display {
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+
+            .modal-desc {
+                font-size: 0.95rem;
+                padding-left: 1rem;
+            }
+
+            .move-name {
+                font-size: 0.85rem;
+            }
+
+            .move-val {
+                font-size: 1.2rem;
+            }
+
+            .stat-label {
+                width: 70px;
+                font-size: 0.7rem;
+            }
+
+            /* Battle arena */
+            .battle-stage {
+                padding: 0.8rem;
+                border-radius: 10px;
+            }
+
+            .battle-title {
+                font-size: 1.8rem;
+            }
+
+            .side h2 {
+                font-size: 1.3rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .side-img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .battle-area > div:nth-child(2) {
+                font-size: 2rem;
+            }
+
+            .hp-bar-container {
+                height: 18px;
+            }
+
+            .battle-log {
+                height: 70px;
+                font-size: 0.9rem;
+                padding: 0.6rem;
+            }
+
+            .battle-btn-initiate {
+                font-size: 1.6rem;
+                padding: 12px 30px;
+            }
+
+            .battle-btn-commence {
+                font-size: 2rem;
+                padding: 15px 35px;
+            }
+
+            .dossier-btn {
+                font-size: 0.7rem;
+                padding: 3px 10px;
+            }
+
+            /* Battle items - make them stack better */
+            .battle-items-container {
+                bottom: 80px;
+                flex-direction: column;
+                gap: 0.4rem;
+                left: auto;
+                right: 10px;
+                transform: none;
+            }
+
+            .battle-item-btn {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+                width: auto;
+                min-width: 120px;
+            }
+
+            .battle-item-btn .item-icon {
+                font-size: 1.2rem;
+            }
+
+            /* Damage numbers */
+            .damage-number {
+                font-size: 2.5rem;
+            }
+
+            .damage-number.critical {
+                font-size: 3.5rem;
+            }
+
+            /* Combo counter */
+            .combo-counter {
+                font-size: 2rem;
+                top: 10px;
+            }
+
+            .combo-counter.high {
+                font-size: 2.5rem;
+            }
+
+            /* World map */
+            .world-map-container {
+                width: 95%;
+                height: 90vh;
+            }
+
+            .world-map-header {
+                padding: 1rem;
+            }
+
+            .world-map-title {
+                font-size: 2rem;
+            }
+
+            .region-node {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .completion-badge {
+                width: 24px;
+                height: 24px;
+                font-size: 1rem;
+            }
+
+            .region-detail-panel {
+                padding: 1rem;
+                max-height: 250px;
+            }
+
+            .region-detail-icon {
+                font-size: 2.5rem;
+            }
+
+            .region-detail-name {
+                font-size: 1.8rem;
+            }
+
+            .region-detail-desc {
+                font-size: 0.95rem;
+            }
+
+            .enter-region-btn {
+                padding: 0.8rem 2rem;
+                font-size: 1.2rem;
+            }
+
+            /* Stage selection */
+            .stage-select-container {
+                padding: 1rem;
+            }
+
+            .stage-select-header h2 {
+                font-size: 2rem;
+            }
+
+            .stage-card {
+                padding: 1rem;
+            }
+
+            /* Stage intro */
+            .stage-intro-region {
+                font-size: 1.5rem;
+            }
+
+            .stage-intro-name {
+                font-size: 3rem;
+            }
+
+            .stage-intro-type {
+                font-size: 1.2rem;
+            }
+
+            .stage-intro-villain {
+                font-size: 1.5rem;
+            }
+
+            .stage-intro-begin-btn {
+                padding: 1rem 2.5rem;
+                font-size: 1.5rem;
+            }
+
+            /* Item selection */
+            .item-selection-container {
+                padding: 2rem 1rem;
+                width: 95%;
+            }
+
+            .item-selection-title {
+                font-size: 2rem;
+            }
+
+            .item-selection-counter {
+                font-size: 1.2rem;
+            }
+
+            .items-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .item-card {
+                padding: 1.2rem;
+            }
+
+            .item-icon-large {
+                font-size: 3rem;
+            }
+
+            .item-card-name {
+                font-size: 1.3rem;
+            }
+
+            .enter-battle-btn {
+                font-size: 1.8rem;
+                padding: 12px 30px;
+            }
+
+            /* Math challenge */
+            #mathQuestion {
+                font-size: 2.5rem;
+            }
+
+            #mathAnswer {
+                width: 180px;
+                font-size: 1.3rem;
+                padding: 12px;
+            }
+
+            #submitAnswerBtn {
+                font-size: 1.3rem;
+                padding: 12px 30px;
+            }
+
+            /* Power-up selection */
+            #powerUpChoices {
+                grid-template-columns: 1fr;
+            }
+
+            .powerup-card {
+                min-height: 140px;
+                padding: 15px;
+            }
+
+            .powerup-card-name {
+                font-size: 1.3rem;
+            }
+
+            /* Post battle */
+            .victory-header {
+                font-size: 3rem;
+            }
+
+            .star {
+                font-size: 2.5rem;
+            }
+
+            .score-details {
+                font-size: 1rem;
+            }
+
+            .score-row {
+                width: 250px;
+            }
+
+            /* Cinematics */
+            .victory-title-slam,
+            .defeat-title-drop {
+                font-size: 3.5rem;
+                top: 10%;
+            }
+
+            .gauntlet-subtitle {
+                font-size: 2rem;
+                top: 25%;
+            }
+
+            .record-flash {
+                font-size: 2.5rem;
+                top: 30%;
+            }
+        }
+
+        /* SMALL PHONE (375px and below) */
+        @media (max-width: 375px) {
+            /* Header */
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 0.65rem;
+                letter-spacing: 1px;
+                display: none; /* Hide subtitle on very small screens */
+            }
+
+            /* App container */
+            .app {
+                padding: 0.5rem;
+            }
+
+            /* Controls */
+            .filter-btn {
+                padding: 0.8rem 0.8rem;
+                font-size: 0.75rem;
+            }
+
+            /* Hero cards */
+            .hero-card {
+                height: 400px;
+            }
+
+            .hero-name {
+                font-size: 2rem;
+            }
+
+            .hero-alias {
+                font-size: 0.75rem;
+            }
+
+            .card-content {
+                padding: 1rem;
+            }
+
+            /* Modal */
+            .modal-name-display {
+                font-size: 2rem;
+                line-height: 1;
+            }
+
+            .modal-role-display {
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+            }
+
+            .modal-desc {
+                font-size: 0.9rem;
+            }
+
+            .dash-panel {
+                padding: 1rem;
+            }
+
+            .move-name {
+                font-size: 0.8rem;
+            }
+
+            .move-val {
+                font-size: 1.1rem;
+            }
+
+            /* Battle arena */
+            .battle-title {
+                font-size: 1.5rem;
+            }
+
+            .side h2 {
+                font-size: 1.1rem;
+            }
+
+            .side-img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .battle-area > div:nth-child(2) {
+                font-size: 1.8rem;
+            }
+
+            .hp-bar-container {
+                height: 16px;
+            }
+
+            .battle-log {
+                height: 60px;
+                font-size: 0.85rem;
+            }
+
+            .battle-btn-initiate {
+                font-size: 1.4rem;
+                padding: 10px 25px;
+            }
+
+            .battle-btn-commence {
+                font-size: 1.8rem;
+                padding: 12px 28px;
+            }
+
+            /* Damage numbers */
+            .damage-number {
+                font-size: 2rem;
+            }
+
+            .damage-number.critical {
+                font-size: 3rem;
+            }
+
+            /* World map */
+            .world-map-title {
+                font-size: 1.8rem;
+            }
+
+            .region-node {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+
+            .region-detail-name {
+                font-size: 1.5rem;
+            }
+
+            /* Item selection */
+            .item-selection-title {
+                font-size: 1.8rem;
+            }
+
+            .item-icon-large {
+                font-size: 2.5rem;
+            }
+
+            .item-card-name {
+                font-size: 1.2rem;
+            }
+
+            .item-card-desc {
+                font-size: 0.85rem;
+            }
+
+            /* Victory/defeat titles */
+            .victory-title-slam,
+            .defeat-title-drop {
+                font-size: 2.5rem;
+            }
+
+            .gauntlet-subtitle {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* LANDSCAPE ORIENTATION FIXES FOR PHONES */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .battle-stage {
+                height: 95vh;
+                padding: 0.5rem;
+            }
+
+            .battle-area {
+                flex-direction: row;
+                gap: 1rem;
+            }
+
+            .side {
+                width: 40%;
+            }
+
+            .side-img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .battle-log {
+                height: 60px;
+                font-size: 0.85rem;
+            }
+
+            .modal-card {
+                grid-template-rows: 1fr;
+                grid-template-columns: 40% 60%;
+                height: 95vh;
+            }
+
+            .modal-col-data {
+                max-height: 95vh;
+            }
+        }
     </style>
 </head>
 
